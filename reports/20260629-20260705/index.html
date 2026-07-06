@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>熊猫密室品牌周报｜直观决策版</title>
+<style>
+@page { size:A4; margin:12mm; }
+* { box-sizing:border-box; }
+body { margin:0; background:#e9e9e9; color:#333; font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif; font-size:12px; line-height:1.55; }
+.container { max-width:1120px; margin:0 auto; padding:16px; }
+.page { background:white; margin:0 0 18px; padding:24px 28px; border-radius:4px; box-shadow:0 1px 6px rgba(0,0,0,.08); }
+.deck-toolbar { position:sticky; top:0; z-index:20; max-width:1120px; margin:0 auto; padding:12px 16px 10px; background:rgba(233,233,233,.96); backdrop-filter:blur(8px); border-bottom:1px solid #dedede; }
+.deck-tabs { display:grid; grid-template-columns:repeat(7,1fr); gap:8px; margin-bottom:8px; }
+.deck-tab { appearance:none; border:1px solid #ffd8bf; background:#fff7ed; color:#8a3412; border-radius:4px; padding:8px 10px; font-size:12px; font-weight:800; text-align:left; cursor:pointer; }
+.deck-tab.active { background:linear-gradient(135deg,#ff6b35,#ff8a1f); color:white; border-color:#ff6b35; box-shadow:0 2px 8px rgba(250,84,28,.2); }
+.deck-actions { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.deck-actions button { appearance:none; border:1px solid #ffd8bf; background:white; color:#d4380d; border-radius:4px; padding:6px 12px; font-size:12px; font-weight:800; cursor:pointer; }
+.deck-actions button.primary { background:#ff6b35; color:white; border-color:#ff6b35; }
+.deck-status { color:#8a4b00; font-weight:800; }
+.deck-mode .container { padding-top:14px; }
+.deck-mode .page { display:none; min-height:calc(100vh - 116px); margin-bottom:0; }
+.deck-mode .page.active { display:block; }
+.page-guide { text-align:right; color:#999; font-size:11px; margin-bottom:10px; }
+.report-header { background:linear-gradient(135deg,#ff6b35,#ff8a1f); color:white; padding:20px 24px; border-radius:2px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+.report-header h1 { margin:0 0 6px; font-size:24px; letter-spacing:.5px; }
+.report-header p { margin:0; color:#fff7ed; }
+.header-score { text-align:right; min-width:120px; }
+.header-score b { display:block; font-size:28px; line-height:1; }
+.header-score span { font-size:11px; opacity:.9; }
+.standards { background:#fff7e6; border:1px solid #ffd591; color:#8a4b00; padding:8px 12px; border-radius:2px; margin-bottom:12px; }
+.section-title { margin:0 0 12px; color:#d4380d; border-bottom:3px solid #ff6b35; padding-bottom:7px; font-size:18px; }
+h3 { margin:14px 0 7px; color:#d4380d; font-size:14px; border-left:3px solid #ff6b35; padding-left:8px; }
+.hero-grid { display:grid; grid-template-columns:1fr 180px; gap:12px; align-items:stretch; }
+.hero-main { border:1px solid #ffd8bf; background:#fff; }
+.block-title { background:#fff1e6; color:#d4380d; font-weight:800; padding:8px 10px; border-bottom:1px solid #ffd8bf; }
+.metric-table { margin:0; font-size:12px; }
+.metric-table th { background:#fff7ed; color:#d4380d; padding:7px 6px; }
+.metric-table td { padding:7px 6px; }
+.metric-table .metric-name { text-align:left; font-weight:800; color:#8a3412; }
+.metric-table .now { font-weight:900; font-size:14px; color:#111; }
+.metric-table tr.warning td { background:#fffbe6; }
+.hero-side { display:grid; grid-template-columns:1fr; gap:8px; }
+.side-card { border-radius:2px; padding:10px; text-align:center; border:1px solid #eee; }
+.side-card b { display:block; font-size:28px; line-height:1; margin-bottom:4px; }
+.side-card span { color:#666; }
+.side-card.danger { background:#fff1f0; border-color:#ffa39e; color:#cf1322; }
+.side-card.warning { background:#fffbe6; border-color:#ffe58f; color:#d48806; }
+.side-card.ok { background:#f6ffed; border-color:#b7eb8f; color:#389e0d; }
+.side-card.neutral { background:#fff7e6; border-color:#ffd591; color:#d4380d; }
+table { width:100%; border-collapse:collapse; margin:8px 0 14px; font-size:12px; }
+th { background:#fff1e6; color:#d4380d; border:1px solid #ffd8bf; padding:7px 6px; white-space:nowrap; text-align:center; }
+td { border:1px solid #eee; padding:6px 7px; text-align:center; vertical-align:middle; }
+td:last-child { text-align:left; }
+.dense td { font-size:10px; padding:5px; }
+.table-scroll { width:100%; overflow-x:auto; margin:8px 0 14px; }
+.table-scroll table { min-width:1120px; margin:0; }
+.manager-table { min-width:1040px !important; }
+.employee-table { min-width:980px !important; }
+.employee-page .area-brief { grid-template-columns:repeat(5,1fr); }
+.employee-page h3 { margin-top:16px; }
+.table-scroll th { font-size:11px; }
+.table-scroll td:nth-child(14), .table-scroll td:nth-child(15) { text-align:left; line-height:1.55; }
+.page > table:not(.metric-table):not(.region-summary) td:nth-child(4),
+.page > table:not(.metric-table):not(.region-summary) td:nth-child(5) { text-align:left; line-height:1.65; }
+.cg { color:#00a85a; font-weight:800; }
+.cy { color:#ff7a1a; font-weight:800; }
+.cr { color:#ff4d5f; font-weight:800; }
+.metric-table td:last-child .cg,.metric-table td:last-child .cy,.metric-table td:last-child .cr { display:inline-block; border-radius:5px; padding:3px 8px; font-size:12px; line-height:1.3; font-weight:900; white-space:normal; }
+.metric-table td:last-child .cg { background:#d9f8e8; color:#00a85a; }
+.metric-table td:last-child .cy { background:#fff0dc; color:#ff7a1a; }
+.metric-table td:last-child .cr { background:#ffe1e6; color:#ff4d5f; }
+.badge { display:inline-block; border-radius:999px; padding:4px 12px; font-size:12px; line-height:1.15; font-weight:900; letter-spacing:0; color:white; border:0; }
+.badge.red { background:#ff4d5f; color:white; }
+.badge.yellow { background:#ff8a2a; color:white; }
+.badge.green { background:#05b864; color:white; }
+.badge.gray { background:#8c8c8c; color:white; }
+.badge.rating { min-width:46px; padding:5px 9px; font-size:13px; line-height:1; white-space:nowrap; word-break:keep-all; text-align:center; }
+.badge.risk { padding:2px 8px; font-size:11px; min-width:auto; letter-spacing:0; background:#f5f5f5 !important; color:#666 !important; border:1px solid #bfbfbf; }
+.alert { background:#fff7e6; border-left:4px solid #fa8c16; padding:12px; border-radius:0 8px 8px 0; margin:12px 0; }
+.area-brief { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:10px 0 12px; }
+.area-brief div { background:#fff7e6; border:1px solid #ffd591; border-radius:2px; padding:10px; text-align:center; }
+.area-brief b { display:block; color:#d4380d; font-size:20px; line-height:1.15; }
+.area-brief em { display:block; color:#00a85a; font-size:16px; line-height:1.2; font-style:normal; font-weight:900; margin-top:3px; }
+.area-brief span { color:#8a4b00; font-size:11px; }
+.footer-note { background:#fff7e6; color:#8a4b00; padding:12px; border-radius:8px; text-align:center; margin-top:12px; }
+.rank-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:10px; }
+.rank-card { border:1px solid #d9e6f2; border-radius:2px; overflow:hidden; background:white; }
+.rank-card h3 { margin:0; border:0; padding:7px 8px; text-align:center; background:#2f75a3; color:white; font-size:13px; }
+.rank-table { margin:0; font-size:10px; }
+.rank-table th { background:#e8f2fb; color:#14324a; padding:5px 4px; }
+.rank-table td { padding:4px 5px; border-color:#dbe5ee; }
+.rank-table td:nth-child(1) { width:32px; }
+.rank-table td:nth-child(2) { text-align:left; font-weight:700; }
+.rank-table td:nth-child(3) { text-align:right; font-weight:900; color:#14324a; }
+.rank-table tr.top-rank td { background:#fff2cc; }
+@media print { body { background:white; } .deck-toolbar { display:none; } .container { padding:0; } .deck-mode .page,.page { display:block; box-shadow:none; border-radius:0; page-break-before:always; } .page:first-child { page-break-before:auto; } }
+@media (max-width:1000px) { .deck-tabs { grid-template-columns:1fr 1fr; } .deck-actions { align-items:stretch; flex-wrap:wrap; } .hero-grid,.area-brief,.rank-grid { grid-template-columns:1fr; } .container { padding:10px; } .page { padding:18px; } .report-header { display:block; } .header-score { text-align:left; margin-top:12px; } }
+</style>
+</head>
+<body class="deck-mode"><div class="deck-toolbar" aria-label="周报翻页控制">
+  <div class="deck-tabs">
+    <button class="deck-tab active" type="button" data-page="0">第1页 · 品牌总览</button>
+    <button class="deck-tab" type="button" data-page="1">第2页 · 1区周会</button>
+    <button class="deck-tab" type="button" data-page="2">第3页 · 2区周会</button>
+    <button class="deck-tab" type="button" data-page="3">第4页 · 3区周会</button>
+    <button class="deck-tab" type="button" data-page="4">第5页 · 店长排名</button>
+    <button class="deck-tab" type="button" data-page="5">第6页 · 店员区域排名</button>
+    <button class="deck-tab" type="button" data-page="6">第7页 · 店员全员排名</button>
+  </div>
+  <div class="deck-actions">
+    <div>
+      <button type="button" data-action="prev">上一页</button>
+      <button type="button" data-action="next">下一页</button>
+      <button class="primary" type="button" data-action="toggle">暂停自动翻页</button>
+    </div>
+    <div class="deck-status">自动翻页中 · 每60秒切换</div>
+  </div>
+</div><div class="container">
+    <section class="page">
+      <div class="page-guide">第1页 · 30秒看懂全局</div>
+      <h2 class="section-title">一、老板先看这页：本周到底好不好？</h2>
+      <div class="report-header">
+        <div>
+          <h1>熊猫密室·品牌周报（直观决策版）</h1>
+          <p>周期：2026/06/29-2026/07/05　|　口径：现阶段以线下为主，美团/抖音暂不纳入核心评估</p>
+        </div>
+        <div class="header-score">
+          <b>14/4/1</b>
+          <span>红 / 黄 / 绿</span>
+        </div>
+      </div>
+      <div class="standards"><b>达标线</b>　完成率≥100%　新签≥40%　总引流≥25%　续卡≥20%　扫楼≥15%　大卡≥70%。过线即达标，低于才算风险。</div>
+      <div class="hero-grid">
+        <div class="hero-main">
+          <div class="block-title">品牌核心数字对比</div>
+          <table class="metric-table"><thead><tr><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>环比/变化</th><th>判断</th></tr></thead><tbody>
+      <tr class="ok">
+        <td class="metric-name">总接待人数</td>
+        <td>5,322</td>
+        <td class="now">9,773</td>
+        <td>+4,451</td>
+        <td><span class='cg'>+83.6%</span></td>
+        <td><span class='cg'>增长</span></td>
+      </tr>
+
+      <tr class="ok">
+        <td class="metric-name">新客数</td>
+        <td>888</td>
+        <td class="now">1,407</td>
+        <td>+519</td>
+        <td><span class='cg'>+58.4%</span></td>
+        <td><span class='cg'>增长</span></td>
+      </tr>
+
+      <tr class="ok">
+        <td class="metric-name">营业额</td>
+        <td>¥267,538.30</td>
+        <td class="now">¥470,635.69</td>
+        <td>¥203,097.39</td>
+        <td><span class='cg'>+75.9%</span></td>
+        <td><span class='cg'>增长</span></td>
+      </tr>
+
+      <tr class="warning">
+        <td class="metric-name">完成率</td>
+        <td>63.50%</td>
+        <td class="now">81.76%</td>
+        <td>+18.3%</td>
+        <td><span class='cr'>未过线</span></td>
+        <td><span class='cr'>本周未过线，但较上周提升</span></td>
+      </tr>
+
+      <tr class="ok">
+        <td class="metric-name">新签办卡率</td>
+        <td>48.76%</td>
+        <td class="now">51.72%</td>
+        <td>+3.0%</td>
+        <td><span class='cg'>过线</span></td>
+        <td><span class='cg'>新签品牌层面过线</span></td>
+      </tr>
+
+      <tr class="ok">
+        <td class="metric-name">总续卡金额</td>
+        <td>¥58,338.00</td>
+        <td class="now">¥112,434.00</td>
+        <td>¥54,096.00</td>
+        <td><span class='cg'>+92.7%</span></td>
+        <td><span class='cg'>增长</span></td>
+      </tr>
+
+      <tr class="ok">
+        <td class="metric-name">总引流金额</td>
+        <td>¥65,553.45</td>
+        <td class="now">¥96,903.10</td>
+        <td>¥31,349.65</td>
+        <td><span class='cg'>+47.8%</span></td>
+        <td><span class='cg'>增长</span></td>
+      </tr>
+
+      <tr class="ok">
+        <td class="metric-name">扫楼金额</td>
+        <td>¥34,556.76</td>
+        <td class="now">¥51,813.77</td>
+        <td>¥17,257.01</td>
+        <td><span class='cg'>+49.9%</span></td>
+        <td><span class='cg'>增长</span></td>
+      </tr>
+
+      <tr class="ok">
+        <td class="metric-name">总续卡占比</td>
+        <td>21.81%</td>
+        <td class="now">23.89%</td>
+        <td>+2.1%</td>
+        <td><span class='cg'>过线</span></td>
+        <td><span class='cg'>续卡占比过线，仍看门店分化</span></td>
+      </tr>
+
+      <tr class="warning">
+        <td class="metric-name">总引流占比</td>
+        <td>24.50%</td>
+        <td class="now">20.59%</td>
+        <td>-3.9%</td>
+        <td><span class='cr'>未过线</span></td>
+        <td><span class='cr'>引流占比低于25%，要追拉新入口</span></td>
+      </tr>
+
+      <tr class="warning">
+        <td class="metric-name">扫楼占比</td>
+        <td>12.92%</td>
+        <td class="now">11.01%</td>
+        <td>-1.9%</td>
+        <td><span class='cr'>未过线</span></td>
+        <td><span class='cr'>扫楼占比低于15%，要追线下动作</span></td>
+      </tr>
+
+      <tr class="warning">
+        <td class="metric-name">大卡率</td>
+        <td>67.14%</td>
+        <td class="now">69.19%</td>
+        <td>+2.0%</td>
+        <td><span class='cr'>未过线</span></td>
+        <td><span class='cr'>接近安全线，重点看销售大卡勇气</span></td>
+      </tr></tbody></table>
+        </div>
+        <div class="hero-side">
+          <div class="side-card danger"><b>14</b><span>红灯店</span></div>
+          <div class="side-card warning"><b>4</b><span>黄灯店</span></div>
+          <div class="side-card ok"><b>1</b><span>绿灯店</span></div>
+          <div class="side-card neutral"><b>61</b><span>未达标指标</span></div>
+        </div>
+      </div>
+      <h3>各区域核心数据</h3>
+      <table class="dense region-summary"><thead><tr><th>大区</th><th>新客数</th><th>营业额</th><th>完成率</th><th>新签办卡率</th><th>总续卡金额</th><th>总引流金额</th><th>扫楼金额</th><th>总续卡占比</th><th>总引流占比</th><th>扫楼占比</th><th>红/黄</th><th>未达标指标数</th><th>主要问题</th></tr></thead><tbody><tr><td>1区</td><td>351</td><td>¥150,115</td><td>81.63%</td><td>70.37%</td><td>¥41,146</td><td>¥19,620</td><td>¥15,597</td><td>27.41%</td><td>13.07%</td><td>10.39%</td><td>4/2</td><td>17</td><td>总引流占比&lt;25%(5)；扫楼占比&lt;15%(5)；完成率&lt;100%(4)</td></tr><tr><td>2区</td><td>545</td><td>¥180,849</td><td>81.15%</td><td>49.36%</td><td>¥48,612</td><td>¥41,378</td><td>¥25,590</td><td>26.88%</td><td>22.88%</td><td>14.15%</td><td>5/1</td><td>20</td><td>完成率&lt;100%(6)；总引流占比&lt;25%(4)；扫楼占比&lt;15%(4)</td></tr><tr><td>3区</td><td>511</td><td>¥139,672</td><td>82.29%</td><td>41.68%</td><td>¥22,676</td><td>¥35,905</td><td>¥10,629</td><td>16.24%</td><td>25.71%</td><td>7.61%</td><td>5/1</td><td>24</td><td>完成率&lt;100%(5)；扫楼占比&lt;15%(5)；续卡占比&lt;20%(4)</td></tr></tbody></table>
+      <div class="alert">本期品牌营收和新客均明显增长，但总引流占比低于25%，会议重点追每区引流兼职、0元体验、电销到店、续卡大卡和扫楼动作，同时复制高排名员工的有效动作。</div>
+    </section>
+    
+    <section class="page">
+      <div class="page-guide">第2页 · 1区城市经理只看本区</div>
+      <h2 class="section-title">1区周会页：1看整体 2看门店 3定动作</h2>
+      <div class="area-brief">
+        <div><b>6</b><span>门店数</span></div>
+        <div><b>¥150,115</b><em>81.63%</em><span>营收 / 完成率</span></div>
+        <div><b>351</b><span>本周新客 · <span class='cg'>+53.95%</span></span></div>
+        <div><b>4/2</b><span>红/黄灯</span></div>
+        <div><b>17</b><span>未达标指标</span></div>
+      </div>
+      <h3>1. 1区整体区域表现</h3>
+      <table class='metric-table area-metric-table'><thead><tr><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>变化</th><th>判断</th></tr></thead><tbody><tr><td class='metric-name'>新客数</td><td>228</td><td class='now'>351</td><td>+123</td><td><span class='cg'>+53.9%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>营业额</td><td>¥78,134</td><td class='now'>¥150,115</td><td>¥71,981</td><td><span class='cg'>+92.1%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>完成率</td><td>59.56%</td><td class='now'>81.63%</td><td>+22.1%</td><td><span class='cr'>+22.1%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>新签办卡率</td><td>63.16%</td><td class='now'>70.37%</td><td>+7.2%</td><td><span class='cg'>+7.2%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-name'>总续卡金额</td><td>¥16,534</td><td class='now'>¥41,146</td><td>¥24,612</td><td><span class='cg'>+148.9%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>总引流金额</td><td>¥14,868</td><td class='now'>¥19,620</td><td>¥4,752</td><td><span class='cg'>+32.0%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>扫楼金额</td><td>¥8,899</td><td class='now'>¥15,597</td><td>¥6,697</td><td><span class='cg'>+75.3%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>总续卡占比</td><td>21.16%</td><td class='now'>27.41%</td><td>+6.2%</td><td><span class='cg'>+6.2%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-name'>总引流占比</td><td>19.03%</td><td class='now'>13.07%</td><td>-6.0%</td><td><span class='cr'>-6.0%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>扫楼占比</td><td>11.39%</td><td class='now'>10.39%</td><td>-1.0%</td><td><span class='cr'>-1.0%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>大卡率</td><td>59.02%</td><td class='now'>68.53%</td><td>+9.5%</td><td><span class='cr'>+9.5%</span></td><td><span class='cr'>低于目标</span></td></tr></tbody></table>
+      <h3>2. 1区门店哪里好，哪里不好</h3>
+      <div class="table-scroll"><table class="dense"><thead><tr><th>评级</th><th>门店</th><th>店型</th><th>主题数</th><th>营收</th><th>完成率</th><th>新签</th><th>总引流</th><th>续卡</th><th>扫楼</th><th>大卡</th><th>新客环比</th><th>风险</th><th>短板</th><th>亮点备注</th></tr></thead><tbody>
+        <tr>
+          <td><span class='badge rating red'>红灯</span></td><td>襄阳高新万达</td><td>A类</td><td>10</td>
+          <td>¥39,690</td><td><span class='cg'>100.71%</span></td>
+          <td><span class='cg'>74.34%</span></td>
+          <td><span class='cr'>5.56%</span></td>
+          <td><span class='cr'>10.58%</span></td>
+          <td><span class='cr'>3.04%</span></td>
+          <td><span class='cr'>53.19%</span></td>
+          <td><span class='cg'>+85.25%</span></td>
+          <td><span class='badge risk red'>4项</span></td>
+          <td>总引流占比&lt;25%、续卡占比&lt;20%、扫楼占比&lt;15%、大卡率&lt;70%</td><td>本区营收最高¥39,690；新客环比85.25%，可分享拉新动作</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating red'>红灯</span></td><td>南阳吾悦</td><td>A类</td><td>14</td>
+          <td>¥28,373</td><td><span class='cr'>70.21%</span></td>
+          <td><span class='cg'>63.01%</span></td>
+          <td><span class='cr'>5.56%</span></td>
+          <td><span class='cg'>23.97%</span></td>
+          <td><span class='cr'>5.56%</span></td>
+          <td><span class='cr'>60.00%</span></td>
+          <td><span class='cg'>+102.78%</span></td>
+          <td><span class='badge risk red'>4项</span></td>
+          <td>完成率&lt;100%、总引流占比&lt;25%、扫楼占比&lt;15%、大卡率&lt;70%</td><td>新客环比102.78%，可分享拉新动作</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating red'>红灯</span></td><td>南阳万达</td><td>B类</td><td>18</td>
+          <td>¥19,214</td><td><span class='cr'>56.85%</span></td>
+          <td><span class='cg'>82.86%</span></td>
+          <td><span class='cr'>13.35%</span></td>
+          <td><span class='cg'>24.98%</span></td>
+          <td><span class='cr'>13.35%</span></td>
+          <td><span class='cg'>76.92%</span></td>
+          <td><span class='cg'>+29.63%</span></td>
+          <td><span class='badge risk red'>3项</span></td>
+          <td>完成率&lt;100%、总引流占比&lt;25%、扫楼占比&lt;15%</td><td>新客环比29.63%，可分享拉新动作</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating red'>红灯</span></td><td>信阳万达</td><td>C类</td><td>9</td>
+          <td>¥11,199</td><td><span class='cr'>55.10%</span></td>
+          <td><span class='cg'>66.67%</span></td>
+          <td><span class='cr'>3.38%</span></td>
+          <td><span class='cg'>20.47%</span></td>
+          <td><span class='cr'>3.38%</span></td>
+          <td><span class='cg'>72.41%</span></td>
+          <td><span class='cr'>-17.50%</span></td>
+          <td><span class='badge risk red'>3项</span></td>
+          <td>完成率&lt;100%、总引流占比&lt;25%、扫楼占比&lt;15%</td><td>-</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating yellow'>黄灯</span></td><td>商丘万达</td><td>C类</td><td>13</td>
+          <td>¥29,995</td><td><span class='cg'>126.15%</span></td>
+          <td><span class='cg'>68.42%</span></td>
+          <td><span class='cr'>12.85%</span></td>
+          <td><span class='cg'>50.19%</span></td>
+          <td><span class='cr'>11.03%</span></td>
+          <td><span class='cg'>78.38%</span></td>
+          <td><span class='cg'>+111.11%</span></td>
+          <td><span class='badge risk yellow'>2项</span></td>
+          <td>总引流占比&lt;25%、扫楼占比&lt;15%</td><td>新客环比111.11%，可分享拉新动作</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating yellow'>黄灯</span></td><td>许昌万达</td><td>B类</td><td>14</td>
+          <td>¥21,643</td><td><span class='cr'>82.70%</span></td>
+          <td><span class='cg'>67.50%</span></td>
+          <td><span class='cg'>41.76%</span></td>
+          <td><span class='cg'>36.96%</span></td>
+          <td><span class='cg'>30.32%</span></td>
+          <td><span class='cg'>86.36%</span></td>
+          <td><span class='cg'>+8.11%</span></td>
+          <td><span class='badge risk yellow'>1项</span></td>
+          <td>完成率&lt;100%</td><td>扫楼占比30.32%，线下动作可复制；新客环比8.11%，可分享拉新动作</td>
+        </tr></tbody></table></div>
+      <h3>3. 1区下一步怎么做</h3>
+      <table><thead><tr><th>优先级</th><th>门店</th><th>风险数</th><th>核心短板</th><th>下一步处理</th></tr></thead><tbody><tr><td><span class='badge red'>P0</span></td><td>襄阳高新万达</td><td>4</td><td>总引流占比5.56%、续卡占比10.58%、扫楼占比3.04%、大卡率53.19%</td><td>城市经理先问诊：客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼；续卡弱查后场人员稳定、服务质量、陪玩和下一主题引导，重点看是否只敢续小卡；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>南阳吾悦</td><td>4</td><td>完成率70.21%、总引流占比5.56%、扫楼占比5.56%、大卡率60.00%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>南阳万达</td><td>3</td><td>完成率56.85%、总引流占比13.35%、扫楼占比13.35%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼。</td></tr><tr><td><span class='badge red'>P0</span></td><td>信阳万达</td><td>3</td><td>完成率55.10%、总引流占比3.38%、扫楼占比3.38%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼。</td></tr><tr><td><span class='badge yellow'>P1</span></td><td>商丘万达</td><td>2</td><td>总引流占比12.85%、扫楼占比11.03%</td><td>城市经理先问诊：客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼。</td></tr><tr><td><span class='badge yellow'>P1</span></td><td>许昌万达</td><td>1</td><td>完成率82.70%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单。</td></tr></tbody></table>
+    </section>
+    
+    
+    <section class="page">
+      <div class="page-guide">第3页 · 2区城市经理只看本区</div>
+      <h2 class="section-title">2区周会页：1看整体 2看门店 3定动作</h2>
+      <div class="area-brief">
+        <div><b>7</b><span>门店数</span></div>
+        <div><b>¥180,849</b><em>81.15%</em><span>营收 / 完成率</span></div>
+        <div><b>545</b><span>本周新客 · <span class='cg'>+58.89%</span></span></div>
+        <div><b>5/1</b><span>红/黄灯</span></div>
+        <div><b>20</b><span>未达标指标</span></div>
+      </div>
+      <h3>1. 2区整体区域表现</h3>
+      <table class='metric-table area-metric-table'><thead><tr><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>变化</th><th>判断</th></tr></thead><tbody><tr><td class='metric-name'>新客数</td><td>343</td><td class='now'>545</td><td>+202</td><td><span class='cg'>+58.9%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>营业额</td><td>¥108,272</td><td class='now'>¥180,849</td><td>¥72,577</td><td><span class='cg'>+67.0%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>完成率</td><td>71.89%</td><td class='now'>81.15%</td><td>+9.3%</td><td><span class='cr'>+9.3%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>新签办卡率</td><td>43.73%</td><td class='now'>49.36%</td><td>+5.6%</td><td><span class='cg'>+5.6%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-name'>总续卡金额</td><td>¥31,352</td><td class='now'>¥48,612</td><td>¥17,260</td><td><span class='cg'>+55.1%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>总引流金额</td><td>¥23,693</td><td class='now'>¥41,378</td><td>¥17,685</td><td><span class='cg'>+74.6%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>扫楼金额</td><td>¥12,906</td><td class='now'>¥25,590</td><td>¥12,684</td><td><span class='cg'>+98.3%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>总续卡占比</td><td>28.96%</td><td class='now'>26.88%</td><td>-2.1%</td><td><span class='cg'>-2.1%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-name'>总引流占比</td><td>21.88%</td><td class='now'>22.88%</td><td>+1.0%</td><td><span class='cr'>+1.0%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>扫楼占比</td><td>11.92%</td><td class='now'>14.15%</td><td>+2.2%</td><td><span class='cr'>+2.2%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>大卡率</td><td>75.57%</td><td class='now'>72.68%</td><td>-2.9%</td><td><span class='cg'>-2.9%</span></td><td><span class='cg'>达标</span></td></tr></tbody></table>
+      <h3>2. 2区门店哪里好，哪里不好</h3>
+      <div class="table-scroll"><table class="dense"><thead><tr><th>评级</th><th>门店</th><th>店型</th><th>主题数</th><th>营收</th><th>完成率</th><th>新签</th><th>总引流</th><th>续卡</th><th>扫楼</th><th>大卡</th><th>新客环比</th><th>风险</th><th>短板</th><th>亮点备注</th></tr></thead><tbody>
+        <tr>
+          <td><span class='badge rating red'>红灯</span></td><td>洛阳泉舜</td><td>A类</td><td>12</td>
+          <td>¥48,459</td><td><span class='cr'>97.96%</span></td>
+          <td><span class='cg'>48.23%</span></td>
+          <td><span class='cr'>18.35%</span></td>
+          <td><span class='cg'>26.00%</span></td>
+          <td><span class='cr'>14.48%</span></td>
+          <td><span class='cr'>68.42%</span></td>
+          <td><span class='cg'>+110.45%</span></td>
+          <td><span class='badge risk red'>4项</span></td>
+          <td>完成率&lt;100%、总引流占比&lt;25%、扫楼占比&lt;15%、大卡率&lt;70%</td><td>本区营收最高¥48,459；新客环比110.45%，可分享拉新动作</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating red'>红灯</span></td><td>洛阳中州万达</td><td>B类</td><td>10</td>
+          <td>¥26,574</td><td><span class='cr'>95.32%</span></td>
+          <td><span class='cg'>42.73%</span></td>
+          <td><span class='cr'>20.46%</span></td>
+          <td><span class='cr'>9.03%</span></td>
+          <td><span class='cg'>18.87%</span></td>
+          <td><span class='cr'>52.83%</span></td>
+          <td><span class='cg'>+103.70%</span></td>
+          <td><span class='badge risk red'>4项</span></td>
+          <td>完成率&lt;100%、总引流占比&lt;25%、续卡占比&lt;20%、大卡率&lt;70%</td><td>新客环比103.70%，可分享拉新动作</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating red'>红灯</span></td><td>周口万达</td><td>C类</td><td>9</td>
+          <td>¥18,258</td><td><span class='cr'>79.52%</span></td>
+          <td><span class='cr'>36.48%</span></td>
+          <td><span class='cr'>20.85%</span></td>
+          <td><span class='cg'>33.67%</span></td>
+          <td><span class='cr'>6.00%</span></td>
+          <td><span class='cg'>75.61%</span></td>
+          <td><span class='cg'>+38.30%</span></td>
+          <td><span class='badge risk red'>4项</span></td>
+          <td>完成率&lt;100%、新签办卡率&lt;40%、总引流占比&lt;25%、扫楼占比&lt;15%</td><td>新客环比38.30%，可分享拉新动作</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating red'>红灯</span></td><td>郑州惠济万达</td><td>B类</td><td>10</td>
+          <td>¥20,014</td><td><span class='cr'>58.18%</span></td>
+          <td><span class='cg'>40.82%</span></td>
+          <td><span class='cr'>22.98%</span></td>
+          <td><span class='cg'>46.22%</span></td>
+          <td><span class='cr'>4.45%</span></td>
+          <td><span class='cg'>80.95%</span></td>
+          <td><span class='cg'>+96.00%</span></td>
+          <td><span class='badge risk red'>3项</span></td>
+          <td>完成率&lt;100%、总引流占比&lt;25%、扫楼占比&lt;15%</td><td>新客环比96.00%，可分享拉新动作</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating red'>红灯</span></td><td>新乡牧野万达</td><td>C类</td><td>13</td>
+          <td>¥7,831</td><td><span class='cr'>36.69%</span></td>
+          <td><span class='cr'>25.00%</span></td>
+          <td><span class='cg'>38.04%</span></td>
+          <td><span class='cg'>38.31%</span></td>
+          <td><span class='cg'>23.89%</span></td>
+          <td><span class='cr'>60.00%</span></td>
+          <td><span class='cr'>-2.70%</span></td>
+          <td><span class='badge risk red'>3项</span></td>
+          <td>完成率&lt;100%、新签办卡率&lt;40%、大卡率&lt;70%</td><td>-</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating yellow'>黄灯</span></td><td>焦作万达</td><td>A类</td><td>15</td>
+          <td>¥38,165</td><td><span class='cr'>83.89%</span></td>
+          <td><span class='cg'>69.05%</span></td>
+          <td><span class='cg'>26.41%</span></td>
+          <td><span class='cg'>27.51%</span></td>
+          <td><span class='cr'>14.37%</span></td>
+          <td><span class='cg'>70.13%</span></td>
+          <td><span class='cg'>+18.31%</span></td>
+          <td><span class='badge risk yellow'>2项</span></td>
+          <td>完成率&lt;100%、扫楼占比&lt;15%</td><td>新客环比18.31%，可分享拉新动作</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating green'>绿灯</span></td><td>郑州信万</td><td>C类</td><td>14</td>
+          <td>¥21,548</td><td><span class='cg'>101.04%</span></td>
+          <td><span class='cg'>70.00%</span></td>
+          <td><span class='cg'>25.90%</span></td>
+          <td><span class='cg'>21.88%</span></td>
+          <td><span class='cg'>19.58%</span></td>
+          <td><span class='cg'>98.15%</span></td>
+          <td><span class='cg'>+42.86%</span></td>
+          <td><span class='badge risk green'>0项</span></td>
+          <td>全部核心指标过线</td><td>新客环比42.86%，可分享拉新动作</td>
+        </tr></tbody></table></div>
+      <h3>3. 2区下一步怎么做</h3>
+      <table><thead><tr><th>优先级</th><th>门店</th><th>风险数</th><th>核心短板</th><th>下一步处理</th></tr></thead><tbody><tr><td><span class='badge red'>P0</span></td><td>洛阳泉舜</td><td>4</td><td>完成率97.96%、总引流占比18.35%、扫楼占比14.48%、大卡率68.42%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>洛阳中州万达</td><td>4</td><td>完成率95.32%、总引流占比20.46%、续卡占比9.03%、大卡率52.83%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；续卡弱查后场人员稳定、服务质量、陪玩和下一主题引导，重点看是否只敢续小卡；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>周口万达</td><td>4</td><td>完成率79.52%、新签办卡率36.48%、总引流占比20.85%、扫楼占比6.00%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>郑州惠济万达</td><td>3</td><td>完成率58.18%、总引流占比22.98%、扫楼占比4.45%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼。</td></tr><tr><td><span class='badge red'>P0</span></td><td>新乡牧野万达</td><td>3</td><td>完成率36.69%、新签办卡率25.00%、大卡率60.00%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge yellow'>P1</span></td><td>焦作万达</td><td>2</td><td>完成率83.89%、扫楼占比14.37%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼。</td></tr></tbody></table>
+    </section>
+    
+    
+    <section class="page">
+      <div class="page-guide">第4页 · 3区城市经理只看本区</div>
+      <h2 class="section-title">3区周会页：1看整体 2看门店 3定动作</h2>
+      <div class="area-brief">
+        <div><b>6</b><span>门店数</span></div>
+        <div><b>¥139,672</b><em>82.29%</em><span>营收 / 完成率</span></div>
+        <div><b>511</b><span>本周新客 · <span class='cg'>+61.20%</span></span></div>
+        <div><b>5/1</b><span>红/黄灯</span></div>
+        <div><b>24</b><span>未达标指标</span></div>
+      </div>
+      <h3>1. 3区整体区域表现</h3>
+      <table class='metric-table area-metric-table'><thead><tr><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>变化</th><th>判断</th></tr></thead><tbody><tr><td class='metric-name'>新客数</td><td>317</td><td class='now'>511</td><td>+194</td><td><span class='cg'>+61.2%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>营业额</td><td>¥81,133</td><td class='now'>¥139,672</td><td>¥58,539</td><td><span class='cg'>+72.2%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>完成率</td><td>57.98%</td><td class='now'>82.29%</td><td>+24.3%</td><td><span class='cr'>+24.3%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>新签办卡率</td><td>43.85%</td><td class='now'>41.68%</td><td>-2.2%</td><td><span class='cg'>-2.2%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-name'>总续卡金额</td><td>¥10,452</td><td class='now'>¥22,676</td><td>¥12,224</td><td><span class='cg'>+117.0%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>总引流金额</td><td>¥26,992</td><td class='now'>¥35,905</td><td>¥8,913</td><td><span class='cg'>+33.0%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>扫楼金额</td><td>¥12,746</td><td class='now'>¥10,629</td><td>-¥2,117</td><td><span class='cr'>-16.6%</span></td><td><span class='cr'>较上周下降</span></td></tr><tr><td class='metric-name'>总续卡占比</td><td>12.88%</td><td class='now'>16.24%</td><td>+3.4%</td><td><span class='cr'>+3.4%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>总引流占比</td><td>33.27%</td><td class='now'>25.71%</td><td>-7.6%</td><td><span class='cg'>-7.6%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-name'>扫楼占比</td><td>15.71%</td><td class='now'>7.61%</td><td>-8.1%</td><td><span class='cr'>-8.1%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>大卡率</td><td>64.85%</td><td class='now'>65.00%</td><td>+0.2%</td><td><span class='cr'>+0.2%</span></td><td><span class='cr'>低于目标</span></td></tr></tbody></table>
+      <h3>2. 3区门店哪里好，哪里不好</h3>
+      <div class="table-scroll"><table class="dense"><thead><tr><th>评级</th><th>门店</th><th>店型</th><th>主题数</th><th>营收</th><th>完成率</th><th>新签</th><th>总引流</th><th>续卡</th><th>扫楼</th><th>大卡</th><th>新客环比</th><th>风险</th><th>短板</th><th>亮点备注</th></tr></thead><tbody>
+        <tr>
+          <td><span class='badge rating red'>红灯</span></td><td>郑州二七万象城</td><td>B类</td><td>15</td>
+          <td>¥25,656</td><td><span class='cr'>80.48%</span></td>
+          <td><span class='cr'>38.00%</span></td>
+          <td><span class='cr'>15.75%</span></td>
+          <td><span class='cr'>12.08%</span></td>
+          <td><span class='cr'>0.00%</span></td>
+          <td><span class='cr'>58.70%</span></td>
+          <td><span class='cg'>+51.52%</span></td>
+          <td><span class='badge risk red'>6项</span></td>
+          <td>完成率&lt;100%、新签办卡率&lt;40%、总引流占比&lt;25%、续卡占比&lt;20%、扫楼占比&lt;15%、大卡率&lt;70%</td><td>新客环比51.52%，可分享拉新动作</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating red'>红灯</span></td><td>郑州中原万达</td><td>B类</td><td>13</td>
+          <td>¥17,327</td><td><span class='cr'>55.71%</span></td>
+          <td><span class='cr'>34.85%</span></td>
+          <td><span class='cr'>18.38%</span></td>
+          <td><span class='cr'>16.16%</span></td>
+          <td><span class='cr'>0.00%</span></td>
+          <td><span class='cg'>75.00%</span></td>
+          <td><span class='cg'>+43.48%</span></td>
+          <td><span class='badge risk red'>5项</span></td>
+          <td>完成率&lt;100%、新签办卡率&lt;40%、总引流占比&lt;25%、续卡占比&lt;20%、扫楼占比&lt;15%</td><td>新客环比43.48%，可分享拉新动作</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating red'>红灯</span></td><td>滑县吾悦</td><td>C类</td><td>8</td>
+          <td>¥11,563</td><td><span class='cr'>73.81%</span></td>
+          <td><span class='cr'>37.88%</span></td>
+          <td><span class='cr'>10.09%</span></td>
+          <td><span class='cr'>12.93%</span></td>
+          <td><span class='cr'>10.09%</span></td>
+          <td><span class='cg'>70.00%</span></td>
+          <td><span class='cg'>+46.67%</span></td>
+          <td><span class='badge risk red'>5项</span></td>
+          <td>完成率&lt;100%、新签办卡率&lt;40%、总引流占比&lt;25%、续卡占比&lt;20%、扫楼占比&lt;15%</td><td>新客环比46.67%，可分享拉新动作</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating red'>红灯</span></td><td>武汉荟聚</td><td>A类</td><td>10</td>
+          <td>¥37,951</td><td><span class='cr'>96.05%</span></td>
+          <td><span class='cg'>41.96%</span></td>
+          <td><span class='cg'>39.09%</span></td>
+          <td><span class='cr'>7.90%</span></td>
+          <td><span class='cg'>17.73%</span></td>
+          <td><span class='cr'>60.00%</span></td>
+          <td><span class='cg'>+104.29%</span></td>
+          <td><span class='badge risk red'>3项</span></td>
+          <td>完成率&lt;100%、续卡占比&lt;20%、大卡率&lt;70%</td><td>本区营收最高¥37,951；新客环比104.29%，可分享拉新动作</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating red'>红灯</span></td><td>安阳万达</td><td>C类</td><td>10</td>
+          <td>¥11,323</td><td><span class='cr'>64.12%</span></td>
+          <td><span class='cg'>41.18%</span></td>
+          <td><span class='cr'>10.59%</span></td>
+          <td><span class='cg'>31.79%</span></td>
+          <td><span class='cr'>0.00%</span></td>
+          <td><span class='cg'>71.43%</span></td>
+          <td><span class='cg'>+54.55%</span></td>
+          <td><span class='badge risk red'>3项</span></td>
+          <td>完成率&lt;100%、总引流占比&lt;25%、扫楼占比&lt;15%</td><td>新客环比54.55%，可分享拉新动作</td>
+        </tr>
+        <tr>
+          <td><span class='badge rating yellow'>黄灯</span></td><td>开封万达</td><td>A类</td><td>13</td>
+          <td>¥35,852</td><td><span class='cg'>105.71%</span></td>
+          <td><span class='cg'>51.96%</span></td>
+          <td><span class='cg'>32.02%</span></td>
+          <td><span class='cg'>24.21%</span></td>
+          <td><span class='cr'>7.61%</span></td>
+          <td><span class='cr'>65.71%</span></td>
+          <td><span class='cg'>+50.00%</span></td>
+          <td><span class='badge risk yellow'>2项</span></td>
+          <td>扫楼占比&lt;15%、大卡率&lt;70%</td><td>新客环比50.00%，可分享拉新动作</td>
+        </tr></tbody></table></div>
+      <h3>3. 3区下一步怎么做</h3>
+      <table><thead><tr><th>优先级</th><th>门店</th><th>风险数</th><th>核心短板</th><th>下一步处理</th></tr></thead><tbody><tr><td><span class='badge red'>P0</span></td><td>郑州二七万象城</td><td>6</td><td>完成率80.48%、新签办卡率38.00%、总引流占比15.75%、续卡占比12.08%、扫楼占比0.00%、大卡率58.70%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼；续卡弱查后场人员稳定、服务质量、陪玩和下一主题引导，重点看是否只敢续小卡；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>郑州中原万达</td><td>5</td><td>完成率55.71%、新签办卡率34.85%、总引流占比18.38%、续卡占比16.16%、扫楼占比0.00%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼；续卡弱查后场人员稳定、服务质量、陪玩和下一主题引导，重点看是否只敢续小卡；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>滑县吾悦</td><td>5</td><td>完成率73.81%、新签办卡率37.88%、总引流占比10.09%、续卡占比12.93%、扫楼占比10.09%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼；续卡弱查后场人员稳定、服务质量、陪玩和下一主题引导，重点看是否只敢续小卡；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>武汉荟聚</td><td>3</td><td>完成率96.05%、续卡占比7.90%、大卡率60.00%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；续卡弱查后场人员稳定、服务质量、陪玩和下一主题引导，重点看是否只敢续小卡；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>安阳万达</td><td>3</td><td>完成率64.12%、总引流占比10.59%、扫楼占比0.00%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼。</td></tr><tr><td><span class='badge yellow'>P1</span></td><td>开封万达</td><td>2</td><td>扫楼占比7.61%、大卡率65.71%</td><td>城市经理先问诊：扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr></tbody></table>
+    </section>
+    
+    
+    <section class="page">
+      <div class="page-guide">第5页 · 店长业绩排名</div>
+      <h2 class="section-title">店长本周业绩和上周业绩排名</h2>
+      <div class="area-brief">
+        <div><b>¥136,820.8</b><span>店长本周合计</span></div>
+        <div><b>¥75,584.1</b><span>店长上周合计</span></div>
+        <div><b><span class="cg">¥61,236.7</span></b><span>合计增减</span></div>
+        <div><b>14/5</b><span>上升/下降人数</span></div>
+        <div><b>周坤琪</b><span>本周第1 · ¥14,764.8</span></div>
+      </div>
+      <div class="alert">会议追问口径：排名上升看动作复制，排名下滑看电销、0元体验、后场服务、续卡金额结构和中大卡开口。</div>
+      <div class="table-scroll"><table class="dense manager-table"><thead><tr><th>本周</th><th>上周</th><th>排名变化</th><th>区域</th><th>门店</th><th>店长</th><th>本周总金额</th><th>上周总金额</th><th>金额增减</th><th>充值金额</th><th>办卡/新签/续卡</th><th>办卡率</th><th>新签率</th></tr></thead><tbody><tr><td>1</td><td>2</td><td><span class='cg'>+1</span></td><td>3区</td><td>武汉荟聚</td><td><b>周坤琪</b></td><td><span class='now'>¥14,764.8</span></td><td>¥8,262.0</td><td><span class='cg'>¥6,502.8</span></td><td>¥11,600.0</td><td>25/22/3</td><td><span class='cg'>41.70%</span></td><td><span class='cr'>38.60%</span></td></tr><tr><td>2</td><td>6</td><td><span class='cg'>+4</span></td><td>3区</td><td>开封万达</td><td><b>卢嘉诺</b></td><td><span class='now'>¥11,101.0</span></td><td>¥4,603.0</td><td><span class='cg'>¥6,498.0</span></td><td>¥9,748.0</td><td>22/13/9</td><td><span class='cg'>57.90%</span></td><td><span class='cg'>44.80%</span></td></tr><tr><td>3</td><td>1</td><td><span class='cr'>-2</span></td><td>2区</td><td>焦作万达</td><td><b>张强</b></td><td><span class='now'>¥10,800.6</span></td><td>¥10,658.0</td><td><span class='cg'>¥142.6</span></td><td>¥9,535.2</td><td>22/16/6</td><td><span class='cg'>59.50%</span></td><td><span class='cg'>51.60%</span></td></tr><tr><td>4</td><td>5</td><td><span class='cg'>+1</span></td><td>1区</td><td>许昌万达</td><td><b>孙刘柱</b></td><td><span class='now'>¥10,091.0</span></td><td>¥5,054.0</td><td><span class='cg'>¥5,037.0</span></td><td>¥9,789.0</td><td>21/13/8</td><td><span class='cg'>84.00%</span></td><td><span class='cg'>76.50%</span></td></tr><tr><td>5</td><td>14</td><td><span class='cg'>+9</span></td><td>1区</td><td>商丘万达</td><td><b>李烨</b></td><td><span class='now'>¥8,584.0</span></td><td>¥2,512.0</td><td><span class='cg'>¥6,072.0</span></td><td>¥8,433.0</td><td>20/10/10</td><td><span class='cg'>90.90%</span></td><td><span class='cg'>83.30%</span></td></tr><tr><td>6</td><td>19</td><td><span class='cg'>+13</span></td><td>2区</td><td>郑州信万</td><td><b>张运倩</b></td><td><span class='now'>¥8,081.0</span></td><td>¥399.0</td><td><span class='cg'>¥7,682.0</span></td><td>¥7,978.0</td><td>22/19/3</td><td><span class='cg'>91.70%</span></td><td><span class='cg'>90.50%</span></td></tr><tr><td>7</td><td>-</td><td><span class=''>-</span></td><td>2区</td><td>洛阳泉舜</td><td><b>蒋雪柯</b></td><td><span class='now'>¥6,770.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥5,700.0</td><td>11/9/2</td><td><span class='cg'>45.80%</span></td><td><span class='cg'>40.90%</span></td></tr><tr><td>8</td><td>13</td><td><span class='cg'>+5</span></td><td>3区</td><td>滑县吾悦</td><td><b>汤明放</b></td><td><span class='now'>¥6,524.0</span></td><td>¥3,035.0</td><td><span class='cg'>¥3,489.0</span></td><td>¥5,176.0</td><td>18/14/4</td><td><span class='cg'>43.90%</span></td><td><span class='cr'>37.80%</span></td></tr><tr><td>9</td><td>-</td><td><span class=''>-</span></td><td>3区</td><td>安阳万达</td><td><b>宋宋</b></td><td><span class='now'>¥5,737.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥5,494.0</td><td>12/9/3</td><td><span class='cg'>80.00%</span></td><td><span class='cg'>75.00%</span></td></tr><tr><td>10</td><td>17</td><td><span class='cg'>+7</span></td><td>1区</td><td>南阳吾悦</td><td><b>齐继风</b></td><td><span class='now'>¥5,711.0</span></td><td>¥1,699.0</td><td><span class='cg'>¥4,012.0</span></td><td>¥5,559.0</td><td>13/8/5</td><td><span class='cg'>76.50%</span></td><td><span class='cg'>66.70%</span></td></tr><tr><td>11</td><td>3</td><td><span class='cr'>-8</span></td><td>2区</td><td>洛阳泉舜</td><td><b>王若涵</b></td><td><span class='now'>¥5,664.0</span></td><td>¥6,739.0</td><td><span class='cr'>-¥1,075.0</span></td><td>¥4,689.0</td><td>12/8/4</td><td><span class='cg'>52.20%</span></td><td><span class='cg'>42.10%</span></td></tr><tr><td>12</td><td>10</td><td><span class='cr'>-2</span></td><td>2区</td><td>洛阳中州万达</td><td><b>霍亭芮</b></td><td><span class='now'>¥5,492.0</span></td><td>¥3,490.0</td><td><span class='cg'>¥2,002.0</span></td><td>¥5,284.0</td><td>13/13/0</td><td><span class='cg'>81.30%</span></td><td><span class='cg'>81.30%</span></td></tr><tr><td>13</td><td>18</td><td><span class='cg'>+5</span></td><td>2区</td><td>郑州惠济万达</td><td><b>司聪慧</b></td><td><span class='now'>¥5,343.0</span></td><td>¥400.0</td><td><span class='cg'>¥4,943.0</span></td><td>¥4,841.0</td><td>12/6/6</td><td><span class='cg'>63.20%</span></td><td><span class='cg'>46.20%</span></td></tr><tr><td>14</td><td>4</td><td><span class='cr'>-10</span></td><td>2区</td><td>周口万达</td><td><b>杨宁可</b></td><td><span class='now'>¥5,081.2</span></td><td>¥6,019.0</td><td><span class='cr'>-¥937.8</span></td><td>¥4,027.0</td><td>12/9/3</td><td><span class='cg'>50.00%</span></td><td><span class='cg'>42.90%</span></td></tr><tr><td>15</td><td>15</td><td><span class=''>0</span></td><td>1区</td><td>襄阳高新万达</td><td><b>王爽</b></td><td><span class='now'>¥5,048.0</span></td><td>¥1,949.0</td><td><span class='cg'>¥3,099.0</span></td><td>¥4,571.0</td><td>13/11/2</td><td><span class='cg'>65.00%</span></td><td><span class='cg'>61.10%</span></td></tr><tr><td>16</td><td>16</td><td><span class=''>0</span></td><td>1区</td><td>信阳万达</td><td><b>胡功海</b></td><td><span class='now'>¥4,893.1</span></td><td>¥1,784.0</td><td><span class='cg'>¥3,109.1</span></td><td>¥4,699.1</td><td>13/8/5</td><td><span class='cg'>86.70%</span></td><td><span class='cg'>80.00%</span></td></tr><tr><td>17</td><td>7</td><td><span class='cr'>-10</span></td><td>1区</td><td>南阳万达</td><td><b>王佳婷</b></td><td><span class='now'>¥4,348.0</span></td><td>¥4,360.0</td><td><span class='cr'>-¥12.0</span></td><td>¥4,250.0</td><td>8/4/4</td><td><span class='cg'>88.90%</span></td><td><span class='cg'>80.00%</span></td></tr><tr><td>18</td><td>12</td><td><span class='cr'>-6</span></td><td>3区</td><td>郑州中原万达</td><td><b>王嘉琦</b></td><td><span class='now'>¥4,095.0</span></td><td>¥3,235.0</td><td><span class='cg'>¥860.0</span></td><td>¥3,123.0</td><td>7/6/1</td><td><span class='cr'>38.90%</span></td><td><span class='cr'>35.30%</span></td></tr><tr><td>19</td><td>9</td><td><span class='cr'>-10</span></td><td>1区</td><td>南阳万达</td><td><b>蔺海芬</b></td><td><span class='now'>¥3,986.0</span></td><td>¥3,883.0</td><td><span class='cg'>¥103.0</span></td><td>¥3,742.0</td><td>8/7/1</td><td><span class='cg'>72.70%</span></td><td><span class='cg'>70.00%</span></td></tr><tr><td>20</td><td>11</td><td><span class='cr'>-9</span></td><td>2区</td><td>新乡牧野万达</td><td><b>贵诗涵</b></td><td><span class='now'>¥2,434.0</span></td><td>¥3,281.0</td><td><span class='cr'>-¥847.0</span></td><td>¥1,679.0</td><td>4/2/2</td><td><span class='cr'>26.70%</span></td><td><span class='cr'>15.40%</span></td></tr><tr><td>21</td><td>8</td><td><span class='cr'>-13</span></td><td>3区</td><td>郑州二七万象城</td><td><b>郑金原</b></td><td><span class='now'>¥2,272.0</span></td><td>¥4,222.0</td><td><span class='cr'>-¥1,950.0</span></td><td>¥1,571.0</td><td>6/4/2</td><td><span class='cg'>42.90%</span></td><td><span class='cr'>33.30%</span></td></tr></tbody></table></div>
+      <div class="footer-note">数据来源：/Users/zhx/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_qb01bt25y2fa22_ae0a/temp/drag/熊猫员工数据6月29日~7月5日(1).xlsx · 店长数据排名</div>
+    </section>
+    
+    
+    <section class="page employee-page">
+      <div class="page-guide">第6页 · 店员区域排名</div>
+      <h2 class="section-title">店员区域排名：分区域看谁做得好</h2>
+      <div class="alert">会议追问口径：每个区域先看本区前3名动作能不能复制，再看尾部员工电销、0元体验、服务陪玩和开口销售哪里断了。</div>
+      
+      <h3>区域1店员排名</h3>
+      <div class="area-brief employee-brief">
+        <div><b>9</b><span>店员数</span></div>
+        <div><b>¥104,953.7</b><span>本周合计</span></div>
+        <div><b>¥56,247.7</b><span>上周合计</span></div>
+        <div><b><span class="cg">¥48,706.0</span></b><span>合计增减</span></div>
+        <div><b>谢航宇 · ¥19,494.0</b><span>本区第1</span></div>
+      </div>
+      <div class="table-scroll"><table class='dense manager-table employee-table'><thead><tr><th>排名</th><th>区域</th><th>门店</th><th>店员</th><th>本周总金额</th><th>上周总金额</th><th>金额增减</th><th>充值金额</th><th>办卡/新签/续卡</th><th>办卡率</th><th>新签率</th></tr></thead><tbody><tr><td>1</td><td>1区</td><td>商丘万达</td><td><b>谢航宇</b></td><td><span class='now'>¥19,494.0</span></td><td>¥7,169.2</td><td><span class='cg'>¥12,324.8</span></td><td>¥18,537.0</td><td>50/26/24</td><td><span class='cg'>83.30%</span></td><td><span class='cg'>72.20%</span></td></tr><tr><td>2</td><td>1区</td><td>襄阳高新万达</td><td><b>吴嘉丽</b></td><td><span class='now'>¥18,087.2</span></td><td>¥9,101.0</td><td><span class='cg'>¥8,986.2</span></td><td>¥17,033.2</td><td>46/41/5</td><td><span class='cg'>85.20%</span></td><td><span class='cg'>83.70%</span></td></tr><tr><td>3</td><td>1区</td><td>襄阳高新万达</td><td><b>倪书馨</b></td><td><span class='now'>¥15,446.0</span></td><td>¥9,348.0</td><td><span class='cg'>¥6,098.0</span></td><td>¥13,581.0</td><td>33/31/2</td><td><span class='cg'>64.70%</span></td><td><span class='cg'>63.30%</span></td></tr><tr><td>4</td><td>1区</td><td>南阳吾悦</td><td><b>樊鑫</b></td><td><span class='now'>¥11,702.0</span></td><td>¥4,750.0</td><td><span class='cg'>¥6,952.0</span></td><td>¥10,376.0</td><td>24/18/6</td><td><span class='cg'>66.70%</span></td><td><span class='cg'>60.00%</span></td></tr><tr><td>5</td><td>1区</td><td>许昌万达</td><td><b>吉祥</b></td><td><span class='now'>¥11,552.0</span></td><td>¥6,625.0</td><td><span class='cg'>¥4,927.0</span></td><td>¥10,711.0</td><td>23/14/9</td><td><span class='cg'>71.90%</span></td><td><span class='cg'>60.90%</span></td></tr><tr><td>6</td><td>1区</td><td>南阳万达</td><td><b>李想</b></td><td><span class='now'>¥10,802.0</span></td><td>¥5,509.0</td><td><span class='cg'>¥5,293.0</span></td><td>¥10,627.0</td><td>23/18/5</td><td><span class='cg'>88.50%</span></td><td><span class='cg'>85.70%</span></td></tr><tr><td>7</td><td>1区</td><td>南阳吾悦</td><td><b>朱玫卉</b></td><td><span class='now'>¥10,481.2</span></td><td>¥6,043.0</td><td><span class='cg'>¥4,438.2</span></td><td>¥9,549.2</td><td>23/20/3</td><td><span class='cg'>60.50%</span></td><td><span class='cg'>57.10%</span></td></tr><tr><td>8</td><td>1区</td><td>信阳万达</td><td><b>李立</b></td><td><span class='now'>¥6,097.2</span></td><td>¥7,702.5</td><td><span class='cr'>-¥1,605.2</span></td><td>¥5,543.2</td><td>16/14/2</td><td><span class='cg'>66.70%</span></td><td><span class='cg'>63.60%</span></td></tr><tr><td>9</td><td>1区</td><td>商丘万达</td><td><b>含潇</b></td><td><span class='now'>¥1,292.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥986.0</td><td>4/3/1</td><td><span class='cg'>44.40%</span></td><td><span class='cr'>37.50%</span></td></tr></tbody></table></div>
+        
+      <h3>区域2店员排名</h3>
+      <div class="area-brief employee-brief">
+        <div><b>18</b><span>店员数</span></div>
+        <div><b>¥127,361.2</b><span>本周合计</span></div>
+        <div><b>¥66,945.6</b><span>上周合计</span></div>
+        <div><b><span class="cg">¥60,415.6</span></b><span>合计增减</span></div>
+        <div><b>朱笛 · ¥18,632.0</b><span>本区第1</span></div>
+      </div>
+      <div class="table-scroll"><table class='dense manager-table employee-table'><thead><tr><th>排名</th><th>区域</th><th>门店</th><th>店员</th><th>本周总金额</th><th>上周总金额</th><th>金额增减</th><th>充值金额</th><th>办卡/新签/续卡</th><th>办卡率</th><th>新签率</th></tr></thead><tbody><tr><td>1</td><td>2区</td><td>焦作万达</td><td><b>朱笛</b></td><td><span class='now'>¥18,632.0</span></td><td>¥11,036.2</td><td><span class='cg'>¥7,595.8</span></td><td>¥17,640.0</td><td>37/29/8</td><td><span class='cg'>62.70%</span></td><td><span class='cg'>56.90%</span></td></tr><tr><td>2</td><td>2区</td><td>洛阳泉舜</td><td><b>关旭阁</b></td><td><span class='now'>¥12,999.0</span></td><td>¥8,740.0</td><td><span class='cg'>¥4,259.0</span></td><td>¥11,451.0</td><td>26/19/7</td><td><span class='cg'>59.10%</span></td><td><span class='cg'>51.40%</span></td></tr><tr><td>3</td><td>2区</td><td>洛阳中州万达</td><td><b>张笑怡</b></td><td><span class='now'>¥10,624.0</span></td><td>¥3,571.0</td><td><span class='cg'>¥7,053.0</span></td><td>¥8,013.0</td><td>22/19/3</td><td><span class='cr'>37.30%</span></td><td><span class='cr'>33.90%</span></td></tr><tr><td>4</td><td>2区</td><td>洛阳泉舜</td><td><b>王佳琳</b></td><td><span class='now'>¥10,377.0</span></td><td>¥3,420.0</td><td><span class='cg'>¥6,957.0</span></td><td>¥9,187.0</td><td>21/14/7</td><td><span class='cg'>61.80%</span></td><td><span class='cg'>51.90%</span></td></tr><tr><td>5</td><td>2区</td><td>洛阳泉舜</td><td><b>杨翠鸽</b></td><td><span class='now'>¥9,559.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥8,367.0</td><td>19/12/7</td><td><span class='cg'>55.90%</span></td><td><span class='cg'>44.40%</span></td></tr><tr><td>6</td><td>2区</td><td>洛阳中州万达</td><td><b>党蕊蕊</b></td><td><span class='now'>¥9,004.0</span></td><td>¥5,459.0</td><td><span class='cg'>¥3,545.0</span></td><td>¥6,897.0</td><td>16/15/1</td><td><span class='cg'>41.00%</span></td><td><span class='cr'>39.50%</span></td></tr><tr><td>7</td><td>2区</td><td>郑州惠济万达</td><td><b>张赛宁</b></td><td><span class='now'>¥8,751.0</span></td><td>¥4,335.0</td><td><span class='cg'>¥4,416.0</span></td><td>¥7,857.0</td><td>17/11/6</td><td><span class='cg'>50.00%</span></td><td><span class='cr'>39.30%</span></td></tr><tr><td>8</td><td>2区</td><td>周口万达</td><td><b>郑梦婷</b></td><td><span class='now'>¥8,019.2</span></td><td>¥6,626.2</td><td><span class='cg'>¥1,393.0</span></td><td>¥6,489.0</td><td>17/8/9</td><td><span class='cg'>48.60%</span></td><td><span class='cr'>30.80%</span></td></tr><tr><td>9</td><td>2区</td><td>焦作万达</td><td><b>王梓恬</b></td><td><span class='now'>¥7,834.0</span></td><td>¥3,124.2</td><td><span class='cg'>¥4,709.8</span></td><td>¥7,592.0</td><td>17/13/4</td><td><span class='cg'>89.50%</span></td><td><span class='cg'>86.70%</span></td></tr><tr><td>10</td><td>2区</td><td>郑州信万</td><td><b>薛飘飘</b></td><td><span class='now'>¥7,481.0</span></td><td>¥5,487.0</td><td><span class='cg'>¥1,994.0</span></td><td>¥7,254.0</td><td>18/10/8</td><td><span class='cg'>81.80%</span></td><td><span class='cg'>71.40%</span></td></tr><tr><td>11</td><td>2区</td><td>郑州惠济万达</td><td><b>杜珂源</b></td><td><span class='now'>¥5,706.0</span></td><td>¥2,986.0</td><td><span class='cg'>¥2,720.0</span></td><td>¥5,300.0</td><td>13/3/10</td><td><span class='cg'>65.00%</span></td><td><span class='cr'>30.00%</span></td></tr><tr><td>12</td><td>2区</td><td>郑州信万</td><td><b>余心如</b></td><td><span class='now'>¥5,515.1</span></td><td>¥2,253.1</td><td><span class='cg'>¥3,262.0</span></td><td>¥4,926.1</td><td>13/12/1</td><td><span class='cg'>56.50%</span></td><td><span class='cg'>54.50%</span></td></tr><tr><td>13</td><td>2区</td><td>周口万达</td><td><b>冯瀚文</b></td><td><span class='now'>¥5,008.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥4,063.0</td><td>12/8/4</td><td><span class='cg'>52.20%</span></td><td><span class='cg'>42.10%</span></td></tr><tr><td>14</td><td>2区</td><td>新乡牧野万达</td><td><b>李淑艳</b></td><td><span class='now'>¥3,498.0</span></td><td>¥4,527.0</td><td><span class='cr'>-¥1,029.0</span></td><td>¥2,553.0</td><td>6/4/2</td><td><span class='cr'>35.30%</span></td><td><span class='cr'>26.70%</span></td></tr><tr><td>15</td><td>2区</td><td>新乡牧野万达</td><td><b>徐彬淼</b></td><td><span class='now'>¥2,402.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥1,900.0</td><td>5/3/2</td><td><span class='cg'>45.50%</span></td><td><span class='cr'>33.30%</span></td></tr><tr><td>16</td><td>2区</td><td>洛阳泉舜</td><td><b>谢家豪</b></td><td><span class='now'>¥1,097.0</span></td><td>¥5,381.0</td><td><span class='cr'>-¥4,284.0</span></td><td>¥1,000.0</td><td>3/3/0</td><td><span class='cg'>75.00%</span></td><td><span class='cg'>75.00%</span></td></tr><tr><td>17</td><td>2区</td><td>洛阳中州万达</td><td><b>于家懿</b></td><td><span class='now'>¥556.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥400.0</td><td>1/0/1</td><td><span class='cr'>33.30%</span></td><td><span class='cr'>0.00%</span></td></tr><tr><td>18</td><td>2区</td><td>郑州信万</td><td><b>靳梦雅</b></td><td><span class='now'>¥299.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥299.0</td><td>1/1/0</td><td><span class='cg'>100.00%</span></td><td><span class='cg'>100.00%</span></td></tr></tbody></table></div>
+        
+      <h3>区域3店员排名</h3>
+      <div class="area-brief employee-brief">
+        <div><b>15</b><span>店员数</span></div>
+        <div><b>¥91,171.0</b><span>本周合计</span></div>
+        <div><b>¥54,070.9</b><span>上周合计</span></div>
+        <div><b><span class="cg">¥37,100.1</span></b><span>合计增减</span></div>
+        <div><b>夏佳静 · ¥11,608.0</b><span>本区第1</span></div>
+      </div>
+      <div class="table-scroll"><table class='dense manager-table employee-table'><thead><tr><th>排名</th><th>区域</th><th>门店</th><th>店员</th><th>本周总金额</th><th>上周总金额</th><th>金额增减</th><th>充值金额</th><th>办卡/新签/续卡</th><th>办卡率</th><th>新签率</th></tr></thead><tbody><tr><td>1</td><td>3区</td><td>郑州二七万象城</td><td><b>夏佳静</b></td><td><span class='now'>¥11,608.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥8,919.0</td><td>18/17/1</td><td><span class='cr'>34.00%</span></td><td><span class='cr'>32.70%</span></td></tr><tr><td>2</td><td>3区</td><td>武汉荟聚</td><td><b>李茁壮</b></td><td><span class='now'>¥10,731.0</span></td><td>¥5,641.9</td><td><span class='cg'>¥5,089.1</span></td><td>¥9,394.0</td><td>20/19/1</td><td><span class='cg'>58.80%</span></td><td><span class='cg'>57.60%</span></td></tr><tr><td>3</td><td>3区</td><td>郑州二七万象城</td><td><b>橙子</b></td><td><span class='now'>¥10,616.0</span></td><td>¥11,746.0</td><td><span class='cr'>-¥1,130.0</span></td><td>¥9,202.0</td><td>21/17/4</td><td><span class='cg'>58.30%</span></td><td><span class='cg'>53.10%</span></td></tr><tr><td>4</td><td>3区</td><td>开封万达</td><td><b>李紫琪</b></td><td><span class='now'>¥9,981.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥9,465.0</td><td>18/15/3</td><td><span class='cg'>72.00%</span></td><td><span class='cg'>68.20%</span></td></tr><tr><td>5</td><td>3区</td><td>武汉荟聚</td><td><b>邵娜娜</b></td><td><span class='now'>¥9,096.0</span></td><td>¥6,226.0</td><td><span class='cg'>¥2,870.0</span></td><td>¥6,711.0</td><td>15/14/1</td><td><span class='cr'>35.70%</span></td><td><span class='cr'>34.10%</span></td></tr><tr><td>6</td><td>3区</td><td>开封万达</td><td><b>易梦婷</b></td><td><span class='now'>¥9,012.0</span></td><td>¥4,978.0</td><td><span class='cg'>¥4,034.0</span></td><td>¥7,542.0</td><td>18/16/2</td><td><span class='cg'>48.60%</span></td><td><span class='cg'>45.70%</span></td></tr><tr><td>7</td><td>3区</td><td>郑州中原万达</td><td><b>殷翔坤</b></td><td><span class='now'>¥6,308.0</span></td><td>¥6,439.0</td><td><span class='cr'>-¥131.0</span></td><td>¥5,457.0</td><td>10/8/2</td><td><span class='cg'>52.60%</span></td><td><span class='cg'>47.10%</span></td></tr><tr><td>8</td><td>3区</td><td>开封万达</td><td><b>张甜甜</b></td><td><span class='now'>¥5,705.0</span></td><td>¥8,494.0</td><td><span class='cr'>-¥2,789.0</span></td><td>¥5,268.0</td><td>12/9/3</td><td><span class='cg'>70.60%</span></td><td><span class='cg'>64.30%</span></td></tr><tr><td>9</td><td>3区</td><td>郑州中原万达</td><td><b>娄永超</b></td><td><span class='now'>¥5,332.0</span></td><td>¥2,099.0</td><td><span class='cg'>¥3,233.0</span></td><td>¥4,900.0</td><td>11/9/2</td><td><span class='cg'>73.30%</span></td><td><span class='cg'>69.20%</span></td></tr><tr><td>10</td><td>3区</td><td>安阳万达</td><td><b>杨晶晶</b></td><td><span class='now'>¥4,807.0</span></td><td>¥5,412.0</td><td><span class='cr'>-¥605.0</span></td><td>¥4,249.0</td><td>9/5/4</td><td><span class='cg'>52.90%</span></td><td><span class='cr'>38.50%</span></td></tr><tr><td>11</td><td>3区</td><td>滑县吾悦</td><td><b>范超凡</b></td><td><span class='now'>¥3,697.0</span></td><td>¥3,035.0</td><td><span class='cg'>¥662.0</span></td><td>¥2,791.0</td><td>9/8/1</td><td><span class='cg'>40.90%</span></td><td><span class='cr'>38.10%</span></td></tr><tr><td>12</td><td>3区</td><td>武汉荟聚</td><td><b>严诗仪</b></td><td><span class='now'>¥1,782.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥1,304.0</td><td>4/4/0</td><td><span class='cg'>44.40%</span></td><td><span class='cg'>44.40%</span></td></tr><tr><td>13</td><td>3区</td><td>滑县吾悦</td><td><b>卢思如</b></td><td><span class='now'>¥1,342.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥997.0</td><td>3/3/0</td><td><span class='cr'>33.30%</span></td><td><span class='cr'>33.30%</span></td></tr><tr><td>14</td><td>3区</td><td>武汉荟聚</td><td><b>代紫霞</b></td><td><span class='now'>¥854.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥300.0</td><td>1/1/0</td><td><span class='cr'>16.70%</span></td><td><span class='cr'>16.70%</span></td></tr><tr><td>15</td><td>3区</td><td>郑州二七万象城</td><td><b>娄永超</b></td><td><span class='now'>¥300.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥300.0</td><td>1/0/1</td><td><span class='cg'>100.00%</span></td><td><span class='cr'>0.00%</span></td></tr></tbody></table></div>
+        
+      <div class="footer-note">数据来源：/Users/zhx/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_qb01bt25y2fa22_ae0a/temp/drag/熊猫员工数据6月29日~7月5日(1).xlsx · 区域1 / 区域2 / 区域3</div>
+    </section>
+    
+    
+    <section class="page employee-page">
+      <div class="page-guide">第7页 · 店员全员排名</div>
+      <h2 class="section-title">店员全员排名：全品牌统一看优秀和短板</h2>
+      <div class="area-brief employee-brief">
+        <div><b>42</b><span>店员数</span></div>
+        <div><b>¥323,485.9</b><span>本周合计</span></div>
+        <div><b><span class="cg">¥146,221.7</span></b><span>合计增减</span></div>
+        <div><b>23/7</b><span>上升/下降人数</span></div>
+        <div><b>谢航宇 · ¥19,494.0</b><span>全员第1</span></div>
+      </div>
+      <div class="alert">会议追问口径：全员前排提炼可复制动作，后排重点看是否不会邀约、不敢卖卡、后场服务和续玩引导不到位。</div>
+      <div class="table-scroll"><table class='dense manager-table employee-table'><thead><tr><th>排名</th><th>区域</th><th>门店</th><th>店员</th><th>本周总金额</th><th>上周总金额</th><th>金额增减</th><th>充值金额</th><th>办卡/新签/续卡</th><th>办卡率</th><th>新签率</th></tr></thead><tbody><tr><td>1</td><td>1区</td><td>商丘万达</td><td><b>谢航宇</b></td><td><span class='now'>¥19,494.0</span></td><td>¥7,169.2</td><td><span class='cg'>¥12,324.8</span></td><td>¥18,537.0</td><td>50/26/24</td><td><span class='cg'>83.30%</span></td><td><span class='cg'>72.20%</span></td></tr><tr><td>2</td><td>2区</td><td>焦作万达</td><td><b>朱笛</b></td><td><span class='now'>¥18,632.0</span></td><td>¥11,036.2</td><td><span class='cg'>¥7,595.8</span></td><td>¥17,640.0</td><td>37/29/8</td><td><span class='cg'>62.70%</span></td><td><span class='cg'>56.90%</span></td></tr><tr><td>3</td><td>1区</td><td>襄阳高新万达</td><td><b>吴嘉丽</b></td><td><span class='now'>¥18,087.2</span></td><td>¥9,101.0</td><td><span class='cg'>¥8,986.2</span></td><td>¥17,033.2</td><td>46/41/5</td><td><span class='cg'>85.20%</span></td><td><span class='cg'>83.70%</span></td></tr><tr><td>4</td><td>1区</td><td>襄阳高新万达</td><td><b>倪书馨</b></td><td><span class='now'>¥15,446.0</span></td><td>¥9,348.0</td><td><span class='cg'>¥6,098.0</span></td><td>¥13,581.0</td><td>33/31/2</td><td><span class='cg'>64.70%</span></td><td><span class='cg'>63.30%</span></td></tr><tr><td>5</td><td>2区</td><td>洛阳泉舜</td><td><b>关旭阁</b></td><td><span class='now'>¥12,999.0</span></td><td>¥8,740.0</td><td><span class='cg'>¥4,259.0</span></td><td>¥11,451.0</td><td>26/19/7</td><td><span class='cg'>59.10%</span></td><td><span class='cg'>51.40%</span></td></tr><tr><td>6</td><td>1区</td><td>南阳吾悦</td><td><b>樊鑫</b></td><td><span class='now'>¥11,702.0</span></td><td>¥4,750.0</td><td><span class='cg'>¥6,952.0</span></td><td>¥10,376.0</td><td>24/18/6</td><td><span class='cg'>66.70%</span></td><td><span class='cg'>60.00%</span></td></tr><tr><td>7</td><td>3区</td><td>郑州二七万象城</td><td><b>夏佳静</b></td><td><span class='now'>¥11,608.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥8,919.0</td><td>18/17/1</td><td><span class='cr'>34.00%</span></td><td><span class='cr'>32.70%</span></td></tr><tr><td>8</td><td>1区</td><td>许昌万达</td><td><b>吉祥</b></td><td><span class='now'>¥11,552.0</span></td><td>¥6,625.0</td><td><span class='cg'>¥4,927.0</span></td><td>¥10,711.0</td><td>23/14/9</td><td><span class='cg'>71.90%</span></td><td><span class='cg'>60.90%</span></td></tr><tr><td>9</td><td>1区</td><td>南阳万达</td><td><b>李想</b></td><td><span class='now'>¥10,802.0</span></td><td>¥5,509.0</td><td><span class='cg'>¥5,293.0</span></td><td>¥10,627.0</td><td>23/18/5</td><td><span class='cg'>88.50%</span></td><td><span class='cg'>85.70%</span></td></tr><tr><td>10</td><td>3区</td><td>武汉荟聚</td><td><b>李茁壮</b></td><td><span class='now'>¥10,731.0</span></td><td>¥5,641.9</td><td><span class='cg'>¥5,089.1</span></td><td>¥9,394.0</td><td>20/19/1</td><td><span class='cg'>58.80%</span></td><td><span class='cg'>57.60%</span></td></tr><tr><td>11</td><td>2区</td><td>洛阳中州万达</td><td><b>张笑怡</b></td><td><span class='now'>¥10,624.0</span></td><td>¥3,571.0</td><td><span class='cg'>¥7,053.0</span></td><td>¥8,013.0</td><td>22/19/3</td><td><span class='cr'>37.30%</span></td><td><span class='cr'>33.90%</span></td></tr><tr><td>12</td><td>3区</td><td>郑州二七万象城</td><td><b>橙子</b></td><td><span class='now'>¥10,616.0</span></td><td>¥11,746.0</td><td><span class='cr'>-¥1,130.0</span></td><td>¥9,202.0</td><td>21/17/4</td><td><span class='cg'>58.30%</span></td><td><span class='cg'>53.10%</span></td></tr><tr><td>13</td><td>1区</td><td>南阳吾悦</td><td><b>朱玫卉</b></td><td><span class='now'>¥10,481.2</span></td><td>¥6,043.0</td><td><span class='cg'>¥4,438.2</span></td><td>¥9,549.2</td><td>23/20/3</td><td><span class='cg'>60.50%</span></td><td><span class='cg'>57.10%</span></td></tr><tr><td>14</td><td>2区</td><td>洛阳泉舜</td><td><b>王佳琳</b></td><td><span class='now'>¥10,377.0</span></td><td>¥3,420.0</td><td><span class='cg'>¥6,957.0</span></td><td>¥9,187.0</td><td>21/14/7</td><td><span class='cg'>61.80%</span></td><td><span class='cg'>51.90%</span></td></tr><tr><td>15</td><td>3区</td><td>开封万达</td><td><b>李紫琪</b></td><td><span class='now'>¥9,981.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥9,465.0</td><td>18/15/3</td><td><span class='cg'>72.00%</span></td><td><span class='cg'>68.20%</span></td></tr><tr><td>16</td><td>2区</td><td>洛阳泉舜</td><td><b>杨翠鸽</b></td><td><span class='now'>¥9,559.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥8,367.0</td><td>19/12/7</td><td><span class='cg'>55.90%</span></td><td><span class='cg'>44.40%</span></td></tr><tr><td>17</td><td>3区</td><td>武汉荟聚</td><td><b>邵娜娜</b></td><td><span class='now'>¥9,096.0</span></td><td>¥6,226.0</td><td><span class='cg'>¥2,870.0</span></td><td>¥6,711.0</td><td>15/14/1</td><td><span class='cr'>35.70%</span></td><td><span class='cr'>34.10%</span></td></tr><tr><td>18</td><td>3区</td><td>开封万达</td><td><b>易梦婷</b></td><td><span class='now'>¥9,012.0</span></td><td>¥4,978.0</td><td><span class='cg'>¥4,034.0</span></td><td>¥7,542.0</td><td>18/16/2</td><td><span class='cg'>48.60%</span></td><td><span class='cg'>45.70%</span></td></tr><tr><td>19</td><td>2区</td><td>洛阳中州万达</td><td><b>党蕊蕊</b></td><td><span class='now'>¥9,004.0</span></td><td>¥5,459.0</td><td><span class='cg'>¥3,545.0</span></td><td>¥6,897.0</td><td>16/15/1</td><td><span class='cg'>41.00%</span></td><td><span class='cr'>39.50%</span></td></tr><tr><td>20</td><td>2区</td><td>郑州惠济万达</td><td><b>张赛宁</b></td><td><span class='now'>¥8,751.0</span></td><td>¥4,335.0</td><td><span class='cg'>¥4,416.0</span></td><td>¥7,857.0</td><td>17/11/6</td><td><span class='cg'>50.00%</span></td><td><span class='cr'>39.30%</span></td></tr><tr><td>21</td><td>2区</td><td>周口万达</td><td><b>郑梦婷</b></td><td><span class='now'>¥8,019.2</span></td><td>¥6,626.2</td><td><span class='cg'>¥1,393.0</span></td><td>¥6,489.0</td><td>17/8/9</td><td><span class='cg'>48.60%</span></td><td><span class='cr'>30.80%</span></td></tr><tr><td>22</td><td>2区</td><td>焦作万达</td><td><b>王梓恬</b></td><td><span class='now'>¥7,834.0</span></td><td>¥3,124.2</td><td><span class='cg'>¥4,709.8</span></td><td>¥7,592.0</td><td>17/13/4</td><td><span class='cg'>89.50%</span></td><td><span class='cg'>86.70%</span></td></tr><tr><td>23</td><td>2区</td><td>郑州信万</td><td><b>薛飘飘</b></td><td><span class='now'>¥7,481.0</span></td><td>¥5,487.0</td><td><span class='cg'>¥1,994.0</span></td><td>¥7,254.0</td><td>18/10/8</td><td><span class='cg'>81.80%</span></td><td><span class='cg'>71.40%</span></td></tr><tr><td>24</td><td>3区</td><td>郑州中原万达</td><td><b>殷翔坤</b></td><td><span class='now'>¥6,308.0</span></td><td>¥6,439.0</td><td><span class='cr'>-¥131.0</span></td><td>¥5,457.0</td><td>10/8/2</td><td><span class='cg'>52.60%</span></td><td><span class='cg'>47.10%</span></td></tr><tr><td>25</td><td>1区</td><td>信阳万达</td><td><b>李立</b></td><td><span class='now'>¥6,097.2</span></td><td>¥7,702.5</td><td><span class='cr'>-¥1,605.2</span></td><td>¥5,543.2</td><td>16/14/2</td><td><span class='cg'>66.70%</span></td><td><span class='cg'>63.60%</span></td></tr><tr><td>26</td><td>2区</td><td>郑州惠济万达</td><td><b>杜珂源</b></td><td><span class='now'>¥5,706.0</span></td><td>¥2,986.0</td><td><span class='cg'>¥2,720.0</span></td><td>¥5,300.0</td><td>13/3/10</td><td><span class='cg'>65.00%</span></td><td><span class='cr'>30.00%</span></td></tr><tr><td>27</td><td>3区</td><td>开封万达</td><td><b>张甜甜</b></td><td><span class='now'>¥5,705.0</span></td><td>¥8,494.0</td><td><span class='cr'>-¥2,789.0</span></td><td>¥5,268.0</td><td>12/9/3</td><td><span class='cg'>70.60%</span></td><td><span class='cg'>64.30%</span></td></tr><tr><td>28</td><td>2区</td><td>郑州信万</td><td><b>余心如</b></td><td><span class='now'>¥5,515.1</span></td><td>¥2,253.1</td><td><span class='cg'>¥3,262.0</span></td><td>¥4,926.1</td><td>13/12/1</td><td><span class='cg'>56.50%</span></td><td><span class='cg'>54.50%</span></td></tr><tr><td>29</td><td>3区</td><td>郑州中原万达</td><td><b>娄永超</b></td><td><span class='now'>¥5,332.0</span></td><td>¥2,099.0</td><td><span class='cg'>¥3,233.0</span></td><td>¥4,900.0</td><td>11/9/2</td><td><span class='cg'>73.30%</span></td><td><span class='cg'>69.20%</span></td></tr><tr><td>30</td><td>2区</td><td>周口万达</td><td><b>冯瀚文</b></td><td><span class='now'>¥5,008.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥4,063.0</td><td>12/8/4</td><td><span class='cg'>52.20%</span></td><td><span class='cg'>42.10%</span></td></tr><tr><td>31</td><td>3区</td><td>安阳万达</td><td><b>杨晶晶</b></td><td><span class='now'>¥4,807.0</span></td><td>¥5,412.0</td><td><span class='cr'>-¥605.0</span></td><td>¥4,249.0</td><td>9/5/4</td><td><span class='cg'>52.90%</span></td><td><span class='cr'>38.50%</span></td></tr><tr><td>32</td><td>3区</td><td>滑县吾悦</td><td><b>范超凡</b></td><td><span class='now'>¥3,697.0</span></td><td>¥3,035.0</td><td><span class='cg'>¥662.0</span></td><td>¥2,791.0</td><td>9/8/1</td><td><span class='cg'>40.90%</span></td><td><span class='cr'>38.10%</span></td></tr><tr><td>33</td><td>2区</td><td>新乡牧野万达</td><td><b>李淑艳</b></td><td><span class='now'>¥3,498.0</span></td><td>¥4,527.0</td><td><span class='cr'>-¥1,029.0</span></td><td>¥2,553.0</td><td>6/4/2</td><td><span class='cr'>35.30%</span></td><td><span class='cr'>26.70%</span></td></tr><tr><td>34</td><td>2区</td><td>新乡牧野万达</td><td><b>徐彬淼</b></td><td><span class='now'>¥2,402.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥1,900.0</td><td>5/3/2</td><td><span class='cg'>45.50%</span></td><td><span class='cr'>33.30%</span></td></tr><tr><td>35</td><td>3区</td><td>武汉荟聚</td><td><b>严诗仪</b></td><td><span class='now'>¥1,782.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥1,304.0</td><td>4/4/0</td><td><span class='cg'>44.40%</span></td><td><span class='cg'>44.40%</span></td></tr><tr><td>36</td><td>3区</td><td>滑县吾悦</td><td><b>卢思如</b></td><td><span class='now'>¥1,342.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥997.0</td><td>3/3/0</td><td><span class='cr'>33.30%</span></td><td><span class='cr'>33.30%</span></td></tr><tr><td>37</td><td>1区</td><td>商丘万达</td><td><b>含潇</b></td><td><span class='now'>¥1,292.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥986.0</td><td>4/3/1</td><td><span class='cg'>44.40%</span></td><td><span class='cr'>37.50%</span></td></tr><tr><td>38</td><td>2区</td><td>洛阳泉舜</td><td><b>谢家豪</b></td><td><span class='now'>¥1,097.0</span></td><td>¥5,381.0</td><td><span class='cr'>-¥4,284.0</span></td><td>¥1,000.0</td><td>3/3/0</td><td><span class='cg'>75.00%</span></td><td><span class='cg'>75.00%</span></td></tr><tr><td>39</td><td>3区</td><td>武汉荟聚</td><td><b>代紫霞</b></td><td><span class='now'>¥854.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥300.0</td><td>1/1/0</td><td><span class='cr'>16.70%</span></td><td><span class='cr'>16.70%</span></td></tr><tr><td>40</td><td>2区</td><td>洛阳中州万达</td><td><b>于家懿</b></td><td><span class='now'>¥556.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥400.0</td><td>1/0/1</td><td><span class='cr'>33.30%</span></td><td><span class='cr'>0.00%</span></td></tr><tr><td>41</td><td>3区</td><td>郑州二七万象城</td><td><b>娄永超</b></td><td><span class='now'>¥300.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥300.0</td><td>1/0/1</td><td><span class='cg'>100.00%</span></td><td><span class='cr'>0.00%</span></td></tr><tr><td>42</td><td>2区</td><td>郑州信万</td><td><b>靳梦雅</b></td><td><span class='now'>¥299.0</span></td><td>-</td><td><span class='cg'>-</span></td><td>¥299.0</td><td>1/1/0</td><td><span class='cg'>100.00%</span></td><td><span class='cg'>100.00%</span></td></tr></tbody></table></div>
+      <div class="footer-note">数据来源：/Users/zhx/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_qb01bt25y2fa22_ae0a/temp/drag/熊猫员工数据6月29日~7月5日(1).xlsx · 全员汇总</div>
+    </section>
+    
+    </div><script>
+(function () {
+  var pages = Array.from(document.querySelectorAll('.page'));
+  var tabs = Array.from(document.querySelectorAll('.deck-tab'));
+  var status = document.querySelector('.deck-status');
+  var toggle = document.querySelector('[data-action="toggle"]');
+  var current = 0;
+  var playing = true;
+  var intervalMs = 60000;
+  var timer = null;
+  function showPage(index) {
+    current = (index + pages.length) % pages.length;
+    pages.forEach(function (page, i) { page.classList.toggle('active', i === current); });
+    tabs.forEach(function (tab, i) { tab.classList.toggle('active', i === current); });
+    if (status) status.textContent = (playing ? '自动翻页中' : '已暂停自动翻页') + ' · 第' + (current + 1) + '/' + pages.length + '页';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function restartTimer() {
+    if (timer) clearInterval(timer);
+    if (playing) timer = setInterval(function () { showPage(current + 1); }, intervalMs);
+  }
+  tabs.forEach(function (tab) { tab.addEventListener('click', function () { showPage(Number(tab.dataset.page || 0)); restartTimer(); }); });
+  document.querySelector('[data-action="prev"]').addEventListener('click', function () { showPage(current - 1); restartTimer(); });
+  document.querySelector('[data-action="next"]').addEventListener('click', function () { showPage(current + 1); restartTimer(); });
+  toggle.addEventListener('click', function () { playing = !playing; toggle.textContent = playing ? '暂停自动翻页' : '开始自动翻页'; restartTimer(); showPage(current); });
+  document.addEventListener('keydown', function (event) { if (event.key === 'ArrowRight') { showPage(current + 1); restartTimer(); } if (event.key === 'ArrowLeft') { showPage(current - 1); restartTimer(); } });
+  showPage(0); restartTimer();
+})();
+</script></body></html>
