@@ -55,6 +55,10 @@ td:last-child { text-align:left; }
 .dense td { font-size:10px; padding:5px; }
 .table-scroll { width:100%; overflow-x:auto; margin:8px 0 14px; }
 .table-scroll table { min-width:1120px; margin:0; }
+.region-summary { min-width:1480px !important; }
+.region-summary th { font-size:11px; padding:7px 5px; }
+.region-summary td { text-align:center !important; font-size:10px; padding:7px 5px; line-height:1.45; }
+.region-summary td:last-child { text-align:left !important; min-width:180px; }
 .manager-table { min-width:1040px !important; }
 .employee-table { min-width:980px !important; }
 .employee-page .area-brief { grid-template-columns:repeat(5,1fr); }
@@ -281,37 +285,7 @@ td:last-child { text-align:left; }
         </div>
       </div>
       <h3>各区域核心数据</h3>
-      <div class="region-card-grid">
-      <article class="region-card">
-        <div class="region-card-head">
-          <h4>1区</h4>
-          <strong>3/3</strong>
-          <span>红/黄灯</span>
-        </div>
-        <div class="region-card-metrics"><div><span>新客数</span><b>351</b></div><div><span>营业额</span><b>¥150,115</b></div><div><span>新签营收</span><b>¥108,969</b></div><div><span>新签营收环比</span><b><span class='cg'>+76.9%</span></b></div><div><span>完成率</span><b>81.63%</b></div><div><span>新签办卡率</span><b>70.37%</b></div><div><span>新签大卡率</span><b>59.11%</b></div><div><span>大卡率</span><b>68.53%</b></div><div><span>续卡金额</span><b>¥41,146</b></div><div><span>引流金额</span><b>¥41,984</b></div><div><span>扫楼金额</span><b>¥21,067</b></div><div><span>续卡占比</span><b>27.41%</b></div><div><span>引流占比</span><b>27.97%</b></div><div><span>扫楼占比</span><b>14.03%</b></div><div><span>红/黄灯</span><b>3/3</b></div><div><span>未达标</span><b>14项</b></div></div>
-        <p><b>主要问题：</b>扫楼占比&lt;15%(4)；完成率&lt;100%(4)；总引流占比&lt;25%(3)</p>
-      </article>
-    
-      <article class="region-card">
-        <div class="region-card-head">
-          <h4>2区</h4>
-          <strong>4/2</strong>
-          <span>红/黄灯</span>
-        </div>
-        <div class="region-card-metrics"><div><span>新客数</span><b>545</b></div><div><span>营业额</span><b>¥180,849</b></div><div><span>新签营收</span><b>¥132,235</b></div><div><span>新签营收环比</span><b><span class='cg'>+71.9%</span></b></div><div><span>完成率</span><b>81.15%</b></div><div><span>新签办卡率</span><b>49.36%</b></div><div><span>新签大卡率</span><b>62.31%</b></div><div><span>大卡率</span><b>72.68%</b></div><div><span>续卡金额</span><b>¥48,614</b></div><div><span>引流金额</span><b>¥49,292</b></div><div><span>扫楼金额</span><b>¥27,456</b></div><div><span>续卡占比</span><b>26.88%</b></div><div><span>引流占比</span><b>27.26%</b></div><div><span>扫楼占比</span><b>15.18%</b></div><div><span>红/黄灯</span><b>4/2</b></div><div><span>未达标</span><b>17项</b></div></div>
-        <p><b>主要问题：</b>完成率&lt;100%(6)；扫楼占比&lt;15%(3)；大卡率&lt;70%(3)</p>
-      </article>
-    
-      <article class="region-card">
-        <div class="region-card-head">
-          <h4>3区</h4>
-          <strong>4/2</strong>
-          <span>红/黄灯</span>
-        </div>
-        <div class="region-card-metrics"><div><span>新客数</span><b>511</b></div><div><span>营业额</span><b>¥139,672</b></div><div><span>新签营收</span><b>¥112,257</b></div><div><span>新签营收环比</span><b><span class='cg'>+58.8%</span></b></div><div><span>完成率</span><b>82.29%</b></div><div><span>新签办卡率</span><b>42.33%</b></div><div><span>新签大卡率</span><b>58.69%</b></div><div><span>大卡率</span><b>65.00%</b></div><div><span>续卡金额</span><b>¥27,415</b></div><div><span>引流金额</span><b>¥51,165</b></div><div><span>扫楼金额</span><b>¥12,188</b></div><div><span>续卡占比</span><b>19.63%</b></div><div><span>引流占比</span><b>36.63%</b></div><div><span>扫楼占比</span><b>8.73%</b></div><div><span>红/黄灯</span><b>4/2</b></div><div><span>未达标</span><b>19项</b></div></div>
-        <p><b>主要问题：</b>完成率&lt;100%(5)；续卡占比&lt;20%(4)；扫楼占比&lt;15%(4)</p>
-      </article>
-    </div>
+      <div class="table-scroll"><table class="dense region-summary"><thead><tr><th>大区</th><th>新客数</th><th>营业额</th><th>新签营收</th><th>新签营收环比</th><th>完成率</th><th>新签办卡率</th><th>新签大卡率</th><th>大卡率</th><th>总续卡金额</th><th>总引流金额</th><th>扫楼金额</th><th>总续卡占比</th><th>总引流占比</th><th>扫楼占比</th><th>未达标指标数</th><th>主要问题</th></tr></thead><tbody><tr><td>1区</td><td>351</td><td>¥150,115</td><td>¥108,969</td><td><span class='cg'>+76.9%</span></td><td>81.63%</td><td>70.37%</td><td>59.11%</td><td>68.53%</td><td>¥41,146</td><td>¥41,984</td><td>¥21,067</td><td>27.41%</td><td>27.97%</td><td>14.03%</td><td>14</td><td>扫楼占比&lt;15%(4)；完成率&lt;100%(4)；总引流占比&lt;25%(3)</td></tr><tr><td>2区</td><td>545</td><td>¥180,849</td><td>¥132,235</td><td><span class='cg'>+71.9%</span></td><td>81.15%</td><td>49.36%</td><td>62.31%</td><td>72.68%</td><td>¥48,614</td><td>¥49,292</td><td>¥27,456</td><td>26.88%</td><td>27.26%</td><td>15.18%</td><td>17</td><td>完成率&lt;100%(6)；扫楼占比&lt;15%(3)；大卡率&lt;70%(3)</td></tr><tr><td>3区</td><td>511</td><td>¥139,672</td><td>¥112,257</td><td><span class='cg'>+58.8%</span></td><td>82.29%</td><td>42.33%</td><td>58.69%</td><td>65.00%</td><td>¥27,415</td><td>¥51,165</td><td>¥12,188</td><td>19.63%</td><td>36.63%</td><td>8.73%</td><td>19</td><td>完成率&lt;100%(5)；续卡占比&lt;20%(4)；扫楼占比&lt;15%(4)</td></tr></tbody></table></div>
       <div class="alert">本期品牌营收、新客和总引流占比均明显增长，会议重点追各区扫楼动作、0元体验、电销到店、续卡大卡和门店分化，同时复制高排名员工的有效动作。</div>
     </section>
     
