@@ -74,6 +74,21 @@ td:last-child { text-align:left; }
 .store-table th:nth-child(4), .store-table td:nth-child(4) { left:230px; width:54px; }
 .store-table th:nth-child(5), .store-table td:nth-child(5) { left:284px; width:110px; }
 .store-table th:nth-child(6), .store-table td:nth-child(6) { left:394px; width:100px; box-shadow:4px 0 7px rgba(0,0,0,.12); }
+.closure-table { min-width:1320px !important; table-layout:fixed; font-size:10px; }
+.closure-table th { font-size:11px; padding:7px 6px; }
+.closure-table td { padding:8px 7px; line-height:1.55; text-align:left; vertical-align:top; }
+.closure-table td:nth-child(1), .closure-table td:nth-child(2) { text-align:center; vertical-align:middle; font-weight:800; }
+.closure-table th:nth-child(1), .closure-table td:nth-child(1) { width:70px; }
+.closure-table th:nth-child(2), .closure-table td:nth-child(2) { width:92px; }
+.closure-table th:nth-child(3), .closure-table td:nth-child(3) { width:190px; }
+.closure-table th:nth-child(4), .closure-table td:nth-child(4) { width:225px; }
+.closure-table th:nth-child(5), .closure-table td:nth-child(5) { width:220px; }
+.closure-table th:nth-child(6), .closure-table td:nth-child(6) { width:210px; }
+.closure-table th:nth-child(7), .closure-table td:nth-child(7) { width:250px; }
+.closure-table .last-issue,.closure-table .now-issue { background:#fff1f0; }
+.closure-table .done-action { background:#fff7e6; }
+.closure-table .result-cell { background:#f6ffed; }
+.closure-table .next-action { background:#fffbe6; }
 .manager-table { min-width:1040px !important; }
 .employee-table { min-width:980px !important; }
 .employee-page .area-brief { grid-template-columns:repeat(5,1fr); }
@@ -407,7 +422,9 @@ td:last-child { text-align:left; }
           <td><span class='badge risk yellow'>1项</span></td>
           <td>完成率&lt;100%</td><td>新客环比29.63%，可分享拉新动作</td>
         </tr></tbody></table></div>
-      <h3>3. 1区下一步怎么做</h3>
+      <h3>3. 1区上周问题闭环追踪</h3>
+      <div class="table-scroll"><table class='closure-table'><thead><tr><th>优先级</th><th>门店/区域</th><th>上周异常</th><th>已做动作</th><th>本周结果</th><th>本周仍异常</th><th>下周动作</th></tr></thead><tbody><tr><td><span class='badge yellow'>P1</span></td><td>商丘万达</td><td class='last-issue'>上周新客27，客流基础偏小</td><td class='done-action'>加强周中承接，保持续卡和大卡成交打法</td><td class='result-cell'>变好：新客从27增至57，营业额从约1万增至约3万，新签办卡率从55.56%升至68.42%。</td><td class='now-issue'>襄阳高新万达：总引流占比23.88%、续卡占比10.58%、扫楼占比13.10%、大卡率占比53.19%</td><td class='next-action'>补引流兼职和0元体验追踪；固定扫楼点位/人员/成交金额；查后场服务和续玩引导</td></tr><tr><td><span class='badge red'>P0</span></td><td>南阳吾悦承接不稳</td><td class='last-issue'>完成率42.53%，续卡占比16.21%，客流承接不稳定</td><td class='done-action'>对复位定岗定责，更换/培训部分人员，给强推加目标压力</td><td class='result-cell'>没有真正变好：新客和营收上涨，但完成率仍只有70.21%，新签办卡率从69.44%降至63.01%。</td><td class='now-issue'>南阳吾悦：完成率70.21%、总引流占比15.78%、扫楼占比5.56%、大卡率占比60.00%</td><td class='next-action'>查电销邀约和目标拆解；补引流兼职和0元体验追踪；固定扫楼点位/人员/成交金额</td></tr></tbody></table></div>
+      <h3>4. 1区本周异常和下一步怎么做</h3>
       <table><thead><tr><th>优先级</th><th>门店</th><th>风险数</th><th>核心短板</th><th>下一步处理</th></tr></thead><tbody><tr><td><span class='badge red'>P0</span></td><td>襄阳高新万达</td><td>4</td><td>总引流占比23.88%、续卡占比10.58%、扫楼占比13.10%、大卡率占比53.19%</td><td>城市经理先问诊：客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼；续卡弱查后场人员稳定、服务质量、陪玩和下一主题引导，重点看是否只敢续小卡；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>南阳吾悦</td><td>4</td><td>完成率70.21%、总引流占比15.78%、扫楼占比5.56%、大卡率占比60.00%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>信阳万达</td><td>3</td><td>完成率55.10%、总引流占比22.14%、扫楼占比13.63%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼。</td></tr><tr><td><span class='badge yellow'>P1</span></td><td>商丘万达</td><td>1</td><td>扫楼占比12.85%</td><td>城市经理先问诊：扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼。</td></tr><tr><td><span class='badge yellow'>P1</span></td><td>许昌万达</td><td>1</td><td>完成率82.70%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单。</td></tr><tr><td><span class='badge yellow'>P1</span></td><td>南阳万达</td><td>1</td><td>完成率56.85%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单。</td></tr></tbody></table>
     </section>
     
@@ -529,7 +546,9 @@ td:last-child { text-align:left; }
           <td><span class='badge risk green'>0项</span></td>
           <td>全部核心指标过线</td><td>新客环比42.86%，可分享拉新动作</td>
         </tr></tbody></table></div>
-      <h3>3. 2区下一步怎么做</h3>
+      <h3>3. 2区上周问题闭环追踪</h3>
+      <div class="table-scroll"><table class='closure-table'><thead><tr><th>优先级</th><th>门店/区域</th><th>上周异常</th><th>已做动作</th><th>本周结果</th><th>本周仍异常</th><th>下周动作</th></tr></thead><tbody><tr><td><span class='badge red'>P0</span></td><td>周口万达</td><td class='last-issue'>完成率&lt;100%、新签办卡率&lt;40%、总引流占比&lt;25%、扫楼占比&lt;15%</td><td class='done-action'>查电销、邀约到店、店长目标拆解和全员业务技能；查引流兼职招聘、培训、优秀兼职复制和0元体验追踪</td><td class='result-cell'>完成率继续恶化：上周85.42%，本周79.52%；新签有改善但未过线：上周36.17%，本周36.48%；总引流有改善但未过线：上周8.82%，本周20.43%；扫楼有改善但未过线：上周0.59%，本周5.89%</td><td class='now-issue'>洛阳泉舜：完成率97.96%、总引流占比19.74%、扫楼占比14.48%、大卡率占比68.42%</td><td class='next-action'>查电销邀约和目标拆解；补引流兼职和0元体验追踪；固定扫楼点位/人员/成交金额</td></tr><tr><td><span class='badge red'>P0</span></td><td>洛阳泉舜</td><td class='last-issue'>完成率&lt;100%、总引流占比&lt;25%、扫楼占比&lt;15%</td><td class='done-action'>查电销、邀约到店、店长目标拆解和全员业务技能；查引流兼职招聘、培训、优秀兼职复制和0元体验追踪</td><td class='result-cell'>完成率有改善但未过线：上周75.87%，本周97.96%；总引流有改善但未过线：上周15.28%，本周19.74%；扫楼有改善但未过线：上周9.10%，本周14.48%</td><td class='now-issue'>周口万达：完成率79.52%、新签办卡率36.48%、总引流占比20.43%、扫楼占比5.89%</td><td class='next-action'>查电销邀约和目标拆解；补引流兼职和0元体验追踪；固定扫楼点位/人员/成交金额</td></tr></tbody></table></div>
+      <h3>4. 2区本周异常和下一步怎么做</h3>
       <table><thead><tr><th>优先级</th><th>门店</th><th>风险数</th><th>核心短板</th><th>下一步处理</th></tr></thead><tbody><tr><td><span class='badge red'>P0</span></td><td>洛阳泉舜</td><td>4</td><td>完成率97.96%、总引流占比19.74%、扫楼占比14.48%、大卡率占比68.42%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>周口万达</td><td>4</td><td>完成率79.52%、新签办卡率36.48%、总引流占比20.43%、扫楼占比5.89%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；客流入口弱，问引流兼职是否招够、是否复制优秀兼职话术，0元体验名单是否追到预约和到店；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>洛阳中州万达</td><td>3</td><td>完成率95.32%、续卡占比9.03%、大卡率占比52.83%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；续卡弱查后场人员稳定、服务质量、陪玩和下一主题引导，重点看是否只敢续小卡；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>新乡牧野万达</td><td>3</td><td>完成率36.69%、新签办卡率25.00%、大卡率占比60.00%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge yellow'>P1</span></td><td>郑州惠济万达</td><td>2</td><td>完成率58.18%、扫楼占比3.67%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼。</td></tr><tr><td><span class='badge yellow'>P1</span></td><td>焦作万达</td><td>1</td><td>完成率83.89%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单。</td></tr></tbody></table>
     </section>
     
@@ -637,7 +656,9 @@ td:last-child { text-align:left; }
           <td><span class='badge risk yellow'>2项</span></td>
           <td>完成率&lt;100%、扫楼占比&lt;15%</td><td>总引流占比56.58%，可复盘获客动作；新客环比54.55%，可分享拉新动作</td>
         </tr></tbody></table></div>
-      <h3>3. 3区下一步怎么做</h3>
+      <h3>3. 3区上周问题闭环追踪</h3>
+      <div class="table-scroll"><table class='closure-table'><thead><tr><th>优先级</th><th>门店/区域</th><th>上周异常</th><th>已做动作</th><th>本周结果</th><th>本周仍异常</th><th>下周动作</th></tr></thead><tbody><tr><td><span class='badge yellow'>P1</span></td><td>3区</td><td class='last-issue'>上周完成率58.98%，低于100%目标</td><td class='done-action'>重点盯低完成率门店，收集各店中大卡话术，培训门店办卡话术，让店长带领门店模拟演练</td><td class='result-cell'>上涨到82.29%，提升24.3个百分点。</td><td class='now-issue'>郑州二七万象城：完成率80.48%、新签办卡率38.00%、续卡占比12.08%、扫楼占比0.00%、大卡率占比58.70%</td><td class='next-action'>查电销邀约和目标拆解；固定扫楼点位/人员/成交金额；查后场服务和续玩引导</td></tr><tr><td><span class='badge yellow'>P1</span></td><td>3区</td><td class='last-issue'>上周总引流¥26,992，占比33.27%，金额环比下降</td><td class='done-action'>监督门店登记，确保人员引流配置，收集引流不消费痛点，优化方案，周中安排人在门口引流并跟进意向客户</td><td class='result-cell'>上涨到¥51,165，增长89.6%。</td><td class='now-issue'>郑州中原万达：完成率55.71%、新签办卡率35.38%、续卡占比19.62%、扫楼占比0.00%</td><td class='next-action'>查电销邀约和目标拆解；固定扫楼点位/人员/成交金额；查后场服务和续玩引导</td></tr></tbody></table></div>
+      <h3>4. 3区本周异常和下一步怎么做</h3>
       <table><thead><tr><th>优先级</th><th>门店</th><th>风险数</th><th>核心短板</th><th>下一步处理</th></tr></thead><tbody><tr><td><span class='badge red'>P0</span></td><td>郑州二七万象城</td><td>5</td><td>完成率80.48%、新签办卡率38.00%、续卡占比12.08%、扫楼占比0.00%、大卡率占比58.70%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼；续卡弱查后场人员稳定、服务质量、陪玩和下一主题引导，重点看是否只敢续小卡；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>郑州中原万达</td><td>4</td><td>完成率55.71%、新签办卡率35.38%、续卡占比19.62%、扫楼占比0.00%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼；续卡弱查后场人员稳定、服务质量、陪玩和下一主题引导，重点看是否只敢续小卡；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>武汉荟聚</td><td>3</td><td>完成率96.05%、续卡占比18.45%、大卡率占比60.00%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；续卡弱查后场人员稳定、服务质量、陪玩和下一主题引导，重点看是否只敢续小卡；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge red'>P0</span></td><td>滑县吾悦</td><td>3</td><td>完成率73.81%、新签办卡率39.06%、续卡占比12.93%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；续卡弱查后场人员稳定、服务质量、陪玩和下一主题引导，重点看是否只敢续小卡；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge yellow'>P1</span></td><td>开封万达</td><td>2</td><td>扫楼占比7.61%、大卡率占比65.71%</td><td>城市经理先问诊：扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼；中大卡和新签弱要旁听接待，现场练开口、价值表达和成交追销。</td></tr><tr><td><span class='badge yellow'>P1</span></td><td>安阳万达</td><td>2</td><td>完成率64.12%、扫楼占比0.00%</td><td>城市经理先问诊：完成率低先查电销是否打够、邀约是否到店，再看店长是否把目标拆到人头、场次和客单；扫楼弱要到店看点位、话术和名单回访，必要时城市经理现场带扫楼。</td></tr></tbody></table>
     </section>
     
