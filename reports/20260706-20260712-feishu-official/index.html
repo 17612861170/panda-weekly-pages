@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>熊猫密室品牌周报｜飞书正式版</title>
+<style>
+@page { size:A4; margin:12mm; }
+* { box-sizing:border-box; }
+body { margin:0; background:#e9e9e9; color:#333; font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif; font-size:12px; line-height:1.55; }
+.container { max-width:1120px; margin:0 auto; padding:16px; }
+.page { background:white; margin:0 0 18px; padding:24px 28px; border-radius:4px; box-shadow:0 1px 6px rgba(0,0,0,.08); }
+.deck-toolbar { position:sticky; top:0; z-index:20; max-width:1120px; margin:0 auto; padding:12px 16px 10px; background:rgba(233,233,233,.96); backdrop-filter:blur(8px); border-bottom:1px solid #dedede; }
+.deck-tabs { display:grid; grid-template-columns:repeat(7,1fr); gap:8px; margin-bottom:8px; }
+.deck-tab { appearance:none; border:1px solid #ffd8bf; background:#fff7ed; color:#8a3412; border-radius:4px; padding:8px 10px; font-size:12px; font-weight:800; text-align:left; cursor:pointer; }
+.deck-tab.active { background:linear-gradient(135deg,#ff6b35,#ff8a1f); color:white; border-color:#ff6b35; box-shadow:0 2px 8px rgba(250,84,28,.2); }
+.deck-actions { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.deck-actions button { appearance:none; border:1px solid #ffd8bf; background:white; color:#d4380d; border-radius:4px; padding:6px 12px; font-size:12px; font-weight:800; cursor:pointer; }
+.deck-actions button.primary { background:#ff6b35; color:white; border-color:#ff6b35; }
+.deck-status { color:#8a4b00; font-weight:800; }
+.deck-mode .container { padding-top:14px; }
+.deck-mode .page { display:none; min-height:calc(100vh - 116px); margin-bottom:0; }
+.deck-mode .page.active { display:block; }
+.page-guide { text-align:right; color:#999; font-size:11px; margin-bottom:10px; }
+.report-header { background:linear-gradient(135deg,#ff6b35,#ff8a1f); color:white; padding:20px 24px; border-radius:2px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+.report-header h1 { margin:0 0 6px; font-size:24px; letter-spacing:.5px; }
+.report-header p { margin:0; color:#fff7ed; }
+.header-score { text-align:right; min-width:120px; }
+.header-score b { display:block; font-size:28px; line-height:1; }
+.header-score span { font-size:11px; opacity:.9; }
+.standards { background:#fff7e6; border:1px solid #ffd591; color:#8a4b00; padding:8px 12px; border-radius:2px; margin-bottom:12px; }
+.section-title { margin:0 0 12px; color:#d4380d; border-bottom:3px solid #ff6b35; padding-bottom:7px; font-size:18px; }
+h3 { margin:14px 0 7px; color:#d4380d; font-size:14px; border-left:3px solid #ff6b35; padding-left:8px; }
+.hero-grid { display:grid; grid-template-columns:1fr 180px; gap:12px; align-items:stretch; }
+.hero-main { border:1px solid #ffd8bf; background:#fff; }
+.block-title { background:#fff1e6; color:#d4380d; font-weight:800; padding:8px 10px; border-bottom:1px solid #ffd8bf; }
+.metric-table { margin:0; font-size:12px; }
+.metric-table th { background:#fff7ed; color:#d4380d; padding:7px 6px; }
+.metric-table td { padding:7px 6px; }
+.metric-table .metric-name { text-align:left; font-weight:800; color:#8a3412; }
+.metric-table .now { font-weight:900; font-size:14px; color:#111; }
+.metric-table tr.warning td { background:#fffbe6; }
+.hero-side { display:grid; grid-template-columns:1fr; gap:8px; }
+.side-card { border-radius:2px; padding:10px; text-align:center; border:1px solid #eee; }
+.side-card b { display:block; font-size:28px; line-height:1; margin-bottom:4px; }
+.side-card span { color:#666; }
+.side-card.danger { background:#fff1f0; border-color:#ffa39e; color:#cf1322; }
+.side-card.warning { background:#fffbe6; border-color:#ffe58f; color:#d48806; }
+.side-card.ok { background:#f6ffed; border-color:#b7eb8f; color:#389e0d; }
+.side-card.neutral { background:#fff7e6; border-color:#ffd591; color:#d4380d; }
+table { width:100%; border-collapse:collapse; margin:8px 0 14px; font-size:12px; }
+th { background:#fff1e6; color:#d4380d; border:1px solid #ffd8bf; padding:7px 6px; white-space:nowrap; text-align:center; }
+td { border:1px solid #eee; padding:6px 7px; text-align:center; vertical-align:middle; }
+td:last-child { text-align:left; }
+.dense td { font-size:10px; padding:5px; }
+.table-scroll { width:100%; overflow-x:auto; margin:8px 0 14px; }
+.table-scroll table { min-width:1120px; margin:0; }
+.region-summary { min-width:1480px !important; }
+.region-summary th { font-size:11px; padding:7px 5px; }
+.region-summary td { text-align:center !important; font-size:10px; padding:7px 5px; line-height:1.45; }
+.region-summary td:last-child { text-align:left !important; min-width:180px; }
+.region-summary small { display:block; margin-top:2px; line-height:1.35; color:#555; }
+.region-summary th:first-child,
+.region-summary td:first-child { position:sticky; left:0; z-index:5; min-width:72px; width:72px; background:#fff; box-shadow:4px 0 7px rgba(0,0,0,.10); }
+.region-summary th:first-child { z-index:7; background:#fff1e6; }
+.store-table { min-width:1770px !important; table-layout:fixed; }
+.store-table small { display:block; margin-top:2px; line-height:1.35; color:#555; }
+.store-table th:nth-child(-n+6),
+.store-table td:nth-child(-n+6) { position:sticky; background:#fff; z-index:5; box-shadow:1px 0 0 #eee; }
+.store-table th:nth-child(-n+6) { background:#fff1e6; z-index:7; }
+.store-table th:nth-child(1), .store-table td:nth-child(1) { left:0; width:70px; }
+.store-table th:nth-child(2), .store-table td:nth-child(2) { left:70px; width:110px; }
+.store-table th:nth-child(3), .store-table td:nth-child(3) { left:180px; width:50px; }
+.store-table th:nth-child(4), .store-table td:nth-child(4) { left:230px; width:54px; }
+.store-table th:nth-child(5), .store-table td:nth-child(5) { left:284px; width:110px; }
+.store-table th:nth-child(6), .store-table td:nth-child(6) { left:394px; width:100px; box-shadow:4px 0 7px rgba(0,0,0,.12); }
+.closure-table { min-width:1240px !important; table-layout:fixed; font-size:10px; border-collapse:separate; border-spacing:0; }
+.closure-table th { font-size:11px; padding:8px 6px; background:#fff1e6; color:#d4380d; }
+.closure-table td { padding:8px 7px; line-height:1.5; text-align:left; vertical-align:top; border-color:#f0e2d7; }
+.closure-table th:nth-child(1), .closure-table td:nth-child(1) { width:96px; }
+.closure-table th:nth-child(2), .closure-table td:nth-child(2) { width:205px; }
+.closure-table th:nth-child(3), .closure-table td:nth-child(3) { width:235px; }
+.closure-table th:nth-child(4), .closure-table td:nth-child(4) { width:245px; }
+.closure-table th:nth-child(5), .closure-table td:nth-child(5) { width:220px; }
+.closure-table th:nth-child(6), .closure-table td:nth-child(6) { width:240px; }
+.closure-table .object-cell { text-align:center; vertical-align:middle; background:#fffaf3; }
+.closure-table .object-cell b { display:block; color:#111; font-size:13px; line-height:1.15; margin-bottom:4px; }
+.closure-table .object-cell span { display:inline-block; color:#8a4b00; background:#fff1e6; border:1px solid #ffd8bf; border-radius:999px; padding:2px 7px; font-size:10px; line-height:1.2; }
+.closure-table .last-issue { background:#fff7f6; }
+.closure-table .done-action { background:#fffaf0; }
+.closure-table .result-cell { background:#f6ffed; }
+.closure-table .status-cell { background:#fbfbfb; }
+.closure-table .next-action { background:#fffbe6; }
+.metric-chain { display:grid; grid-template-columns:42px 1fr 10px 1fr; gap:4px; align-items:center; padding:4px 0; border-bottom:1px dashed #f0d7c4; }
+.metric-chain:last-child { border-bottom:0; }
+.metric-chain b { color:#111; font-size:11px; }
+.metric-chain span { color:#333; white-space:nowrap; }
+.metric-chain i { color:#999; font-style:normal; text-align:center; }
+.metric-chain em { grid-column:2 / span 3; display:inline-block; width:max-content; max-width:100%; border-radius:999px; padding:2px 7px; font-style:normal; font-weight:900; font-size:10px; }
+.metric-chain em.ok { background:#e8f8ef; color:#00a85a; }
+.metric-chain em.warn { background:#fff1d6; color:#d46b08; }
+.metric-chain em.bad { background:#ffe1e6; color:#ff4d5f; }
+.plain-line { padding:3px 0; border-bottom:1px dashed rgba(0,0,0,.08); }
+.plain-line:last-child { border-bottom:0; }
+.ok-text { color:#00a85a; font-weight:900; }
+.step-line { display:grid; grid-template-columns:18px 1fr; gap:6px; align-items:start; padding:3px 0; }
+.step-line span { display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:999px; background:#ff7a1a; color:white; font-weight:900; font-size:9px; line-height:1; margin-top:1px; }
+.status-pill { display:inline-block; border-radius:999px; padding:3px 9px; font-size:11px; line-height:1.2; font-weight:900; margin-bottom:5px; }
+.status-pill.ok { background:#d9f8e8; color:#00a85a; }
+.status-pill.warn { background:#fff0dc; color:#d46b08; }
+.status-pill.bad { background:#ffe1e6; color:#ff4d5f; }
+.manager-table { min-width:1040px !important; }
+.employee-table { min-width:980px !important; }
+.employee-page .area-brief { grid-template-columns:repeat(5,1fr); }
+.employee-page h3 { margin-top:16px; }
+.table-scroll th { font-size:11px; }
+.table-scroll td:nth-child(14), .table-scroll td:nth-child(15) { text-align:left; line-height:1.55; }
+.page > table:not(.metric-table):not(.region-summary) td:nth-child(4),
+.page > table:not(.metric-table):not(.region-summary) td:nth-child(5) { text-align:left; line-height:1.65; }
+.cg { color:#00a85a; font-weight:800; }
+.cy { color:#ff7a1a; font-weight:800; }
+.cr { color:#ff4d5f; font-weight:800; }
+.metric-table td:last-child .cg,.metric-table td:last-child .cy,.metric-table td:last-child .cr { display:inline-block; border-radius:5px; padding:3px 8px; font-size:12px; line-height:1.3; font-weight:900; white-space:normal; }
+.metric-table td:last-child .cg { background:#d9f8e8; color:#00a85a; }
+.metric-table td:last-child .cy { background:#fff0dc; color:#ff7a1a; }
+.metric-table td:last-child .cr { background:#ffe1e6; color:#ff4d5f; }
+.badge { display:inline-block; border-radius:999px; padding:4px 12px; font-size:12px; line-height:1.15; font-weight:900; letter-spacing:0; color:white; border:0; }
+.badge.red { background:#ff4d5f; color:white; }
+.badge.yellow { background:#ff8a2a; color:white; }
+.badge.green { background:#05b864; color:white; }
+.badge.gray { background:#8c8c8c; color:white; }
+.badge.rating { min-width:46px; padding:5px 9px; font-size:13px; line-height:1; white-space:nowrap; word-break:keep-all; text-align:center; }
+.badge.risk { padding:2px 8px; font-size:11px; min-width:auto; letter-spacing:0; background:#f5f5f5 !important; color:#666 !important; border:1px solid #bfbfbf; }
+.alert { background:#fff7e6; border-left:4px solid #fa8c16; padding:12px; border-radius:0 8px 8px 0; margin:12px 0; }
+.area-brief { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:10px 0 12px; }
+.area-brief div { background:#fff7e6; border:1px solid #ffd591; border-radius:2px; padding:10px; text-align:center; }
+.area-brief b { display:block; color:#d4380d; font-size:20px; line-height:1.15; }
+.area-brief em { display:block; color:#00a85a; font-size:16px; line-height:1.2; font-style:normal; font-weight:900; margin-top:3px; }
+.area-brief span { color:#8a4b00; font-size:11px; }
+.region-card-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:8px 0 14px; }
+.region-card { border:1px solid #ffd8bf; background:#fffdf9; border-radius:4px; overflow:hidden; }
+.region-card-head { display:grid; grid-template-columns:1fr auto; gap:2px 8px; align-items:center; padding:9px 10px; background:#fff1e6; border-bottom:1px solid #ffd8bf; }
+.region-card-head h4 { margin:0; color:#d4380d; font-size:16px; line-height:1.1; }
+.region-card-head strong { color:#d4380d; font-size:18px; line-height:1; text-align:right; }
+.region-card-head span { grid-column:2; color:#8a4b00; font-size:10px; text-align:right; line-height:1; }
+.region-card-metrics { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:#f3e4d8; }
+.region-card-metrics div { min-height:38px; padding:6px 8px; background:white; }
+.region-card-metrics span { display:block; color:#9a5a25; font-size:10px; line-height:1.2; margin-bottom:3px; }
+.region-card-metrics b { display:block; color:#333; font-size:12px; line-height:1.15; white-space:nowrap; }
+.region-card p { margin:0; padding:8px 10px; color:#555; font-size:11px; line-height:1.55; background:#fffaf3; }
+.region-card p b { color:#d4380d; }
+.footer-note { background:#fff7e6; color:#8a4b00; padding:12px; border-radius:8px; text-align:center; margin-top:12px; }
+.rank-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:10px; }
+.rank-card { border:1px solid #d9e6f2; border-radius:2px; overflow:hidden; background:white; }
+.rank-card h3 { margin:0; border:0; padding:7px 8px; text-align:center; background:#2f75a3; color:white; font-size:13px; }
+.rank-table { margin:0; font-size:10px; }
+.rank-table th { background:#e8f2fb; color:#14324a; padding:5px 4px; }
+.rank-table td { padding:4px 5px; border-color:#dbe5ee; }
+.rank-table td:nth-child(1) { width:32px; }
+.rank-table td:nth-child(2) { text-align:left; font-weight:700; }
+.rank-table td:nth-child(3) { text-align:right; font-weight:900; color:#14324a; }
+.rank-table tr.top-rank td { background:#fff2cc; }
+@media print { body { background:white; } .deck-toolbar { display:none; } .container { padding:0; } .deck-mode .page,.page { display:block; box-shadow:none; border-radius:0; page-break-before:always; } .page:first-child { page-break-before:auto; } }
+@media (max-width:1000px) { .deck-tabs { grid-template-columns:1fr 1fr; } .deck-actions { align-items:stretch; flex-wrap:wrap; } .hero-grid,.area-brief,.rank-grid,.region-card-grid { grid-template-columns:1fr; } .container { padding:10px; } .page { padding:18px; } .report-header { display:block; } .header-score { text-align:left; margin-top:12px; } }
+</style>
+</head>
+<body class="deck-mode"><div class="deck-toolbar" aria-label="周报翻页控制">
+  <div class="deck-tabs">
+    <button class="deck-tab active" type="button" data-page="0">第1页 · 品牌总览</button>
+    <button class="deck-tab" type="button" data-page="1">第2页 · 1区周会</button>
+    <button class="deck-tab" type="button" data-page="2">第3页 · 2区周会</button>
+    <button class="deck-tab" type="button" data-page="3">第4页 · 3区周会</button>
+    <button class="deck-tab" type="button" data-page="4">第5页 · 店长排名</button>
+    <button class="deck-tab" type="button" data-page="5">第6页 · 店员区域排名</button>
+    <button class="deck-tab" type="button" data-page="6">第7页 · 店员全员排名</button>
+  </div>
+  <div class="deck-actions">
+    <div>
+      <button type="button" data-action="prev">上一页</button>
+      <button type="button" data-action="next">下一页</button>
+      <button class="primary" type="button" data-action="toggle">暂停自动翻页</button>
+    </div>
+    <div class="deck-status">自动翻页中 · 每60秒切换</div>
+  </div>
+</div><div class="container">
+    <section class="page">
+      <div class="page-guide">第1页 · 30秒看懂全局</div>
+      <h2 class="section-title">一、老板先看这页：本周到底好不好？</h2>
+      <div class="report-header">
+        <div>
+          <h1>熊猫密室·品牌周报（飞书正式版）</h1>
+          <p>周期：2026/07/06-2026/07/12　|　口径：以飞书数据为准；新签大卡率=新签中卡率+新签大卡率</p>
+        </div>
+        <div class="header-score">
+          <b>18/1/0</b>
+          <span>红 / 黄 / 绿</span>
+        </div>
+      </div>
+      <div class="standards"><b>达标线</b>　完成率≥100%　新签≥40%　总引流≥25%　续卡≥20%　扫楼≥15%　大卡≥70%。过线即达标，低于才算风险。</div>
+      <div class="hero-grid">
+        <div class="hero-main">
+          <div class="block-title">品牌核心数字对比</div>
+          <table class="metric-table"><thead><tr><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>环比/变化</th><th>判断</th></tr></thead><tbody><tr class='warning'><td class='metric-name'>总接待人数</td><td>9,764</td><td class='now'>8,521</td><td>-1,243</td><td><span class='cr'>-12.7%</span></td><td><span class='cr'>下降</span></td></tr>
+<tr class='warning'><td class='metric-name'>新客数</td><td>1,392</td><td class='now'>1,209</td><td>-183</td><td><span class='cr'>-13.1%</span></td><td><span class='cr'>下降</span></td></tr>
+<tr class='ok'><td class='metric-name'>新签营收</td><td>¥357,594.69</td><td class='now'>¥368,117.08</td><td>¥10,522.39</td><td><span class='cg'>+2.9%</span></td><td><span class='cg'>总营收-续卡营收</span></td></tr>
+<tr class='warning'><td class='metric-name'>总营收</td><td>¥469,629.69</td><td class='now'>¥450,541.08</td><td>-¥19,088.61</td><td><span class='cr'>-4.1%</span></td><td><span class='cr'>下降</span></td></tr>
+<tr class='warning'><td class='metric-name'>完成率</td><td>81.63%</td><td class='now'>83.58%</td><td>+1.9%</td><td><span class='cr'>未过线</span></td><td><span class='cr'>本周未过线，但较上周提升</span></td></tr>
+<tr class='ok'><td class='metric-name'>新签办卡率</td><td>52.23%</td><td class='now'>52.94%</td><td>+0.7%</td><td><span class='cg'>过线</span></td><td><span class='cg'>新签品牌层面过线</span></td></tr>
+<tr class='warning'><td class='metric-name'>总续卡金额</td><td>¥112,035.00</td><td class='now'>¥82,424.00</td><td>-¥29,611.00</td><td><span class='cr'>-26.4%</span></td><td><span class='cr'>下降</span></td></tr>
+<tr class='warning'><td class='metric-name'>总续卡占比</td><td>23.86%</td><td class='now'>18.29%</td><td>-5.6%</td><td><span class='cr'>未过线</span></td><td><span class='cr'>续卡占比过线，仍看门店分化</span></td></tr>
+<tr class='ok'><td class='metric-name'>总引流金额</td><td>¥54,969.99</td><td class='now'>¥87,298.79</td><td>¥32,328.80</td><td><span class='cg'>+58.8%</span></td><td><span class='cg'>增长</span></td></tr>
+<tr class='warning'><td class='metric-name'>总引流占比</td><td>11.70%</td><td class='now'>19.38%</td><td>+7.7%</td><td><span class='cr'>未过线</span></td><td><span class='cr'>引流占比低于25%，要看门店分化</span></td></tr>
+<tr class='ok'><td class='metric-name'>扫楼金额</td><td>¥17,280.00</td><td class='now'>¥28,923.39</td><td>¥11,643.39</td><td><span class='cg'>+67.4%</span></td><td><span class='cg'>增长</span></td></tr>
+<tr class='warning'><td class='metric-name'>扫楼占比</td><td>3.68%</td><td class='now'>6.42%</td><td>+2.7%</td><td><span class='cr'>未过线</span></td><td><span class='cr'>扫楼占比低于15%，要追线下动作</span></td></tr>
+<tr class='warning'><td class='metric-name'>大卡率占比</td><td>69.17%</td><td class='now'>63.61%</td><td>-5.6%</td><td><span class='cr'>未过线</span></td><td><span class='cr'>接近安全线，重点看销售大卡勇气</span></td></tr>
+<tr class='warning'><td class='metric-name'>新签大卡率</td><td>60.11%</td><td class='now'>54.53%</td><td>-5.6%</td><td><span class='cr'>-5.6%</span></td><td><span class='cr'>新签中卡率+新签大卡率</span></td></tr></tbody></table>
+        </div>
+        <div class="hero-side">
+          <div class="side-card danger"><b>18</b><span>红灯店</span></div>
+          <div class="side-card warning"><b>1</b><span>黄灯店</span></div>
+          <div class="side-card ok"><b>0</b><span>绿灯店</span></div>
+          <div class="side-card neutral"><b>71</b><span>未达标指标</span></div>
+        </div>
+      </div>
+      <h3>各区域核心数据</h3>
+      <div class="table-scroll"><table class="dense region-summary"><thead><tr><th>大区</th><th>新客数</th><th>新签营收</th><th>总营收</th><th>完成率</th><th>新签办卡率</th><th>总续卡金额</th><th>总续卡占比</th><th>总引流金额</th><th>总引流占比</th><th>扫楼金额</th><th>扫楼占比</th><th>大卡率占比</th><th>新签大卡率</th><th>未达标指标数</th><th>主要问题</th></tr></thead><tbody><tr><td>1区</td><td><span class='cr'>296</span><br><small>上周349 / <span class='cr'>-15.2%</span></small></td><td><span class='cr'>¥88,579</span><br><small>上周¥108,969 / <span class='cr'>-18.7%</span></small></td><td><span class='cr'>¥118,830</span><br><small>上周¥150,115 / <span class='cr'>-20.8%</span></small></td><td><span class='cr'>72.28%</span><br><small>上周81.63% / <span class='cr'>-9.3%</span></small></td><td><span class='cg'>68.58%</span><br><small>上周70.77% / <span class='cr'>-2.2%</span></small></td><td><span class='cr'>¥30,251</span><br><small>上周¥41,146 / <span class='cr'>-26.5%</span></small></td><td><span class='cg'>25.46%</span><br><small>上周27.41% / <span class='cr'>-2.0%</span></small></td><td><span class='cg'>¥7,674</span><br><small>上周¥2,363 / <span class='cg'>+224.8%</span></small></td><td><span class='cr'>6.46%</span><br><small>上周1.57% / <span class='cg'>+4.9%</span></small></td><td><span class='cg'>¥4,279</span><br><small>上周¥2,129 / <span class='cg'>+101.0%</span></small></td><td><span class='cr'>3.60%</span><br><small>上周1.42% / <span class='cg'>+2.2%</span></small></td><td><span class='cr'>64.58%</span><br><small>上周68.53% / <span class='cr'>-4.0%</span></small></td><td><span class='cr'>67.00%</span><br><small>上周75.71% / <span class='cr'>-8.7%</span></small></td><td>23</td><td>完成率&lt;100%(6)；总引流占比&lt;25%(5)；扫楼占比&lt;15%(5)</td></tr><tr><td>2区</td><td><span class='cr'>469</span><br><small>上周542 / <span class='cr'>-13.5%</span></small></td><td><span class='cg'>¥174,978</span><br><small>上周¥131,650 / <span class='cg'>+32.9%</span></small></td><td><span class='cg'>¥211,355</span><br><small>上周¥179,863 / <span class='cg'>+17.5%</span></small></td><td><span class='cg'>106.45%</span><br><small>上周80.70% / <span class='cg'>+25.7%</span></small></td><td><span class='cg'>50.75%</span><br><small>上周49.26% / <span class='cg'>+1.5%</span></small></td><td><span class='cr'>¥36,377</span><br><small>上周¥48,213 / <span class='cr'>-24.5%</span></small></td><td><span class='cr'>17.21%</span><br><small>上周26.81% / <span class='cr'>-9.6%</span></small></td><td><span class='cg'>¥36,598</span><br><small>上周¥18,850 / <span class='cg'>+94.2%</span></small></td><td><span class='cr'>17.32%</span><br><small>上周10.48% / <span class='cg'>+6.8%</span></small></td><td><span class='cg'>¥13,215</span><br><small>上周¥7,761 / <span class='cg'>+70.3%</span></small></td><td><span class='cr'>6.25%</span><br><small>上周4.31% / <span class='cg'>+1.9%</span></small></td><td><span class='cr'>64.98%</span><br><small>上周72.46% / <span class='cr'>-7.5%</span></small></td><td><span class='cr'>70.17%</span><br><small>上周80.52% / <span class='cr'>-10.4%</span></small></td><td>25</td><td>扫楼占比&lt;15%(6)；大卡率占比&lt;70%(6)；完成率&lt;100%(5)</td></tr><tr><td>3区</td><td><span class='cr'>444</span><br><small>上周501 / <span class='cr'>-11.4%</span></small></td><td><span class='cr'>¥104,560</span><br><small>上周¥116,976 / <span class='cr'>-10.6%</span></small></td><td><span class='cr'>¥120,356</span><br><small>上周¥139,652 / <span class='cr'>-13.8%</span></small></td><td><span class='cr'>68.35%</span><br><small>上周82.86% / <span class='cr'>-14.5%</span></small></td><td><span class='cg'>44.82%</span><br><small>上周42.51% / <span class='cg'>+2.3%</span></small></td><td><span class='cr'>¥15,796</span><br><small>上周¥22,676 / <span class='cr'>-30.3%</span></small></td><td><span class='cr'>13.12%</span><br><small>上周16.24% / <span class='cr'>-3.1%</span></small></td><td><span class='cg'>¥43,027</span><br><small>上周¥33,757 / <span class='cg'>+27.5%</span></small></td><td><span class='cg'>35.75%</span><br><small>上周24.17% / <span class='cg'>+11.6%</span></small></td><td><span class='cg'>¥11,429</span><br><small>上周¥7,390 / <span class='cg'>+54.7%</span></small></td><td><span class='cr'>9.50%</span><br><small>上周5.29% / <span class='cg'>+4.2%</span></small></td><td><span class='cr'>60.61%</span><br><small>上周65.25% / <span class='cr'>-4.6%</span></small></td><td><span class='cr'>64.32%</span><br><small>上周72.77% / <span class='cr'>-8.4%</span></small></td><td>23</td><td>完成率&lt;100%(6)；续卡占比&lt;20%(5)；扫楼占比&lt;15%(5)</td></tr></tbody></table></div>
+      <div class="alert">本页全部使用飞书数据，不再和旧版周报做蓝色差异对比。</div>
+    </section>
+    
+        <section class="page">
+          <div class="page-guide">第2页 · 1区城市经理只看本区</div>
+          <h2 class="section-title">1区周会页：1看整体 2看门店 3定动作</h2>
+          <div class="area-brief">
+            <div><b>6</b><span>门店数</span></div>
+            <div><b>¥118,830</b><em>72.28%</em><span>总营收 / 完成率</span></div>
+            <div><b>296</b><span>本周新客 · <span class='cr'>-15.19%</span></span></div>
+            <div><b>5/1</b><span>红/黄灯</span></div>
+            <div><b>23</b><span>未达标指标</span></div>
+          </div>
+          <h3>1. 1区整体区域表现</h3>
+          <table class='metric-table area-metric-table'><thead><tr><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>变化</th><th>判断</th></tr></thead><tbody><tr><td class='metric-name'>新客数</td><td>349</td><td class='now'>296</td><td>-53</td><td><span class='cr'>-15.2%</span></td><td><span class='cr'>较上周下降</span></td></tr><tr><td class='metric-name'>新签营收</td><td>¥108,969</td><td class='now'>¥88,579</td><td>-¥20,390</td><td><span class='cr'>-18.7%</span></td><td><span class='cr'>较上周下降</span></td></tr><tr><td class='metric-name'>总营收</td><td>¥150,115</td><td class='now'>¥118,830</td><td>-¥31,285</td><td><span class='cr'>-20.8%</span></td><td><span class='cr'>较上周下降</span></td></tr><tr><td class='metric-name'>完成率</td><td>81.63%</td><td class='now'>72.28%</td><td>-9.3%</td><td><span class='cr'>-9.3%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>新签办卡率</td><td>70.77%</td><td class='now'>68.58%</td><td>-2.2%</td><td><span class='cg'>-2.2%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-name'>总续卡金额</td><td>¥41,146</td><td class='now'>¥30,251</td><td>-¥10,895</td><td><span class='cr'>-26.5%</span></td><td><span class='cr'>较上周下降</span></td></tr><tr><td class='metric-name'>总续卡占比</td><td>27.41%</td><td class='now'>25.46%</td><td>-2.0%</td><td><span class='cg'>-2.0%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-name'>总引流金额</td><td>¥2,363</td><td class='now'>¥7,674</td><td>¥5,311</td><td><span class='cg'>+224.8%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>总引流占比</td><td>1.57%</td><td class='now'>6.46%</td><td>+4.9%</td><td><span class='cr'>+4.9%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>扫楼金额</td><td>¥2,129</td><td class='now'>¥4,279</td><td>¥2,150</td><td><span class='cg'>+101.0%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>扫楼占比</td><td>1.42%</td><td class='now'>3.60%</td><td>+2.2%</td><td><span class='cr'>+2.2%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>大卡率占比</td><td>68.53%</td><td class='now'>64.58%</td><td>-4.0%</td><td><span class='cr'>-4.0%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>新签大卡率</td><td>75.71%</td><td class='now'>67.00%</td><td>-8.7%</td><td><span class='cr'>-8.7%</span></td><td><span class='cr'>较上周下降</span></td></tr></tbody></table>
+          <h3>2. 1区门店哪里好，哪里不好</h3>
+          <div class="table-scroll"><table class="dense store-table"><colgroup>
+<col style="width:70px"><col style="width:110px"><col style="width:50px"><col style="width:54px">
+<col style="width:110px"><col style="width:100px"><col style="width:115px"><col style="width:105px">
+<col style="width:105px"><col style="width:105px"><col style="width:100px"><col style="width:100px">
+<col style="width:105px"><col style="width:100px"><col style="width:70px"><col style="width:230px"><col style="width:240px">
+</colgroup><thead><tr><th>评级</th><th>门店</th><th>店型</th><th>主题数</th><th>总营收</th><th>完成率</th><th>新签营收/环比</th><th>新签办卡率</th><th>新签大卡率</th><th>总引流</th><th>续卡</th><th>扫楼</th><th>大卡率占比</th><th>新客环比</th><th>风险</th><th>短板</th><th>亮点备注</th></tr></thead><tbody><tr><td><span class='badge rating red'>红灯</span></td><td>襄阳高新万达</td><td>A类</td><td>10</td><td><span class='cr'>¥26,476</span><br><small>上周¥39,690 / <span class='cr'>-33.3%</span></small></td><td><span class='cr'>75.61%</span><br><small>上周100.71% / <span class='cr'>-25.1%</span></small></td><td><span class='cr'>¥24,226</span><br><small>上周¥35,491 / <span class='cr'>-31.7%</span></small></td><td><span class='cg'>69.41%</span><br><small>上周74.34% / <span class='cr'>-4.9%</span></small></td><td><span class='cr'>40.68%</span><br><small>上周48.81% / <span class='cr'>-8.1%</span></small></td><td><span class='cr'>2.73%</span><br><small>上周1.39% / <span class='cg'>+1.3%</span></small></td><td><span class='cr'>8.50%</span><br><small>上周10.58% / <span class='cr'>-2.1%</span></small></td><td><span class='cr'>1.79%</span><br><small>上周1.39% / <span class='cg'>+0.4%</span></small></td><td><span class='cr'>43.75%</span><br><small>上周53.19% / <span class='cr'>-9.4%</span></small></td><td><span class='cr'>85</span><br><small>上周113 / <span class='cr'>-24.8%</span></small></td><td><span class='badge risk red'>5项</span></td><td>完成率&lt;100%、总引流占比&lt;25%、续卡占比&lt;20%、扫楼占比&lt;15%、大卡率占比&lt;70%</td><td>本区营收最高¥26,476</td></tr><tr><td><span class='badge rating red'>红灯</span></td><td>信阳万达</td><td>C类</td><td>9</td><td><span class='cr'>¥9,262</span><br><small>上周¥11,199 / <span class='cr'>-17.3%</span></small></td><td><span class='cr'>51.29%</span><br><small>上周55.10% / <span class='cr'>-3.8%</span></small></td><td><span class='cr'>¥7,517</span><br><small>上周¥8,906 / <span class='cr'>-15.6%</span></small></td><td><span class='cg'>58.06%</span><br><small>上周66.67% / <span class='cr'>-8.6%</span></small></td><td><span class='cr'>61.11%</span><br><small>上周77.27% / <span class='cr'>-16.2%</span></small></td><td><span class='cr'>0.00%</span><br><small>上周0.00% / <span class='cg'>+0.0%</span></small></td><td><span class='cr'>18.84%</span><br><small>上周20.47% / <span class='cr'>-1.6%</span></small></td><td><span class='cr'>0.00%</span><br><small>上周0.00% / <span class='cg'>+0.0%</span></small></td><td><span class='cr'>60.87%</span><br><small>上周72.41% / <span class='cr'>-11.5%</span></small></td><td><span class='cr'>31</span><br><small>上周33 / <span class='cr'>-6.1%</span></small></td><td><span class='badge risk red'>5项</span></td><td>完成率&lt;100%、总引流占比&lt;25%、续卡占比&lt;20%、扫楼占比&lt;15%、大卡率占比&lt;70%</td><td>-</td></tr><tr><td><span class='badge rating red'>红灯</span></td><td>南阳吾悦</td><td>A类</td><td>14</td><td><span class='cr'>¥25,424</span><br><small>上周¥28,373 / <span class='cr'>-10.4%</span></small></td><td><span class='cr'>70.81%</span><br><small>上周70.21% / <span class='cg'>+0.6%</span></small></td><td><span class='cr'>¥20,639</span><br><small>上周¥21,573 / <span class='cr'>-4.3%</span></small></td><td><span class='cg'>74.51%</span><br><small>上周64.79% / <span class='cg'>+9.7%</span></small></td><td><span class='cg'>78.95%</span><br><small>上周47.83% / <span class='cg'>+31.1%</span></small></td><td><span class='cr'>4.83%</span><br><small>上周0.27% / <span class='cg'>+4.6%</span></small></td><td><span class='cr'>18.82%</span><br><small>上周23.97% / <span class='cr'>-5.1%</span></small></td><td><span class='cr'>2.86%</span><br><small>上周0.27% / <span class='cg'>+2.6%</span></small></td><td><span class='cg'>83.67%</span><br><small>上周60.00% / <span class='cg'>+23.7%</span></small></td><td><span class='cr'>51</span><br><small>上周71 / <span class='cr'>-28.2%</span></small></td><td><span class='badge risk red'>4项</span></td><td>完成率&lt;100%、总引流占比&lt;25%、续卡占比&lt;20%、扫楼占比&lt;15%</td><td>-</td></tr><tr><td><span class='badge rating red'>红灯</span></td><td>许昌万达</td><td>B类</td><td>14</td><td><span class='cr'>¥20,705</span><br><small>上周¥21,643 / <span class='cr'>-4.3%</span></small></td><td><span class='cr'>85.33%</span><br><small>上周82.70% / <span class='cg'>+2.6%</span></small></td><td><span class='cr'>¥11,805</span><br><small>上周¥13,643 / <span class='cr'>-13.5%</span></small></td><td><span class='cg'>63.83%</span><br><small>上周67.50% / <span class='cr'>-3.7%</span></small></td><td><span class='cr'>43.33%</span><br><small>上周77.78% / <span class='cr'>-34.4%</span></small></td><td><span class='cr'>0.00%</span><br><small>上周0.00% / <span class='cg'>+0.0%</span></small></td><td><span class='cg'>42.99%</span><br><small>上周36.96% / <span class='cg'>+6.0%</span></small></td><td><span class='cr'>0.00%</span><br><small>上周0.00% / <span class='cg'>+0.0%</span></small></td><td><span class='cr'>64.00%</span><br><small>上周86.36% / <span class='cr'>-22.4%</span></small></td><td><span class='cg'>47</span><br><small>上周40 / <span class='cg'>+17.5%</span></small></td><td><span class='badge risk red'>4项</span></td><td>完成率&lt;100%、总引流占比&lt;25%、扫楼占比&lt;15%、大卡率占比&lt;70%</td><td>新客环比17.50%，可分享拉新动作</td></tr><tr><td><span class='badge rating red'>红灯</span></td><td>南阳万达</td><td>B类</td><td>18</td><td><span class='cg'>¥20,391</span><br><small>上周¥19,214 / <span class='cg'>+6.1%</span></small></td><td><span class='cr'>67.91%</span><br><small>上周56.85% / <span class='cg'>+11.1%</span></small></td><td><span class='cr'>¥13,206</span><br><small>上周¥14,415 / <span class='cr'>-8.4%</span></small></td><td><span class='cg'>68.29%</span><br><small>上周82.86% / <span class='cr'>-14.6%</span></small></td><td><span class='cr'>60.71%</span><br><small>上周72.41% / <span class='cr'>-11.7%</span></small></td><td><span class='cr'>2.62%</span><br><small>上周2.88% / <span class='cr'>-0.3%</span></small></td><td><span class='cg'>35.24%</span><br><small>上周24.98% / <span class='cg'>+10.3%</span></small></td><td><span class='cr'>0.38%</span><br><small>上周2.88% / <span class='cr'>-2.5%</span></small></td><td><span class='cg'>74.42%</span><br><small>上周76.92% / <span class='cr'>-2.5%</span></small></td><td><span class='cg'>41</span><br><small>上周35 / <span class='cg'>+17.1%</span></small></td><td><span class='badge risk red'>3项</span></td><td>完成率&lt;100%、总引流占比&lt;25%、扫楼占比&lt;15%</td><td>新客环比17.14%，可分享拉新动作</td></tr><tr><td><span class='badge rating yellow'>黄灯</span></td><td>商丘万达</td><td>C类</td><td>13</td><td><span class='cr'>¥16,572</span><br><small>上周¥29,995 / <span class='cr'>-44.8%</span></small></td><td><span class='cr'>78.44%</span><br><small>上周126.15% / <span class='cr'>-47.7%</span></small></td><td><span class='cr'>¥11,186</span><br><small>上周¥14,940 / <span class='cr'>-25.1%</span></small></td><td><span class='cg'>73.17%</span><br><small>上周68.42% / <span class='cg'>+4.7%</span></small></td><td><span class='cr'>53.33%</span><br><small>上周61.54% / <span class='cr'>-8.2%</span></small></td><td><span class='cg'>31.31%</span><br><small>上周3.93% / <span class='cg'>+27.4%</span></small></td><td><span class='cg'>32.50%</span><br><small>上周50.19% / <span class='cr'>-17.7%</span></small></td><td><span class='cg'>18.09%</span><br><small>上周3.15% / <span class='cg'>+14.9%</span></small></td><td><span class='cr'>66.67%</span><br><small>上周78.38% / <span class='cr'>-11.7%</span></small></td><td><span class='cr'>41</span><br><small>上周57 / <span class='cr'>-28.1%</span></small></td><td><span class='badge risk yellow'>2项</span></td><td>完成率&lt;100%、大卡率占比&lt;70%</td><td>-</td></tr></tbody></table></div>
+        </section>
+        
+    
+        <section class="page">
+          <div class="page-guide">第3页 · 2区城市经理只看本区</div>
+          <h2 class="section-title">2区周会页：1看整体 2看门店 3定动作</h2>
+          <div class="area-brief">
+            <div><b>7</b><span>门店数</span></div>
+            <div><b>¥211,355</b><em>106.45%</em><span>总营收 / 完成率</span></div>
+            <div><b>469</b><span>本周新客 · <span class='cr'>-13.47%</span></span></div>
+            <div><b>7/0</b><span>红/黄灯</span></div>
+            <div><b>25</b><span>未达标指标</span></div>
+          </div>
+          <h3>1. 2区整体区域表现</h3>
+          <table class='metric-table area-metric-table'><thead><tr><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>变化</th><th>判断</th></tr></thead><tbody><tr><td class='metric-name'>新客数</td><td>542</td><td class='now'>469</td><td>-73</td><td><span class='cr'>-13.5%</span></td><td><span class='cr'>较上周下降</span></td></tr><tr><td class='metric-name'>新签营收</td><td>¥131,650</td><td class='now'>¥174,978</td><td>¥43,328</td><td><span class='cg'>+32.9%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>总营收</td><td>¥179,863</td><td class='now'>¥211,355</td><td>¥31,492</td><td><span class='cg'>+17.5%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>完成率</td><td>80.70%</td><td class='now'>106.45%</td><td>+25.7%</td><td><span class='cg'>+25.7%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-name'>新签办卡率</td><td>49.26%</td><td class='now'>50.75%</td><td>+1.5%</td><td><span class='cg'>+1.5%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-name'>总续卡金额</td><td>¥48,213</td><td class='now'>¥36,377</td><td>-¥11,836</td><td><span class='cr'>-24.5%</span></td><td><span class='cr'>较上周下降</span></td></tr><tr><td class='metric-name'>总续卡占比</td><td>26.81%</td><td class='now'>17.21%</td><td>-9.6%</td><td><span class='cr'>-9.6%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>总引流金额</td><td>¥18,850</td><td class='now'>¥36,598</td><td>¥17,748</td><td><span class='cg'>+94.2%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>总引流占比</td><td>10.48%</td><td class='now'>17.32%</td><td>+6.8%</td><td><span class='cr'>+6.8%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>扫楼金额</td><td>¥7,761</td><td class='now'>¥13,215</td><td>¥5,454</td><td><span class='cg'>+70.3%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>扫楼占比</td><td>4.31%</td><td class='now'>6.25%</td><td>+1.9%</td><td><span class='cr'>+1.9%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>大卡率占比</td><td>72.46%</td><td class='now'>64.98%</td><td>-7.5%</td><td><span class='cr'>-7.5%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>新签大卡率</td><td>80.52%</td><td class='now'>70.17%</td><td>-10.4%</td><td><span class='cr'>-10.4%</span></td><td><span class='cr'>较上周下降</span></td></tr></tbody></table>
+          <h3>2. 2区门店哪里好，哪里不好</h3>
+          <div class="table-scroll"><table class="dense store-table"><colgroup>
+<col style="width:70px"><col style="width:110px"><col style="width:50px"><col style="width:54px">
+<col style="width:110px"><col style="width:100px"><col style="width:115px"><col style="width:105px">
+<col style="width:105px"><col style="width:105px"><col style="width:100px"><col style="width:100px">
+<col style="width:105px"><col style="width:100px"><col style="width:70px"><col style="width:230px"><col style="width:240px">
+</colgroup><thead><tr><th>评级</th><th>门店</th><th>店型</th><th>主题数</th><th>总营收</th><th>完成率</th><th>新签营收/环比</th><th>新签办卡率</th><th>新签大卡率</th><th>总引流</th><th>续卡</th><th>扫楼</th><th>大卡率占比</th><th>新客环比</th><th>风险</th><th>短板</th><th>亮点备注</th></tr></thead><tbody><tr><td><span class='badge rating red'>红灯</span></td><td>周口万达</td><td>C类</td><td>9</td><td><span class='cr'>¥12,342</span><br><small>上周¥18,258 / <span class='cr'>-32.4%</span></small></td><td><span class='cr'>60.53%</span><br><small>上周79.52% / <span class='cr'>-19.0%</span></small></td><td><span class='cr'>¥10,692</span><br><small>上周¥12,110 / <span class='cr'>-11.7%</span></small></td><td><span class='cg'>42.86%</span><br><small>上周38.46% / <span class='cg'>+4.4%</span></small></td><td><span class='cr'>54.17%</span><br><small>上周60.00% / <span class='cr'>-5.8%</span></small></td><td><span class='cr'>21.51%</span><br><small>上周11.50% / <span class='cg'>+10.0%</span></small></td><td><span class='cr'>13.37%</span><br><small>上周33.67% / <span class='cr'>-20.3%</span></small></td><td><span class='cr'>3.51%</span><br><small>上周3.81% / <span class='cr'>-0.3%</span></small></td><td><span class='cr'>60.71%</span><br><small>上周75.61% / <span class='cr'>-14.9%</span></small></td><td><span class='cr'>56</span><br><small>上周65 / <span class='cr'>-13.8%</span></small></td><td><span class='badge risk red'>5项</span></td><td>完成率&lt;100%、总引流占比&lt;25%、续卡占比&lt;20%、扫楼占比&lt;15%、大卡率占比&lt;70%</td><td>-</td></tr><tr><td><span class='badge rating red'>红灯</span></td><td>洛阳泉舜</td><td>A类</td><td>12</td><td><span class='cg'>¥59,118</span><br><small>上周¥48,459 / <span class='cg'>+22.0%</span></small></td><td><span class='cg'>134.51%</span><br><small>上周97.96% / <span class='cg'>+36.5%</span></small></td><td><span class='cg'>¥47,618</span><br><small>上周¥35,859 / <span class='cg'>+32.8%</span></small></td><td><span class='cg'>45.13%</span><br><small>上周48.23% / <span class='cr'>-3.1%</span></small></td><td><span class='cr'>50.98%</span><br><small>上周55.88% / <span class='cr'>-4.9%</span></small></td><td><span class='cr'>7.69%</span><br><small>上周2.23% / <span class='cg'>+5.5%</span></small></td><td><span class='cr'>19.45%</span><br><small>上周26.00% / <span class='cr'>-6.5%</span></small></td><td><span class='cr'>2.30%</span><br><small>上周1.72% / <span class='cg'>+0.6%</span></small></td><td><span class='cr'>64.86%</span><br><small>上周68.42% / <span class='cr'>-3.6%</span></small></td><td><span class='cr'>113</span><br><small>上周141 / <span class='cr'>-19.9%</span></small></td><td><span class='badge risk red'>4项</span></td><td>总引流占比&lt;25%、续卡占比&lt;20%、扫楼占比&lt;15%、大卡率占比&lt;70%</td><td>本区营收最高¥59,118</td></tr><tr><td><span class='badge rating red'>红灯</span></td><td>洛阳中州万达</td><td>B类</td><td>10</td><td><span class='cg'>¥57,467</span><br><small>上周¥26,574 / <span class='cg'>+116.3%</span></small></td><td><span class='cg'>231.93%</span><br><small>上周95.32% / <span class='cg'>+136.6%</span></small></td><td><span class='cg'>¥55,267</span><br><small>上周¥24,174 / <span class='cg'>+128.6%</span></small></td><td><span class='cg'>44.59%</span><br><small>上周42.73% / <span class='cg'>+1.9%</span></small></td><td><span class='cr'>36.36%</span><br><small>上周46.81% / <span class='cr'>-10.4%</span></small></td><td><span class='cr'>2.56%</span><br><small>上周10.14% / <span class='cr'>-7.6%</span></small></td><td><span class='cr'>3.83%</span><br><small>上周9.03% / <span class='cr'>-5.2%</span></small></td><td><span class='cr'>1.99%</span><br><small>上周4.62% / <span class='cr'>-2.6%</span></small></td><td><span class='cr'>44.74%</span><br><small>上周52.83% / <span class='cr'>-8.1%</span></small></td><td><span class='cr'>74</span><br><small>上周110 / <span class='cr'>-32.7%</span></small></td><td><span class='badge risk red'>4项</span></td><td>总引流占比&lt;25%、续卡占比&lt;20%、扫楼占比&lt;15%、大卡率占比&lt;70%</td><td>-</td></tr><tr><td><span class='badge rating red'>红灯</span></td><td>焦作万达</td><td>A类</td><td>15</td><td><span class='cr'>¥34,126</span><br><small>上周¥37,768 / <span class='cr'>-9.6%</span></small></td><td><span class='cr'>84.43%</span><br><small>上周83.02% / <span class='cg'>+1.4%</span></small></td><td><span class='cr'>¥24,226</span><br><small>上周¥27,268 / <span class='cr'>-11.2%</span></small></td><td><span class='cg'>59.52%</span><br><small>上周68.67% / <span class='cr'>-9.2%</span></small></td><td><span class='cr'>58.00%</span><br><small>上周61.40% / <span class='cr'>-3.4%</span></small></td><td><span class='cg'>42.62%</span><br><small>上周1.32% / <span class='cg'>+41.3%</span></small></td><td><span class='cg'>29.01%</span><br><small>上周27.80% / <span class='cg'>+1.2%</span></small></td><td><span class='cr'>12.52%</span><br><small>上周1.32% / <span class='cg'>+11.2%</span></small></td><td><span class='cr'>68.57%</span><br><small>上周69.74% / <span class='cr'>-1.2%</span></small></td><td><span class='cg'>84</span><br><small>上周83 / <span class='cg'>+1.2%</span></small></td><td><span class='badge risk red'>3项</span></td><td>完成率&lt;100%、扫楼占比&lt;15%、大卡率占比&lt;70%</td><td>新客环比1.20%，可分享拉新动作</td></tr><tr><td><span class='badge rating red'>红灯</span></td><td>郑州惠济万达</td><td>B类</td><td>10</td><td><span class='cr'>¥19,046</span><br><small>上周¥20,014 / <span class='cr'>-4.8%</span></small></td><td><span class='cr'>61.25%</span><br><small>上周58.18% / <span class='cg'>+3.1%</span></small></td><td><span class='cg'>¥16,758</span><br><small>上周¥10,764 / <span class='cg'>+55.7%</span></small></td><td><span class='cg'>58.18%</span><br><small>上周41.67% / <span class='cg'>+16.5%</span></small></td><td><span class='cr'>62.50%</span><br><small>上周65.00% / <span class='cr'>-2.5%</span></small></td><td><span class='cg'>25.62%</span><br><small>上周21.16% / <span class='cg'>+4.5%</span></small></td><td><span class='cr'>12.01%</span><br><small>上周46.22% / <span class='cr'>-34.2%</span></small></td><td><span class='cg'>15.52%</span><br><small>上周1.95% / <span class='cg'>+13.6%</span></small></td><td><span class='cr'>67.57%</span><br><small>上周80.95% / <span class='cr'>-13.4%</span></small></td><td><span class='cg'>55</span><br><small>上周48 / <span class='cg'>+14.6%</span></small></td><td><span class='badge risk red'>3项</span></td><td>完成率&lt;100%、续卡占比&lt;20%、大卡率占比&lt;70%</td><td>新客环比14.58%，可分享拉新动作</td></tr><tr><td><span class='badge rating red'>红灯</span></td><td>新乡牧野万达</td><td>C类</td><td>13</td><td><span class='cg'>¥14,678</span><br><small>上周¥7,831 / <span class='cg'>+87.4%</span></small></td><td><span class='cr'>77.42%</span><br><small>上周36.69% / <span class='cg'>+40.7%</span></small></td><td><span class='cg'>¥10,078</span><br><small>上周¥4,831 / <span class='cg'>+108.6%</span></small></td><td><span class='cg'>44.90%</span><br><small>上周25.00% / <span class='cg'>+19.9%</span></small></td><td><span class='cr'>22.73%</span><br><small>上周33.33% / <span class='cr'>-10.6%</span></small></td><td><span class='cg'>42.18%</span><br><small>上周39.31% / <span class='cg'>+2.9%</span></small></td><td><span class='cg'>31.34%</span><br><small>上周38.31% / <span class='cr'>-7.0%</span></small></td><td><span class='cr'>13.28%</span><br><small>上周13.94% / <span class='cr'>-0.7%</span></small></td><td><span class='cr'>48.48%</span><br><small>上周60.00% / <span class='cr'>-11.5%</span></small></td><td><span class='cg'>49</span><br><small>上周36 / <span class='cg'>+36.1%</span></small></td><td><span class='badge risk red'>3项</span></td><td>完成率&lt;100%、扫楼占比&lt;15%、大卡率占比&lt;70%</td><td>新客环比36.11%，可分享拉新动作</td></tr><tr><td><span class='badge rating red'>红灯</span></td><td>郑州信万</td><td>C类</td><td>14</td><td><span class='cr'>¥14,577</span><br><small>上周¥20,959 / <span class='cr'>-30.5%</span></small></td><td><span class='cr'>76.86%</span><br><small>上周98.28% / <span class='cr'>-21.4%</span></small></td><td><span class='cr'>¥10,338</span><br><small>上周¥16,644 / <span class='cr'>-37.9%</span></small></td><td><span class='cg'>68.42%</span><br><small>上周69.49% / <span class='cr'>-1.1%</span></small></td><td><span class='cr'>92.31%</span><br><small>上周97.56% / <span class='cr'>-5.3%</span></small></td><td><span class='cr'>15.83%</span><br><small>上周24.63% / <span class='cr'>-8.8%</span></small></td><td><span class='cg'>29.08%</span><br><small>上周20.59% / <span class='cg'>+8.5%</span></small></td><td><span class='cr'>7.58%</span><br><small>上周14.42% / <span class='cr'>-6.8%</span></small></td><td><span class='cg'>94.59%</span><br><small>上周98.08% / <span class='cr'>-3.5%</span></small></td><td><span class='cr'>38</span><br><small>上周59 / <span class='cr'>-35.6%</span></small></td><td><span class='badge risk red'>3项</span></td><td>完成率&lt;100%、总引流占比&lt;25%、扫楼占比&lt;15%</td><td>-</td></tr></tbody></table></div>
+        </section>
+        
+    
+        <section class="page">
+          <div class="page-guide">第4页 · 3区城市经理只看本区</div>
+          <h2 class="section-title">3区周会页：1看整体 2看门店 3定动作</h2>
+          <div class="area-brief">
+            <div><b>6</b><span>门店数</span></div>
+            <div><b>¥120,356</b><em>68.35%</em><span>总营收 / 完成率</span></div>
+            <div><b>444</b><span>本周新客 · <span class='cr'>-11.38%</span></span></div>
+            <div><b>6/0</b><span>红/黄灯</span></div>
+            <div><b>23</b><span>未达标指标</span></div>
+          </div>
+          <h3>1. 3区整体区域表现</h3>
+          <table class='metric-table area-metric-table'><thead><tr><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>变化</th><th>判断</th></tr></thead><tbody><tr><td class='metric-name'>新客数</td><td>501</td><td class='now'>444</td><td>-57</td><td><span class='cr'>-11.4%</span></td><td><span class='cr'>较上周下降</span></td></tr><tr><td class='metric-name'>新签营收</td><td>¥116,976</td><td class='now'>¥104,560</td><td>-¥12,416</td><td><span class='cr'>-10.6%</span></td><td><span class='cr'>较上周下降</span></td></tr><tr><td class='metric-name'>总营收</td><td>¥139,652</td><td class='now'>¥120,356</td><td>-¥19,296</td><td><span class='cr'>-13.8%</span></td><td><span class='cr'>较上周下降</span></td></tr><tr><td class='metric-name'>完成率</td><td>82.86%</td><td class='now'>68.35%</td><td>-14.5%</td><td><span class='cr'>-14.5%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>新签办卡率</td><td>42.51%</td><td class='now'>44.82%</td><td>+2.3%</td><td><span class='cg'>+2.3%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-name'>总续卡金额</td><td>¥22,676</td><td class='now'>¥15,796</td><td>-¥6,880</td><td><span class='cr'>-30.3%</span></td><td><span class='cr'>较上周下降</span></td></tr><tr><td class='metric-name'>总续卡占比</td><td>16.24%</td><td class='now'>13.12%</td><td>-3.1%</td><td><span class='cr'>-3.1%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>总引流金额</td><td>¥33,757</td><td class='now'>¥43,027</td><td>¥9,270</td><td><span class='cg'>+27.5%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>总引流占比</td><td>24.17%</td><td class='now'>35.75%</td><td>+11.6%</td><td><span class='cg'>+11.6%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-name'>扫楼金额</td><td>¥7,390</td><td class='now'>¥11,429</td><td>¥4,039</td><td><span class='cg'>+54.7%</span></td><td><span class='cg'>较上周增长</span></td></tr><tr><td class='metric-name'>扫楼占比</td><td>5.29%</td><td class='now'>9.50%</td><td>+4.2%</td><td><span class='cr'>+4.2%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>大卡率占比</td><td>65.25%</td><td class='now'>60.61%</td><td>-4.6%</td><td><span class='cr'>-4.6%</span></td><td><span class='cr'>低于目标</span></td></tr><tr><td class='metric-name'>新签大卡率</td><td>72.77%</td><td class='now'>64.32%</td><td>-8.4%</td><td><span class='cr'>-8.4%</span></td><td><span class='cr'>较上周下降</span></td></tr></tbody></table>
+          <h3>2. 3区门店哪里好，哪里不好</h3>
+          <div class="table-scroll"><table class="dense store-table"><colgroup>
+<col style="width:70px"><col style="width:110px"><col style="width:50px"><col style="width:54px">
+<col style="width:110px"><col style="width:100px"><col style="width:115px"><col style="width:105px">
+<col style="width:105px"><col style="width:105px"><col style="width:100px"><col style="width:100px">
+<col style="width:105px"><col style="width:100px"><col style="width:70px"><col style="width:230px"><col style="width:240px">
+</colgroup><thead><tr><th>评级</th><th>门店</th><th>店型</th><th>主题数</th><th>总营收</th><th>完成率</th><th>新签营收/环比</th><th>新签办卡率</th><th>新签大卡率</th><th>总引流</th><th>续卡</th><th>扫楼</th><th>大卡率占比</th><th>新客环比</th><th>风险</th><th>短板</th><th>亮点备注</th></tr></thead><tbody><tr><td><span class='badge rating red'>红灯</span></td><td>安阳万达</td><td>C类</td><td>10</td><td><span class='cr'>¥6,444</span><br><small>上周¥11,323 / <span class='cr'>-43.1%</span></small></td><td><span class='cr'>36.49%</span><br><small>上周64.12% / <span class='cr'>-27.6%</span></small></td><td><span class='cr'>¥6,044</span><br><small>上周¥7,723 / <span class='cr'>-21.7%</span></small></td><td><span class='cr'>36.36%</span><br><small>上周40.00% / <span class='cr'>-3.6%</span></small></td><td><span class='cr'>41.67%</span><br><small>上周57.14% / <span class='cr'>-15.5%</span></small></td><td><span class='cg'>80.01%</span><br><small>上周8.44% / <span class='cg'>+71.6%</span></small></td><td><span class='cr'>6.21%</span><br><small>上周31.79% / <span class='cr'>-25.6%</span></small></td><td><span class='cr'>0.00%</span><br><small>上周0.00% / <span class='cg'>+0.0%</span></small></td><td><span class='cr'>46.15%</span><br><small>上周71.43% / <span class='cr'>-25.3%</span></small></td><td><span class='cr'>33</span><br><small>上周35 / <span class='cr'>-5.7%</span></small></td><td><span class='badge risk red'>5项</span></td><td>完成率&lt;100%、新签办卡率&lt;40%、续卡占比&lt;20%、扫楼占比&lt;15%、大卡率占比&lt;70%</td><td>总引流占比80.01%，可复盘获客动作</td></tr><tr><td><span class='badge rating red'>红灯</span></td><td>武汉荟聚</td><td>A类</td><td>10</td><td><span class='cr'>¥37,327</span><br><small>上周¥37,951 / <span class='cr'>-1.6%</span></small></td><td><span class='cr'>84.91%</span><br><small>上周96.05% / <span class='cr'>-11.1%</span></small></td><td><span class='cg'>¥35,327</span><br><small>上周¥34,951 / <span class='cg'>+1.1%</span></small></td><td><span class='cg'>58.87%</span><br><small>上周42.55% / <span class='cg'>+16.3%</span></small></td><td><span class='cr'>45.21%</span><br><small>上周56.67% / <span class='cr'>-11.5%</span></small></td><td><span class='cg'>30.45%</span><br><small>上周34.32% / <span class='cr'>-3.9%</span></small></td><td><span class='cr'>5.36%</span><br><small>上周7.90% / <span class='cr'>-2.5%</span></small></td><td><span class='cr'>10.93%</span><br><small>上周12.97% / <span class='cr'>-2.0%</span></small></td><td><span class='cr'>48.05%</span><br><small>上周60.00% / <span class='cr'>-11.9%</span></small></td><td><span class='cr'>124</span><br><small>上周141 / <span class='cr'>-12.1%</span></small></td><td><span class='badge risk red'>4项</span></td><td>完成率&lt;100%、续卡占比&lt;20%、扫楼占比&lt;15%、大卡率占比&lt;70%</td><td>本区营收最高¥37,327</td></tr><tr><td><span class='badge rating red'>红灯</span></td><td>郑州二七万象城</td><td>B类</td><td>15</td><td><span class='cr'>¥21,827</span><br><small>上周¥25,656 / <span class='cr'>-14.9%</span></small></td><td><span class='cr'>67.26%</span><br><small>上周80.48% / <span class='cr'>-13.2%</span></small></td><td><span class='cr'>¥15,827</span><br><small>上周¥22,556 / <span class='cr'>-29.8%</span></small></td><td><span class='cr'>32.88%</span><br><small>上周38.78% / <span class='cr'>-5.9%</span></small></td><td><span class='cg'>75.00%</span><br><small>上周55.26% / <span class='cg'>+19.7%</span></small></td><td><span class='cr'>9.59%</span><br><small>上周13.56% / <span class='cr'>-4.0%</span></small></td><td><span class='cg'>27.49%</span><br><small>上周12.08% / <span class='cg'>+15.4%</span></small></td><td><span class='cr'>0.83%</span><br><small>上周0.00% / <span class='cg'>+0.8%</span></small></td><td><span class='cg'>82.86%</span><br><small>上周60.00% / <span class='cg'>+22.9%</span></small></td><td><span class='cr'>73</span><br><small>上周98 / <span class='cr'>-25.5%</span></small></td><td><span class='badge risk red'>4项</span></td><td>完成率&lt;100%、新签办卡率&lt;40%、总引流占比&lt;25%、扫楼占比&lt;15%</td><td>-</td></tr><tr><td><span class='badge rating red'>红灯</span></td><td>滑县吾悦</td><td>C类</td><td>8</td><td><span class='cr'>¥7,070</span><br><small>上周¥11,563 / <span class='cr'>-38.9%</span></small></td><td><span class='cr'>42.56%</span><br><small>上周73.81% / <span class='cr'>-31.2%</span></small></td><td><span class='cr'>¥6,073</span><br><small>上周¥10,068 / <span class='cr'>-39.7%</span></small></td><td><span class='cg'>44.74%</span><br><small>上周39.06% / <span class='cg'>+5.7%</span></small></td><td><span class='cg'>76.47%</span><br><small>上周64.00% / <span class='cg'>+12.5%</span></small></td><td><span class='cr'>6.63%</span><br><small>上周12.95% / <span class='cr'>-6.3%</span></small></td><td><span class='cr'>14.10%</span><br><small>上周12.93% / <span class='cg'>+1.2%</span></small></td><td><span class='cr'>1.90%</span><br><small>上周3.81% / <span class='cr'>-1.9%</span></small></td><td><span class='cg'>80.00%</span><br><small>上周70.00% / <span class='cg'>+10.0%</span></small></td><td><span class='cr'>38</span><br><small>上周64 / <span class='cr'>-40.6%</span></small></td><td><span class='badge risk red'>4项</span></td><td>完成率&lt;100%、总引流占比&lt;25%、续卡占比&lt;20%、扫楼占比&lt;15%</td><td>-</td></tr><tr><td><span class='badge rating red'>红灯</span></td><td>郑州中原万达</td><td>B类</td><td>13</td><td><span class='cg'>¥24,953</span><br><small>上周¥17,327 / <span class='cg'>+44.0%</span></small></td><td><span class='cr'>80.23%</span><br><small>上周55.71% / <span class='cg'>+24.5%</span></small></td><td><span class='cg'>¥22,353</span><br><small>上周¥14,527 / <span class='cg'>+53.9%</span></small></td><td><span class='cg'>40.00%</span><br><small>上周35.38% / <span class='cg'>+4.6%</span></small></td><td><span class='cr'>69.44%</span><br><small>上周69.57% / <span class='cr'>-0.1%</span></small></td><td><span class='cg'>48.46%</span><br><small>上周26.07% / <span class='cg'>+22.4%</span></small></td><td><span class='cr'>10.42%</span><br><small>上周16.16% / <span class='cr'>-5.7%</span></small></td><td><span class='cr'>5.46%</span><br><small>上周0.00% / <span class='cg'>+5.5%</span></small></td><td><span class='cg'>73.17%</span><br><small>上周75.00% / <span class='cr'>-1.8%</span></small></td><td><span class='cg'>90</span><br><small>上周65 / <span class='cg'>+38.5%</span></small></td><td><span class='badge risk red'>3项</span></td><td>完成率&lt;100%、续卡占比&lt;20%、扫楼占比&lt;15%</td><td>新客环比38.46%，可分享拉新动作</td></tr><tr><td><span class='badge rating red'>红灯</span></td><td>开封万达</td><td>A类</td><td>13</td><td><span class='cr'>¥22,735</span><br><small>上周¥35,832 / <span class='cr'>-36.6%</span></small></td><td><span class='cr'>66.25%</span><br><small>上周109.52% / <span class='cr'>-43.3%</span></small></td><td><span class='cr'>¥18,936</span><br><small>上周¥27,151 / <span class='cr'>-30.3%</span></small></td><td><span class='cg'>43.02%</span><br><small>上周54.08% / <span class='cr'>-11.1%</span></small></td><td><span class='cr'>40.54%</span><br><small>上周56.60% / <span class='cr'>-16.1%</span></small></td><td><span class='cg'>52.12%</span><br><small>上周28.69% / <span class='cg'>+23.4%</span></small></td><td><span class='cr'>16.71%</span><br><small>上周24.23% / <span class='cr'>-7.5%</span></small></td><td><span class='cg'>24.94%</span><br><small>上周5.66% / <span class='cg'>+19.3%</span></small></td><td><span class='cr'>48.89%</span><br><small>上周65.71% / <span class='cr'>-16.8%</span></small></td><td><span class='cr'>86</span><br><small>上周98 / <span class='cr'>-12.2%</span></small></td><td><span class='badge risk red'>3项</span></td><td>完成率&lt;100%、续卡占比&lt;20%、大卡率占比&lt;70%</td><td>总引流占比52.12%，可复盘获客动作</td></tr></tbody></table></div>
+        </section>
+        
+    
+        <section class="page">
+          <div class="page-guide">第5页 · 店长业绩排名</div>
+          <h2 class="section-title">店长本周业绩和上周业绩排名</h2>
+          <div class="area-brief">
+            <div><b>¥0</b><span>店长本周合计</span></div>
+            <div><b>¥0</b><span>店长上周合计</span></div>
+            <div><b><span class="cg">¥0</span></b><span>合计增减</span></div>
+            <div><b>0/0</b><span>上升/下降人数</span></div>
+            <div><b>-</b><span>本周第1 · -</span></div>
+          </div>
+          <div class="alert">本页全部读取飞书员工数据。上周为空代表飞书上周员工记录未匹配到同门店同姓名。</div>
+          <div class="table-scroll"><div class='alert'>飞书本周员工数据暂未录入，店长/店员排名待补充。</div></div>
+        </section>
+        
+    
+        <section class="page employee-page">
+          <div class="page-guide">第6页 · 店员区域排名</div>
+          <h2 class="section-title">店员区域排名：分区域看谁做得好</h2>
+          <div class="alert">本页全部读取飞书员工数据。</div>
+          
+            <h3>1区店员排名</h3>
+            <div class="area-brief employee-brief">
+              <div><b>0</b><span>店员数</span></div>
+              <div><b>¥0</b><span>本周合计</span></div>
+              <div><b>¥0</b><span>上周合计</span></div>
+              <div><b><span class="cg">¥0</span></b><span>合计增减</span></div>
+              <div><b>- · -</b><span>本区第1</span></div>
+            </div>
+            <div class="table-scroll"><div class='alert'>飞书本周员工数据暂未录入，店长/店员排名待补充。</div></div>
+            
+            <h3>2区店员排名</h3>
+            <div class="area-brief employee-brief">
+              <div><b>0</b><span>店员数</span></div>
+              <div><b>¥0</b><span>本周合计</span></div>
+              <div><b>¥0</b><span>上周合计</span></div>
+              <div><b><span class="cg">¥0</span></b><span>合计增减</span></div>
+              <div><b>- · -</b><span>本区第1</span></div>
+            </div>
+            <div class="table-scroll"><div class='alert'>飞书本周员工数据暂未录入，店长/店员排名待补充。</div></div>
+            
+            <h3>3区店员排名</h3>
+            <div class="area-brief employee-brief">
+              <div><b>0</b><span>店员数</span></div>
+              <div><b>¥0</b><span>本周合计</span></div>
+              <div><b>¥0</b><span>上周合计</span></div>
+              <div><b><span class="cg">¥0</span></b><span>合计增减</span></div>
+              <div><b>- · -</b><span>本区第1</span></div>
+            </div>
+            <div class="table-scroll"><div class='alert'>飞书本周员工数据暂未录入，店长/店员排名待补充。</div></div>
+            
+        </section>
+        
+    
+        <section class="page employee-page">
+          <div class="page-guide">第7页 · 店员全员排名</div>
+          <h2 class="section-title">店员全员排名：全品牌统一看优秀和短板</h2>
+          <div class="area-brief employee-brief">
+            <div><b>0</b><span>店员数</span></div>
+            <div><b>¥0</b><span>本周合计</span></div>
+            <div><b><span class="cg">¥0</span></b><span>合计增减</span></div>
+            <div><b>0/0</b><span>上升/下降人数</span></div>
+            <div><b>- · -</b><span>全员第1</span></div>
+          </div>
+          <div class="alert">本页全部读取飞书员工数据，只展示店员，不混入店长。</div>
+          <div class="table-scroll"><div class='alert'>飞书本周员工数据暂未录入，店长/店员排名待补充。</div></div>
+        </section>
+        
+    </div><script>
+(function () {
+  var pages = Array.from(document.querySelectorAll('.page'));
+  var tabs = Array.from(document.querySelectorAll('.deck-tab'));
+  var status = document.querySelector('.deck-status');
+  var toggle = document.querySelector('[data-action="toggle"]');
+  var current = 0;
+  var playing = true;
+  var intervalMs = 60000;
+  var timer = null;
+  function showPage(index) {
+    current = (index + pages.length) % pages.length;
+    pages.forEach(function (page, i) { page.classList.toggle('active', i === current); });
+    tabs.forEach(function (tab, i) { tab.classList.toggle('active', i === current); });
+    if (status) status.textContent = (playing ? '自动翻页中' : '已暂停自动翻页') + ' · 第' + (current + 1) + '/' + pages.length + '页';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function restartTimer() {
+    if (timer) clearInterval(timer);
+    if (playing) timer = setInterval(function () { showPage(current + 1); }, intervalMs);
+  }
+  tabs.forEach(function (tab) { tab.addEventListener('click', function () { showPage(Number(tab.dataset.page || 0)); restartTimer(); }); });
+  document.querySelector('[data-action="prev"]').addEventListener('click', function () { showPage(current - 1); restartTimer(); });
+  document.querySelector('[data-action="next"]').addEventListener('click', function () { showPage(current + 1); restartTimer(); });
+  toggle.addEventListener('click', function () { playing = !playing; toggle.textContent = playing ? '暂停自动翻页' : '开始自动翻页'; restartTimer(); showPage(current); });
+  document.addEventListener('keydown', function (event) { if (event.key === 'ArrowRight') { showPage(current + 1); restartTimer(); } if (event.key === 'ArrowLeft') { showPage(current - 1); restartTimer(); } });
+  showPage(0); restartTimer();
+})();
+</script></body></html>
