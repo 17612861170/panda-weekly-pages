@@ -163,6 +163,46 @@ td:last-child { text-align:left; }
 @media print { body { background:white; } .deck-toolbar { display:none; } .container { padding:0; } .deck-mode .page,.page { display:block; box-shadow:none; border-radius:0; page-break-before:always; } .page:first-child { page-break-before:auto; } }
 @media (max-width:1000px) { .deck-tabs { grid-template-columns:1fr 1fr; } .deck-actions { align-items:stretch; flex-wrap:wrap; } .hero-grid,.area-brief,.rank-grid,.region-card-grid { grid-template-columns:1fr; } .container { padding:10px; } .page { padding:18px; } .report-header { display:block; } .header-score { text-align:left; margin-top:12px; } }
 
+table { border:1px solid #e5b995; }
+th { background:#ffd6b8; color:#a92f0d; border-color:#e8ad81; }
+td { border-color:#e8d5c6; }
+.metric-table { border:1px solid #e6b68f; background:#fffaf5; }
+.metric-table th { background:#ffcfae; color:#a62b0c; border-color:#e6ab7d; border-bottom:2px solid #df8e55; }
+.metric-table tbody tr:nth-child(odd) td { background:#fff9f3; }
+.metric-table tbody tr:nth-child(even) td { background:#ffeddf; }
+.metric-table tbody td:first-child { background:#ffe2cd; color:#8f2f10; font-weight:900; }
+.metric-table tbody tr:nth-child(even) td:first-child { background:#ffd4b7; }
+.metric-table td:last-child .cg { background:#c6f0dc; color:#087a48; }
+.metric-table td:last-child .cy { background:#ffe0b8; color:#b75500; }
+.metric-table td:last-child .cr { background:#ffd0d7; color:#c9273c; }
+.area-metric-table { border:1px solid #edb78f; background:#fffaf5; }
+.area-metric-table th { background:#ffd9bf; color:#ad2f0b; border-color:#edb78f; border-bottom:2px solid #e99861; }
+.area-metric-table td { background:#fff8f1; border-color:#ead8ca; }
+.area-metric-table tbody tr:nth-child(even) td { background:#ffeadb; }
+.area-metric-table td:first-child { background:#ffe0ca; color:#8f2f10; font-weight:900; }
+.area-metric-table tbody tr:nth-child(even) td:first-child { background:#ffd2b3; }
+.region-summary th { background:#ffcfae; color:#9f2a0b; border-color:#e3a97d; }
+.region-summary tbody tr:nth-child(odd) td { background:#fff8f2; }
+.region-summary tbody tr:nth-child(even) td { background:#ffebdc; }
+.region-summary th:first-child { background:#f7bb8f; }
+.region-summary tbody tr:nth-child(odd) td:first-child { background:#ffe0c9; }
+.region-summary tbody tr:nth-child(even) td:first-child { background:#ffd1b1; }
+.store-table th { background:#ffcfae; color:#9f2a0b; border-color:#e3a97d; }
+.store-table th:nth-child(-n+6) { background:#f7bb8f; }
+.store-table tbody tr:nth-child(odd) td { background:#fff9f4; }
+.store-table tbody tr:nth-child(even) td { background:#ffecde; }
+.store-table tbody tr:nth-child(odd) td:nth-child(-n+6) { background:#ffe3d0; }
+.store-table tbody tr:nth-child(even) td:nth-child(-n+6) { background:#ffd5b9; }
+.closure-table th { background:#f6bd92; color:#9e2c0e; border-color:#e2a778; }
+.closure-table .object-cell { background:#ffd9bd; }
+.closure-table .last-issue { background:#ffe8e5; }
+.closure-table .done-action { background:#fff0dc; }
+.closure-table .status-cell { background:#fff4e9; }
+.closure-table .reason-analysis { background:#ffeadf; }
+.closure-table .next-action { background:#ffebc9; }
+.rank-table th { background:#c8dfef; color:#123d5b; border-color:#9fbed5; }
+.rank-table tbody tr:nth-child(odd) td { background:#f4f9fc; }
+.rank-table tbody tr:nth-child(even) td { background:#e7f1f8; }
 .closure-store-list { display:grid; gap:16px; overflow:visible; }
 .closure-store-scroll { width:100%; overflow-x:auto; overflow-y:visible; scrollbar-gutter:stable; border:1px solid #eadfd6; background:#fff; box-shadow:0 1px 2px rgba(15,23,42,.05); }
 .closure-store-scroll .closure-table { margin:0; min-width:1600px !important; }
