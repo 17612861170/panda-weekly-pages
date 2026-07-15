@@ -163,58 +163,130 @@ td:last-child { text-align:left; }
 @media print { body { background:white; } .deck-toolbar { display:none; } .container { padding:0; } .deck-mode .page,.page { display:block; box-shadow:none; border-radius:0; page-break-before:always; } .page:first-child { page-break-before:auto; } }
 @media (max-width:1000px) { .deck-tabs { grid-template-columns:1fr 1fr; } .deck-actions { align-items:stretch; flex-wrap:wrap; } .hero-grid,.area-brief,.rank-grid,.region-card-grid { grid-template-columns:1fr; } .container { padding:10px; } .page { padding:18px; } .report-header { display:block; } .header-score { text-align:left; margin-top:12px; } }
 
-table { border:1px solid #e5b995; }
-th { background:#ffd6b8; color:#a92f0d; border-color:#e8ad81; }
-td { border-color:#e8d5c6; }
-.metric-table { border:1px solid #e6b68f; background:#fffaf5; }
-.metric-table th { background:#ffcfae; color:#a62b0c; border-color:#e6ab7d; border-bottom:2px solid #df8e55; }
-.metric-table tbody tr:nth-child(odd) td { background:#fff9f3; }
-.metric-table tbody tr:nth-child(even) td { background:#ffeddf; }
-.metric-table tbody td:first-child { background:#ffe2cd; color:#8f2f10; font-weight:900; }
-.metric-table tbody tr:nth-child(even) td:first-child { background:#ffd4b7; }
-.metric-table td:last-child .cg { background:#c6f0dc; color:#087a48; }
-.metric-table td:last-child .cy { background:#ffe0b8; color:#b75500; }
-.metric-table td:last-child .cr { background:#ffd0d7; color:#c9273c; }
-.area-metric-table { border:1px solid #edb78f; background:#fffaf5; }
-.area-metric-table th { background:#ffd9bf; color:#ad2f0b; border-color:#edb78f; border-bottom:2px solid #e99861; }
-.area-metric-table td { background:#fff8f1; border-color:#ead8ca; }
-.area-metric-table tbody tr:nth-child(even) td { background:#ffeadb; }
-.area-metric-table td:first-child { background:#ffe0ca; color:#8f2f10; font-weight:900; }
-.area-metric-table tbody tr:nth-child(even) td:first-child { background:#ffd2b3; }
-.region-summary th { background:#ffcfae; color:#9f2a0b; border-color:#e3a97d; }
-.region-summary tbody tr:nth-child(odd) td { background:#fff8f2; }
-.region-summary tbody tr:nth-child(even) td { background:#ffebdc; }
-.region-summary th:first-child { background:#f7bb8f; }
-.region-summary tbody tr:nth-child(odd) td:first-child { background:#ffe0c9; }
-.region-summary tbody tr:nth-child(even) td:first-child { background:#ffd1b1; }
-.store-table th { background:#ffcfae; color:#9f2a0b; border-color:#e3a97d; }
-.store-table th:nth-child(-n+6) { background:#f7bb8f; }
-.store-table tbody tr:nth-child(odd) td { background:#fff9f4; }
-.store-table tbody tr:nth-child(even) td { background:#ffecde; }
-.store-table tbody tr:nth-child(odd) td:nth-child(-n+6) { background:#ffe3d0; }
-.store-table tbody tr:nth-child(even) td:nth-child(-n+6) { background:#ffd5b9; }
-.closure-table th { background:#f6bd92; color:#9e2c0e; border-color:#e2a778; }
-.closure-table .object-cell { background:#ffd9bd; }
-.closure-table .last-issue { background:#ffe8e5; }
-.closure-table .done-action { background:#fff0dc; }
-.closure-table .status-cell { background:#fff4e9; }
-.closure-table .reason-analysis { background:#ffeadf; }
-.closure-table .next-action { background:#ffebc9; }
-.rank-table th { background:#c8dfef; color:#123d5b; border-color:#9fbed5; }
-.rank-table tbody tr:nth-child(odd) td { background:#f4f9fc; }
-.rank-table tbody tr:nth-child(even) td { background:#e7f1f8; }
-.manager-table th, .employee-table th { background:#c8dfef; color:#123d5b; border-color:#9fbed5; border-bottom:2px solid #729bb9; }
-.manager-table tbody tr:nth-child(odd) td, .employee-table tbody tr:nth-child(odd) td { background:#f4f9fc; border-color:#cbdce8; }
-.manager-table tbody tr:nth-child(even) td, .employee-table tbody tr:nth-child(even) td { background:#e5f0f7; border-color:#c2d7e5; }
-.closure-store-list { display:grid; gap:16px; overflow:visible; }
-.closure-store-scroll { width:100%; overflow-x:auto; overflow-y:visible; scrollbar-gutter:stable; border:1px solid #eadfd6; background:#fff; box-shadow:0 1px 2px rgba(15,23,42,.05); }
+body { background:#edf0f3; color:#27313b; }
+.page { box-shadow:0 4px 18px rgba(30,41,59,.09); }
+.deck-toolbar { background:rgba(237,240,243,.97); border-bottom-color:#d4d9df; }
+.deck-tab { border-color:#d9dee5; background:#fff; color:#4b5563; }
+.deck-tab.active { background:#c2410c; border-color:#c2410c; box-shadow:0 2px 8px rgba(154,52,18,.22); }
+.deck-actions button { border-color:#d9dee5; color:#7c2d12; }
+.deck-actions button.primary { background:#c2410c; border-color:#c2410c; }
+.report-header { background:#cf5a1b; }
+.report-header h1 { letter-spacing:0; }
+.standards { background:#fffaf0; border-color:#efd6ad; color:#744210; }
+.section-title { color:#343a40; border-bottom-color:#c2410c; }
+h3 { color:#3f454c; border-left-color:#ea580c; }
+.block-title { background:#fff7ed; color:#7c2d12; border-bottom-color:#ead7c7; }
+.area-brief div { background:#fff; border:1px solid #dfe4ea; border-top:3px solid #c2410c; box-shadow:0 1px 3px rgba(30,41,59,.06); }
+.area-brief b { color:#7c2d12; }
+.area-brief span { color:#667085; }
+.alert { background:#fffaf0; border-left-color:#d97706; color:#4b5563; }
+
+table { border:1px solid #cfd6de; background:#fff; }
+th { background:#9a3412; color:#fff; border-color:#7c2d12; font-weight:900; }
+td { border-color:#dfe4ea; }
+.metric-table { border-color:#cfd6de; background:#fff; }
+.metric-table th { background:#9a3412; color:#fff; border-color:#7c2d12; border-bottom:2px solid #6f2a10; }
+.metric-table tbody tr:nth-child(odd) td { background:#fff; }
+.metric-table tbody tr:nth-child(even) td { background:#f7f8fa; }
+.metric-table tbody td:first-child { background:#fff3e8; color:#6f2a10; font-weight:900; }
+.metric-table tbody tr:nth-child(even) td:first-child { background:#f7e7d8; }
+.metric-table td:last-child .cg { background:#dcf5e8; color:#047857; }
+.metric-table td:last-child .cy { background:#fff0d6; color:#a84f05; }
+.metric-table td:last-child .cr { background:#ffe3e7; color:#c81e3a; }
+.area-metric-table { border-color:#cfd6de; background:#fff; }
+.area-metric-table th { background:#9a3412; color:#fff; border-color:#7c2d12; border-bottom:2px solid #6f2a10; }
+.area-metric-table td { background:#fff; border-color:#dfe4ea; }
+.area-metric-table tbody tr:nth-child(even) td { background:#f7f8fa; }
+.area-metric-table td:first-child { background:#fff3e8; color:#6f2a10; font-weight:900; }
+.area-metric-table tbody tr:nth-child(even) td:first-child { background:#f7e7d8; }
+.region-summary th { background:#9a3412; color:#fff; border-color:#7c2d12; }
+.region-summary tbody tr:nth-child(odd) td { background:#fff; }
+.region-summary tbody tr:nth-child(even) td { background:#f7f8fa; }
+.region-summary th:first-child { background:#7c2d12; }
+.region-summary tbody tr:nth-child(odd) td:first-child { background:#fff3e8; }
+.region-summary tbody tr:nth-child(even) td:first-child { background:#f7e7d8; }
+
+.store-table { min-width:1720px !important; }
+.store-table th { background:#9a3412; color:#fff; border-color:#7c2d12; }
+.store-table th:nth-child(-n+6) { background:#7c2d12; }
+.store-table tbody tr:nth-child(odd) td { background:#fff; }
+.store-table tbody tr:nth-child(even) td { background:#f7f8fa; }
+.store-table tbody tr:nth-child(odd) td:nth-child(-n+6) { background:#f8f3ef; }
+.store-table tbody tr:nth-child(even) td:nth-child(-n+6) { background:#eee7e1; }
+.store-table th:nth-child(1), .store-table td:nth-child(1) { left:0; width:60px; }
+.store-table th:nth-child(2), .store-table td:nth-child(2) { left:60px; width:100px; }
+.store-table th:nth-child(3), .store-table td:nth-child(3) { left:160px; width:44px; }
+.store-table th:nth-child(4), .store-table td:nth-child(4) { left:204px; width:48px; }
+.store-table th:nth-child(5), .store-table td:nth-child(5) { left:252px; width:104px; }
+.store-table th:nth-child(6), .store-table td:nth-child(6) { left:356px; width:88px; box-shadow:4px 0 8px rgba(15,23,42,.14); }
+
+.closure-table { font-size:12px; border-color:#cfd6de; }
+.closure-table th { color:#fff; border-color:rgba(255,255,255,.24); font-size:12px; padding:9px 7px; }
+.closure-table th:nth-child(1), .closure-table th:nth-child(2) { background:#8b3030; }
+.closure-table th:nth-child(3) { background:#9a4c13; }
+.closure-table th:nth-child(4), .closure-table th:nth-child(5) { background:#475569; }
+.closure-table th:nth-child(6) { background:#4d641d; }
+.closure-table td { border-color:#dfe4ea; line-height:1.62; }
+.closure-table .object-cell { background:#f4f6f8; }
+.closure-table .last-issue { background:#fff3f4; }
+.closure-table .done-action { background:#fff7ed; }
+.closure-table .status-cell { background:#fff5f5; }
+.closure-table .reason-analysis { background:#f4f6f8; }
+.closure-table .next-action { background:#f7faef; }
+.closure-table .object-cell b { color:#26313c; font-size:13px; }
+.step-line { grid-template-columns:20px 1fr; gap:7px; padding:4px 0; }
+.step-line span { width:18px; height:18px; background:#7b8794; font-size:10px; }
+.done-action .step-line span { background:#b96924; }
+.status-cell .step-line span { background:#b94a4a; }
+.next-action .step-line span { background:#687d33; }
+.metric-chain { border-bottom-color:#ead7d9; }
+
+.rank-table th, .manager-table th, .employee-table th { background:#315f7d; color:#fff; border-color:#24485f; border-bottom:2px solid #183b52; }
+.rank-table tbody tr:nth-child(odd) td,
+.manager-table tbody tr:nth-child(odd) td,
+.employee-table tbody tr:nth-child(odd) td { background:#fff; border-color:#d8e1e8; }
+.rank-table tbody tr:nth-child(even) td,
+.manager-table tbody tr:nth-child(even) td,
+.employee-table tbody tr:nth-child(even) td { background:#f1f5f8; border-color:#d8e1e8; }
+.manager-table td, .employee-table td { font-size:11px; }
+.manager-table tbody tr:nth-child(1) td,
+.employee-table tbody tr:nth-child(1) td { background:#fff8df; }
+.manager-table tbody tr:nth-child(2) td,
+.employee-table tbody tr:nth-child(2) td { background:#f4f6f8; }
+.manager-table tbody tr:nth-child(3) td,
+.employee-table tbody tr:nth-child(3) td { background:#fbf1e8; }
+.manager-table tbody tr:nth-child(1) td:first-child,
+.employee-table tbody tr:nth-child(1) td:first-child { background:#b78b19; color:#fff; font-weight:900; }
+.manager-table tbody tr:nth-child(2) td:first-child,
+.employee-table tbody tr:nth-child(2) td:first-child { background:#7b8794; color:#fff; font-weight:900; }
+.manager-table tbody tr:nth-child(3) td:first-child,
+.employee-table tbody tr:nth-child(3) td:first-child { background:#a66a3f; color:#fff; font-weight:900; }
+.manager-table td:nth-child(3) .cg, .employee-table td:nth-child(3) .cg { background:#dcf5e8; color:#047857; border-radius:4px; padding:2px 5px; }
+.manager-table td:nth-child(3) .cr, .employee-table td:nth-child(3) .cr { background:#ffe3e7; color:#c81e3a; border-radius:4px; padding:2px 5px; }
+
+.cg { color:#047857; }
+.cy { color:#a84f05; }
+.cr { color:#d6243f; }
+.badge.red { background:#dc334f; }
+.badge.yellow { background:#d97706; }
+.badge.green { background:#0b9460; }
+.closure-store-list { display:grid; gap:18px; overflow:visible; }
+.closure-store-scroll { width:100%; overflow-x:auto; overflow-y:visible; scrollbar-gutter:stable; border:1px solid #d5dbe2; background:#fff; box-shadow:0 2px 7px rgba(15,23,42,.07); }
 .closure-store-scroll .closure-table { margin:0; min-width:1600px !important; }
-.closure-store-scroll thead th { position:sticky; top:0; z-index:6; box-shadow:0 1px 0 #e5d7cc; }
+.closure-store-scroll thead th { position:sticky; top:0; z-index:6; box-shadow:0 1px 0 rgba(15,23,42,.18); }
 .closure-store-scroll th:first-child { position:sticky; left:0; z-index:8; }
-.closure-store-scroll td:first-child { position:sticky; left:0; z-index:4; box-shadow:1px 0 0 #eadfd6; }
+.closure-store-scroll td:first-child { position:sticky; left:0; z-index:4; box-shadow:2px 0 5px rgba(15,23,42,.10); }
 .closure-store-scroll::-webkit-scrollbar { height:12px; }
-.closure-store-scroll::-webkit-scrollbar-track { background:#eef1f4; }
-.closure-store-scroll::-webkit-scrollbar-thumb { background:#7b828a; border:2px solid #eef1f4; border-radius:6px; }
+.closure-store-scroll::-webkit-scrollbar-track { background:#e8edf2; }
+.closure-store-scroll::-webkit-scrollbar-thumb { background:#647382; border:2px solid #e8edf2; border-radius:6px; }
+@media (max-width:1000px) {
+  body { overflow-x:hidden; }
+  .container, .page, .deck-toolbar { width:100%; min-width:0; }
+  .page { padding:16px 12px; }
+  .deck-tabs { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  .deck-tab { min-width:0; padding:8px 7px; font-size:11px; }
+  .table-scroll, .closure-store-scroll { min-width:0; max-width:100%; }
+}
 </style>
 </head>
 <body class="deck-mode"><div class="deck-toolbar" aria-label="周报翻页控制">
@@ -406,8 +478,8 @@ td { border-color:#e8d5c6; }
       <table class='metric-table area-metric-table'><thead><tr><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>变化</th><th>判断</th></tr></thead><tbody><tr><td>新客数</td><td>349</td><td><b>296</b></td><td>-53</td><td><span class='cr'>-15.2%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>新签营收</td><td>¥108,969</td><td><b>¥89,579</b></td><td>-¥19,390</td><td><span class='cr'>-17.8%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>总营收</td><td>¥150,115</td><td><b>¥119,830</b></td><td>-¥30,285</td><td><span class='cr'>-20.2%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>完成率</td><td>81.63%</td><td><b>72.89%</b></td><td>-8.7%</td><td><span class='cr'>-8.7%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td>新签办卡率</td><td>70.37%</td><td><b>68.12%</b></td><td>-2.2%</td><td><span class='cg'>-2.2%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>总续卡金额</td><td>¥41,146</td><td><b>¥30,251</b></td><td>-¥10,895</td><td><span class='cr'>-26.5%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>总续卡占比</td><td>27.41%</td><td><b>25.24%</b></td><td>-2.2%</td><td><span class='cg'>-2.2%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>总引流金额</td><td>¥41,984</td><td><b>¥39,543</b></td><td>-¥2,440</td><td><span class='cr'>-5.8%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>总引流占比</td><td>27.97%</td><td><b>33.00%</b></td><td>+5.0%</td><td><span class='cg'>+5.0%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>扫楼金额</td><td>¥21,067</td><td><b>¥18,471</b></td><td>-¥2,596</td><td><span class='cr'>-12.3%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>扫楼占比</td><td>14.03%</td><td><b>15.41%</b></td><td>+1.4%</td><td><span class='cg'>+1.4%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>大卡率占比</td><td>68.53%</td><td><b>65.75%</b></td><td>-2.8%</td><td><span class='cr'>-2.8%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td>新签大卡率</td><td>59.11%</td><td><b>56.79%</b></td><td>-2.3%</td><td><span class='cg'>-2.3%</span></td><td><span class='cg'>达标</span></td></tr></tbody></table>
       <h3>2. 1区门店哪里好，哪里不好</h3>
       <div class="table-scroll"><table class="dense store-table"><colgroup>
-<col style="width:70px"><col style="width:110px"><col style="width:50px"><col style="width:54px">
-<col style="width:110px"><col style="width:100px"><col style="width:115px"><col style="width:105px">
+<col style="width:60px"><col style="width:100px"><col style="width:44px"><col style="width:48px">
+<col style="width:104px"><col style="width:88px"><col style="width:115px"><col style="width:105px">
 <col style="width:105px"><col style="width:105px"><col style="width:100px"><col style="width:100px">
 <col style="width:105px"><col style="width:100px"><col style="width:70px"><col style="width:230px"><col style="width:240px">
 </colgroup><thead><tr><th>评级</th><th>门店</th><th>店型</th><th>主题数</th><th>总营收</th><th>完成率</th><th>新签营收/环比</th><th>新签办卡率</th><th>新签大卡率</th><th>总引流</th><th>续卡</th><th>扫楼</th><th>大卡率占比</th><th>新客环比</th><th>风险</th><th>短板</th><th>亮点备注</th></tr></thead><tbody>
@@ -514,8 +586,8 @@ td { border-color:#e8d5c6; }
       <table class='metric-table area-metric-table'><thead><tr><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>变化</th><th>判断</th></tr></thead><tbody><tr><td>新客数</td><td>541</td><td><b>468</b></td><td>-73</td><td><span class='cr'>-13.5%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>新签营收</td><td>¥132,235</td><td><b>¥174,978</b></td><td>¥42,743</td><td><span class='cg'>+32.3%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>总营收</td><td>¥180,849</td><td><b>¥211,355</b></td><td>¥30,506</td><td><span class='cg'>+16.9%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>完成率</td><td>81.15%</td><td><b>106.45%</b></td><td>+25.3%</td><td><span class='cg'>+25.3%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>新签办卡率</td><td>49.36%</td><td><b>51.84%</b></td><td>+2.5%</td><td><span class='cg'>+2.5%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>总续卡金额</td><td>¥48,614</td><td><b>¥36,377</b></td><td>-¥12,237</td><td><span class='cr'>-25.2%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>总续卡占比</td><td>26.88%</td><td><b>24.03%</b></td><td>-2.8%</td><td><span class='cg'>-2.8%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>总引流金额</td><td>¥49,292</td><td><b>¥60,860</b></td><td>¥11,568</td><td><span class='cg'>+23.5%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>总引流占比</td><td>27.26%</td><td><b>40.21%</b></td><td>+12.9%</td><td><span class='cg'>+12.9%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>扫楼金额</td><td>¥27,456</td><td><b>¥27,901</b></td><td>¥445</td><td><span class='cg'>+1.6%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>扫楼占比</td><td>15.18%</td><td><b>18.43%</b></td><td>+3.3%</td><td><span class='cg'>+3.3%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>大卡率占比</td><td>72.68%</td><td><b>64.39%</b></td><td>-8.3%</td><td><span class='cr'>-8.3%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td>新签大卡率</td><td>62.31%</td><td><b>54.03%</b></td><td>-8.3%</td><td><span class='cr'>-8.3%</span></td><td><span class='cr'>未过线</span></td></tr></tbody></table>
       <h3>2. 2区门店哪里好，哪里不好</h3>
       <div class="table-scroll"><table class="dense store-table"><colgroup>
-<col style="width:70px"><col style="width:110px"><col style="width:50px"><col style="width:54px">
-<col style="width:110px"><col style="width:100px"><col style="width:115px"><col style="width:105px">
+<col style="width:60px"><col style="width:100px"><col style="width:44px"><col style="width:48px">
+<col style="width:104px"><col style="width:88px"><col style="width:115px"><col style="width:105px">
 <col style="width:105px"><col style="width:105px"><col style="width:100px"><col style="width:100px">
 <col style="width:105px"><col style="width:100px"><col style="width:70px"><col style="width:230px"><col style="width:240px">
 </colgroup><thead><tr><th>评级</th><th>门店</th><th>店型</th><th>主题数</th><th>总营收</th><th>完成率</th><th>新签营收/环比</th><th>新签办卡率</th><th>新签大卡率</th><th>总引流</th><th>续卡</th><th>扫楼</th><th>大卡率占比</th><th>新客环比</th><th>风险</th><th>短板</th><th>亮点备注</th></tr></thead><tbody>
@@ -636,8 +708,8 @@ td { border-color:#e8d5c6; }
       <table class='metric-table area-metric-table'><thead><tr><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>变化</th><th>判断</th></tr></thead><tbody><tr><td>新客数</td><td>501</td><td><b>445</b></td><td>-56</td><td><span class='cr'>-11.2%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>新签营收</td><td>¥112,257</td><td><b>¥100,861</b></td><td>-¥11,396</td><td><span class='cr'>-10.2%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>总营收</td><td>¥139,672</td><td><b>¥120,356</b></td><td>-¥19,316</td><td><span class='cr'>-13.8%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>完成率</td><td>82.29%</td><td><b>68.35%</b></td><td>-13.9%</td><td><span class='cr'>-13.9%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td>新签办卡率</td><td>42.33%</td><td><b>42.28%</b></td><td>-0.0%</td><td><span class='cg'>-0.0%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>总续卡金额</td><td>¥27,415</td><td><b>¥19,495</b></td><td>-¥7,920</td><td><span class='cr'>-28.9%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>总续卡占比</td><td>19.63%</td><td><b>16.20%</b></td><td>-3.4%</td><td><span class='cr'>-3.4%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td>总引流金额</td><td>¥51,165</td><td><b>¥56,143</b></td><td>¥4,978</td><td><span class='cg'>+9.7%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>总引流占比</td><td>36.63%</td><td><b>46.65%</b></td><td>+10.0%</td><td><span class='cg'>+10.0%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>扫楼金额</td><td>¥12,188</td><td><b>¥19,529</b></td><td>¥7,341</td><td><span class='cg'>+60.2%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>扫楼占比</td><td>8.73%</td><td><b>16.23%</b></td><td>+7.5%</td><td><span class='cg'>+7.5%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>大卡率占比</td><td>65.00%</td><td><b>62.99%</b></td><td>-2.0%</td><td><span class='cr'>-2.0%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td>新签大卡率</td><td>58.69%</td><td><b>57.53%</b></td><td>-1.2%</td><td><span class='cg'>-1.2%</span></td><td><span class='cg'>达标</span></td></tr></tbody></table>
       <h3>2. 3区门店哪里好，哪里不好</h3>
       <div class="table-scroll"><table class="dense store-table"><colgroup>
-<col style="width:70px"><col style="width:110px"><col style="width:50px"><col style="width:54px">
-<col style="width:110px"><col style="width:100px"><col style="width:115px"><col style="width:105px">
+<col style="width:60px"><col style="width:100px"><col style="width:44px"><col style="width:48px">
+<col style="width:104px"><col style="width:88px"><col style="width:115px"><col style="width:105px">
 <col style="width:105px"><col style="width:105px"><col style="width:100px"><col style="width:100px">
 <col style="width:105px"><col style="width:100px"><col style="width:70px"><col style="width:230px"><col style="width:240px">
 </colgroup><thead><tr><th>评级</th><th>门店</th><th>店型</th><th>主题数</th><th>总营收</th><th>完成率</th><th>新签营收/环比</th><th>新签办卡率</th><th>新签大卡率</th><th>总引流</th><th>续卡</th><th>扫楼</th><th>大卡率占比</th><th>新客环比</th><th>风险</th><th>短板</th><th>亮点备注</th></tr></thead><tbody>
