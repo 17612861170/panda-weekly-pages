@@ -190,6 +190,16 @@ td { border-color:#dfe4ea; }
 .metric-table tbody tr:nth-child(even) td { background:#f7f8fa; }
 .metric-table tbody td:first-child { background:#fff3e8; color:#6f2a10; font-weight:900; }
 .metric-table tbody tr:nth-child(even) td:first-child { background:#f7e7d8; }
+.metric-table .metric-category { width:88px; min-width:88px; text-align:center; font-weight:900; white-space:nowrap; }
+.metric-table th:first-child { width:88px; }
+.metric-table th:nth-child(2) { width:110px; }
+.metric-table td.metric-name { background:#fff3e8; color:#6f2a10; font-weight:900; }
+.metric-table tbody tr:nth-child(even) td.metric-name { background:#f7e7d8; }
+.metric-table .cat-traffic { background:#e7f2f8 !important; color:#215f7d !important; }
+.metric-table .cat-revenue { background:#fff0e5 !important; color:#8a3412 !important; }
+.metric-table .cat-card { background:#edf5e8 !important; color:#49651f !important; }
+.metric-table .cat-renew { background:#e8f5f1 !important; color:#17695b !important; }
+.metric-table .cat-flow { background:#fff7d9 !important; color:#785c08 !important; }
 .metric-table td:last-child .cg { background:#dcf5e8; color:#047857; }
 .metric-table td:last-child .cy { background:#fff0d6; color:#a84f05; }
 .metric-table td:last-child .cr { background:#ffe3e7; color:#c81e3a; }
@@ -325,8 +335,9 @@ td { border-color:#dfe4ea; }
       <div class="hero-grid">
         <div class="hero-main">
           <div class="block-title">品牌核心数字对比</div>
-          <table class="metric-table"><thead><tr><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>环比/变化</th><th>判断</th></tr></thead><tbody>
+          <table class="metric-table"><thead><tr><th>归类</th><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>环比/变化</th><th>判断</th></tr></thead><tbody>
       <tr class="ok">
+        <td class='metric-category cat-traffic'>客流板块</td>
         <td class="metric-name">总接待人数</td>
         <td>8,475</td>
         <td class="now">8,930</td>
@@ -336,6 +347,7 @@ td { border-color:#dfe4ea; }
       </tr>
 
       <tr class="warning">
+        <td class='metric-category cat-traffic'>客流板块</td>
         <td class="metric-name">新客数</td>
         <td>1,209</td>
         <td class="now">1,153</td>
@@ -345,6 +357,7 @@ td { border-color:#dfe4ea; }
       </tr>
 
       <tr class="warning">
+        <td class='metric-category cat-revenue'>营收板块</td>
         <td class="metric-name">新签营收</td>
         <td>¥365,418.08</td>
         <td class="now">¥328,957.51</td>
@@ -354,6 +367,7 @@ td { border-color:#dfe4ea; }
       </tr>
 
       <tr class="warning">
+        <td class='metric-category cat-revenue'>营收板块</td>
         <td class="metric-name">总营收</td>
         <td>¥451,541.08</td>
         <td class="now">¥424,360.81</td>
@@ -363,6 +377,7 @@ td { border-color:#dfe4ea; }
       </tr>
 
       <tr class="warning">
+        <td class='metric-category cat-revenue'>营收板块</td>
         <td class="metric-name">完成率</td>
         <td>83.77%</td>
         <td class="now">78.72%</td>
@@ -372,6 +387,7 @@ td { border-color:#dfe4ea; }
       </tr>
 
       <tr class="ok">
+        <td class='metric-category cat-card'>办卡转化</td>
         <td class="metric-name">新签办卡率</td>
         <td>53.96%</td>
         <td class="now">53.56%</td>
@@ -381,6 +397,7 @@ td { border-color:#dfe4ea; }
       </tr>
 
       <tr class="ok">
+        <td class='metric-category cat-renew'>续卡板块</td>
         <td class="metric-name">总续卡金额</td>
         <td>¥86,123.00</td>
         <td class="now">¥95,403.30</td>
@@ -390,6 +407,7 @@ td { border-color:#dfe4ea; }
       </tr>
 
       <tr class="ok">
+        <td class='metric-category cat-renew'>续卡板块</td>
         <td class="metric-name">总续卡占比</td>
         <td>19.07%</td>
         <td class="now">22.48%</td>
@@ -399,6 +417,7 @@ td { border-color:#dfe4ea; }
       </tr>
 
       <tr class="ok">
+        <td class='metric-category cat-flow'>引流板块</td>
         <td class="metric-name">总引流金额</td>
         <td>¥156,545.59</td>
         <td class="now">¥182,629.60</td>
@@ -408,6 +427,7 @@ td { border-color:#dfe4ea; }
       </tr>
 
       <tr class="ok">
+        <td class='metric-category cat-flow'>引流板块</td>
         <td class="metric-name">总引流占比</td>
         <td>34.67%</td>
         <td class="now">43.04%</td>
@@ -417,6 +437,7 @@ td { border-color:#dfe4ea; }
       </tr>
 
       <tr class="ok">
+        <td class='metric-category cat-flow'>引流板块</td>
         <td class="metric-name">扫楼金额</td>
         <td>¥65,901.19</td>
         <td class="now">¥73,460.75</td>
@@ -426,6 +447,7 @@ td { border-color:#dfe4ea; }
       </tr>
 
       <tr class="ok">
+        <td class='metric-category cat-flow'>引流板块</td>
         <td class="metric-name">扫楼占比</td>
         <td>14.59%</td>
         <td class="now">17.31%</td>
@@ -435,6 +457,7 @@ td { border-color:#dfe4ea; }
       </tr>
 
       <tr class="warning">
+        <td class='metric-category cat-card'>办卡转化</td>
         <td class="metric-name">大卡率占比</td>
         <td>64.38%</td>
         <td class="now">69.52%</td>
@@ -444,6 +467,7 @@ td { border-color:#dfe4ea; }
       </tr>
 
       <tr class="ok">
+        <td class='metric-category cat-card'>办卡转化</td>
         <td class="metric-name">新签大卡率</td>
         <td>56.01%</td>
         <td class="now">61.22%</td>
@@ -475,7 +499,7 @@ td { border-color:#dfe4ea; }
         <div><b>14</b><span>未达标指标</span></div>
       </div>
       <h3>1. 1区整体区域表现</h3>
-      <table class='metric-table area-metric-table'><thead><tr><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>变化</th><th>判断</th></tr></thead><tbody><tr><td>新客数</td><td>296</td><td><b>312</b></td><td>+16</td><td><span class='cg'>+5.4%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>新签营收</td><td>¥89,579</td><td><b>¥93,916</b></td><td>¥4,336</td><td><span class='cg'>+4.8%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>总营收</td><td>¥119,830</td><td><b>¥123,606</b></td><td>¥3,776</td><td><span class='cg'>+3.2%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>完成率</td><td>72.89%</td><td><b>75.19%</b></td><td>+2.3%</td><td><span class='cr'>+2.3%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td>新签办卡率</td><td>68.12%</td><td><b>65.73%</b></td><td>-2.4%</td><td><span class='cg'>-2.4%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>总续卡金额</td><td>¥30,251</td><td><b>¥29,691</b></td><td>-¥560</td><td><span class='cr'>-1.9%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>总续卡占比</td><td>25.24%</td><td><b>24.02%</b></td><td>-1.2%</td><td><span class='cg'>-1.2%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>总引流金额</td><td>¥39,543</td><td><b>¥42,920</b></td><td>¥3,377</td><td><span class='cg'>+8.5%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>总引流占比</td><td>33.00%</td><td><b>34.72%</b></td><td>+1.7%</td><td><span class='cg'>+1.7%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>扫楼金额</td><td>¥18,471</td><td><b>¥15,963</b></td><td>-¥2,508</td><td><span class='cr'>-13.6%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>扫楼占比</td><td>15.41%</td><td><b>12.91%</b></td><td>-2.5%</td><td><span class='cr'>-2.5%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td>大卡率占比</td><td>65.75%</td><td><b>64.85%</b></td><td>-0.9%</td><td><span class='cr'>-0.9%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td>新签大卡率</td><td>56.79%</td><td><b>55.31%</b></td><td>-1.5%</td><td><span class='cg'>-1.5%</span></td><td><span class='cg'>达标</span></td></tr></tbody></table>
+      <table class='metric-table area-metric-table'><thead><tr><th>归类</th><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>变化</th><th>判断</th></tr></thead><tbody><tr><td class='metric-category cat-traffic'>客流板块</td><td class='metric-name'>新客数</td><td>296</td><td><b>312</b></td><td>+16</td><td><span class='cg'>+5.4%</span></td><td><span class='cg'>增长</span></td></tr><tr><td class='metric-category cat-revenue'>营收板块</td><td class='metric-name'>新签营收</td><td>¥89,579</td><td><b>¥93,916</b></td><td>¥4,336</td><td><span class='cg'>+4.8%</span></td><td><span class='cg'>增长</span></td></tr><tr><td class='metric-category cat-revenue'>营收板块</td><td class='metric-name'>总营收</td><td>¥119,830</td><td><b>¥123,606</b></td><td>¥3,776</td><td><span class='cg'>+3.2%</span></td><td><span class='cg'>增长</span></td></tr><tr><td class='metric-category cat-revenue'>营收板块</td><td class='metric-name'>完成率</td><td>72.89%</td><td><b>75.19%</b></td><td>+2.3%</td><td><span class='cr'>+2.3%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td class='metric-category cat-card'>办卡转化</td><td class='metric-name'>新签办卡率</td><td>68.12%</td><td><b>65.73%</b></td><td>-2.4%</td><td><span class='cg'>-2.4%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-category cat-renew'>续卡板块</td><td class='metric-name'>总续卡金额</td><td>¥30,251</td><td><b>¥29,691</b></td><td>-¥560</td><td><span class='cr'>-1.9%</span></td><td><span class='cr'>下降</span></td></tr><tr><td class='metric-category cat-renew'>续卡板块</td><td class='metric-name'>总续卡占比</td><td>25.24%</td><td><b>24.02%</b></td><td>-1.2%</td><td><span class='cg'>-1.2%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-category cat-flow'>引流板块</td><td class='metric-name'>总引流金额</td><td>¥39,543</td><td><b>¥42,920</b></td><td>¥3,377</td><td><span class='cg'>+8.5%</span></td><td><span class='cg'>增长</span></td></tr><tr><td class='metric-category cat-flow'>引流板块</td><td class='metric-name'>总引流占比</td><td>33.00%</td><td><b>34.72%</b></td><td>+1.7%</td><td><span class='cg'>+1.7%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-category cat-flow'>引流板块</td><td class='metric-name'>扫楼金额</td><td>¥18,471</td><td><b>¥15,963</b></td><td>-¥2,508</td><td><span class='cr'>-13.6%</span></td><td><span class='cr'>下降</span></td></tr><tr><td class='metric-category cat-flow'>引流板块</td><td class='metric-name'>扫楼占比</td><td>15.41%</td><td><b>12.91%</b></td><td>-2.5%</td><td><span class='cr'>-2.5%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td class='metric-category cat-card'>办卡转化</td><td class='metric-name'>大卡率占比</td><td>65.75%</td><td><b>64.85%</b></td><td>-0.9%</td><td><span class='cr'>-0.9%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td class='metric-category cat-card'>办卡转化</td><td class='metric-name'>新签大卡率</td><td>56.79%</td><td><b>55.31%</b></td><td>-1.5%</td><td><span class='cg'>-1.5%</span></td><td><span class='cg'>达标</span></td></tr></tbody></table>
       <h3>2. 1区门店哪里好，哪里不好</h3>
       <div class="table-scroll"><table class="dense store-table"><colgroup>
 <col style="width:60px"><col style="width:100px"><col style="width:44px"><col style="width:48px">
@@ -583,7 +607,7 @@ td { border-color:#dfe4ea; }
         <div><b>15</b><span>未达标指标</span></div>
       </div>
       <h3>1. 2区整体区域表现</h3>
-      <table class='metric-table area-metric-table'><thead><tr><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>变化</th><th>判断</th></tr></thead><tbody><tr><td>新客数</td><td>468</td><td><b>434</b></td><td>-34</td><td><span class='cr'>-7.3%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>新签营收</td><td>¥174,978</td><td><b>¥127,708</b></td><td>-¥47,270</td><td><span class='cr'>-27.0%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>总营收</td><td>¥211,355</td><td><b>¥174,127</b></td><td>-¥37,228</td><td><span class='cr'>-17.6%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>完成率</td><td>106.45%</td><td><b>87.70%</b></td><td>-18.7%</td><td><span class='cr'>-18.7%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td>新签办卡率</td><td>51.84%</td><td><b>47.98%</b></td><td>-3.9%</td><td><span class='cg'>-3.9%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>总续卡金额</td><td>¥36,377</td><td><b>¥46,419</b></td><td>¥10,042</td><td><span class='cg'>+27.6%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>总续卡占比</td><td>17.21%</td><td><b>26.66%</b></td><td>+9.4%</td><td><span class='cg'>+9.4%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>总引流金额</td><td>¥60,860</td><td><b>¥70,525</b></td><td>¥9,665</td><td><span class='cg'>+15.9%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>总引流占比</td><td>28.79%</td><td><b>40.50%</b></td><td>+11.7%</td><td><span class='cg'>+11.7%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>扫楼金额</td><td>¥27,901</td><td><b>¥37,860</b></td><td>¥9,959</td><td><span class='cg'>+35.7%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>扫楼占比</td><td>13.20%</td><td><b>21.74%</b></td><td>+8.5%</td><td><span class='cg'>+8.5%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>大卡率占比</td><td>64.39%</td><td><b>69.31%</b></td><td>+4.9%</td><td><span class='cr'>+4.9%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td>新签大卡率</td><td>54.03%</td><td><b>58.52%</b></td><td>+4.5%</td><td><span class='cg'>+4.5%</span></td><td><span class='cg'>达标</span></td></tr></tbody></table>
+      <table class='metric-table area-metric-table'><thead><tr><th>归类</th><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>变化</th><th>判断</th></tr></thead><tbody><tr><td class='metric-category cat-traffic'>客流板块</td><td class='metric-name'>新客数</td><td>468</td><td><b>434</b></td><td>-34</td><td><span class='cr'>-7.3%</span></td><td><span class='cr'>下降</span></td></tr><tr><td class='metric-category cat-revenue'>营收板块</td><td class='metric-name'>新签营收</td><td>¥174,978</td><td><b>¥127,708</b></td><td>-¥47,270</td><td><span class='cr'>-27.0%</span></td><td><span class='cr'>下降</span></td></tr><tr><td class='metric-category cat-revenue'>营收板块</td><td class='metric-name'>总营收</td><td>¥211,355</td><td><b>¥174,127</b></td><td>-¥37,228</td><td><span class='cr'>-17.6%</span></td><td><span class='cr'>下降</span></td></tr><tr><td class='metric-category cat-revenue'>营收板块</td><td class='metric-name'>完成率</td><td>106.45%</td><td><b>87.70%</b></td><td>-18.7%</td><td><span class='cr'>-18.7%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td class='metric-category cat-card'>办卡转化</td><td class='metric-name'>新签办卡率</td><td>51.84%</td><td><b>47.98%</b></td><td>-3.9%</td><td><span class='cg'>-3.9%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-category cat-renew'>续卡板块</td><td class='metric-name'>总续卡金额</td><td>¥36,377</td><td><b>¥46,419</b></td><td>¥10,042</td><td><span class='cg'>+27.6%</span></td><td><span class='cg'>增长</span></td></tr><tr><td class='metric-category cat-renew'>续卡板块</td><td class='metric-name'>总续卡占比</td><td>17.21%</td><td><b>26.66%</b></td><td>+9.4%</td><td><span class='cg'>+9.4%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-category cat-flow'>引流板块</td><td class='metric-name'>总引流金额</td><td>¥60,860</td><td><b>¥70,525</b></td><td>¥9,665</td><td><span class='cg'>+15.9%</span></td><td><span class='cg'>增长</span></td></tr><tr><td class='metric-category cat-flow'>引流板块</td><td class='metric-name'>总引流占比</td><td>28.79%</td><td><b>40.50%</b></td><td>+11.7%</td><td><span class='cg'>+11.7%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-category cat-flow'>引流板块</td><td class='metric-name'>扫楼金额</td><td>¥27,901</td><td><b>¥37,860</b></td><td>¥9,959</td><td><span class='cg'>+35.7%</span></td><td><span class='cg'>增长</span></td></tr><tr><td class='metric-category cat-flow'>引流板块</td><td class='metric-name'>扫楼占比</td><td>13.20%</td><td><b>21.74%</b></td><td>+8.5%</td><td><span class='cg'>+8.5%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-category cat-card'>办卡转化</td><td class='metric-name'>大卡率占比</td><td>64.39%</td><td><b>69.31%</b></td><td>+4.9%</td><td><span class='cr'>+4.9%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td class='metric-category cat-card'>办卡转化</td><td class='metric-name'>新签大卡率</td><td>54.03%</td><td><b>58.52%</b></td><td>+4.5%</td><td><span class='cg'>+4.5%</span></td><td><span class='cg'>达标</span></td></tr></tbody></table>
       <h3>2. 2区门店哪里好，哪里不好</h3>
       <div class="table-scroll"><table class="dense store-table"><colgroup>
 <col style="width:60px"><col style="width:100px"><col style="width:44px"><col style="width:48px">
@@ -705,7 +729,7 @@ td { border-color:#dfe4ea; }
         <div><b>17</b><span>未达标指标</span></div>
       </div>
       <h3>1. 3区整体区域表现</h3>
-      <table class='metric-table area-metric-table'><thead><tr><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>变化</th><th>判断</th></tr></thead><tbody><tr><td>新客数</td><td>445</td><td><b>407</b></td><td>-38</td><td><span class='cr'>-8.5%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>新签营收</td><td>¥100,861</td><td><b>¥107,334</b></td><td>¥6,473</td><td><span class='cg'>+6.4%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>总营收</td><td>¥120,356</td><td><b>¥126,627</b></td><td>¥6,271</td><td><span class='cg'>+5.2%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>完成率</td><td>68.35%</td><td><b>71.91%</b></td><td>+3.6%</td><td><span class='cr'>+3.6%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td>新签办卡率</td><td>42.28%</td><td><b>46.98%</b></td><td>+4.7%</td><td><span class='cg'>+4.7%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>总续卡金额</td><td>¥19,495</td><td><b>¥19,293</b></td><td>-¥202</td><td><span class='cr'>-1.0%</span></td><td><span class='cr'>下降</span></td></tr><tr><td>总续卡占比</td><td>16.20%</td><td><b>15.24%</b></td><td>-1.0%</td><td><span class='cr'>-1.0%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td>总引流金额</td><td>¥56,143</td><td><b>¥69,185</b></td><td>¥13,042</td><td><span class='cg'>+23.2%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>总引流占比</td><td>46.65%</td><td><b>54.64%</b></td><td>+8.0%</td><td><span class='cg'>+8.0%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>扫楼金额</td><td>¥19,529</td><td><b>¥19,637</b></td><td>¥108</td><td><span class='cg'>+0.6%</span></td><td><span class='cg'>增长</span></td></tr><tr><td>扫楼占比</td><td>16.23%</td><td><b>15.51%</b></td><td>-0.7%</td><td><span class='cg'>-0.7%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>大卡率占比</td><td>62.99%</td><td><b>74.41%</b></td><td>+11.4%</td><td><span class='cg'>+11.4%</span></td><td><span class='cg'>达标</span></td></tr><tr><td>新签大卡率</td><td>57.53%</td><td><b>69.84%</b></td><td>+12.3%</td><td><span class='cg'>+12.3%</span></td><td><span class='cg'>达标</span></td></tr></tbody></table>
+      <table class='metric-table area-metric-table'><thead><tr><th>归类</th><th>指标</th><th>上周</th><th>本周</th><th>差额</th><th>变化</th><th>判断</th></tr></thead><tbody><tr><td class='metric-category cat-traffic'>客流板块</td><td class='metric-name'>新客数</td><td>445</td><td><b>407</b></td><td>-38</td><td><span class='cr'>-8.5%</span></td><td><span class='cr'>下降</span></td></tr><tr><td class='metric-category cat-revenue'>营收板块</td><td class='metric-name'>新签营收</td><td>¥100,861</td><td><b>¥107,334</b></td><td>¥6,473</td><td><span class='cg'>+6.4%</span></td><td><span class='cg'>增长</span></td></tr><tr><td class='metric-category cat-revenue'>营收板块</td><td class='metric-name'>总营收</td><td>¥120,356</td><td><b>¥126,627</b></td><td>¥6,271</td><td><span class='cg'>+5.2%</span></td><td><span class='cg'>增长</span></td></tr><tr><td class='metric-category cat-revenue'>营收板块</td><td class='metric-name'>完成率</td><td>68.35%</td><td><b>71.91%</b></td><td>+3.6%</td><td><span class='cr'>+3.6%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td class='metric-category cat-card'>办卡转化</td><td class='metric-name'>新签办卡率</td><td>42.28%</td><td><b>46.98%</b></td><td>+4.7%</td><td><span class='cg'>+4.7%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-category cat-renew'>续卡板块</td><td class='metric-name'>总续卡金额</td><td>¥19,495</td><td><b>¥19,293</b></td><td>-¥202</td><td><span class='cr'>-1.0%</span></td><td><span class='cr'>下降</span></td></tr><tr><td class='metric-category cat-renew'>续卡板块</td><td class='metric-name'>总续卡占比</td><td>16.20%</td><td><b>15.24%</b></td><td>-1.0%</td><td><span class='cr'>-1.0%</span></td><td><span class='cr'>未过线</span></td></tr><tr><td class='metric-category cat-flow'>引流板块</td><td class='metric-name'>总引流金额</td><td>¥56,143</td><td><b>¥69,185</b></td><td>¥13,042</td><td><span class='cg'>+23.2%</span></td><td><span class='cg'>增长</span></td></tr><tr><td class='metric-category cat-flow'>引流板块</td><td class='metric-name'>总引流占比</td><td>46.65%</td><td><b>54.64%</b></td><td>+8.0%</td><td><span class='cg'>+8.0%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-category cat-flow'>引流板块</td><td class='metric-name'>扫楼金额</td><td>¥19,529</td><td><b>¥19,637</b></td><td>¥108</td><td><span class='cg'>+0.6%</span></td><td><span class='cg'>增长</span></td></tr><tr><td class='metric-category cat-flow'>引流板块</td><td class='metric-name'>扫楼占比</td><td>16.23%</td><td><b>15.51%</b></td><td>-0.7%</td><td><span class='cg'>-0.7%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-category cat-card'>办卡转化</td><td class='metric-name'>大卡率占比</td><td>62.99%</td><td><b>74.41%</b></td><td>+11.4%</td><td><span class='cg'>+11.4%</span></td><td><span class='cg'>达标</span></td></tr><tr><td class='metric-category cat-card'>办卡转化</td><td class='metric-name'>新签大卡率</td><td>57.53%</td><td><b>69.84%</b></td><td>+12.3%</td><td><span class='cg'>+12.3%</span></td><td><span class='cg'>达标</span></td></tr></tbody></table>
       <h3>2. 3区门店哪里好，哪里不好</h3>
       <div class="table-scroll"><table class="dense store-table"><colgroup>
 <col style="width:60px"><col style="width:100px"><col style="width:44px"><col style="width:48px">
