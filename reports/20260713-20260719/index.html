@@ -232,8 +232,16 @@ td { border-color:#dfe4ea; }
 .four-week-table th.current-week-head small { color:#dff7f1; font-size:10px; }
 .four-week-table td.current-week { background:#e8f6f2 !important; color:#103f39; font-weight:900; border-left:2px solid #79bdb1; border-right:2px solid #79bdb1; }
 .four-week-table td:nth-child(7) { white-space:nowrap; font-weight:900; }
-.hero-main { overflow-x:auto; }
-.hero-main .four-week-table { min-width:820px; }
+.hero-main { max-height:min(76vh,780px); overflow:auto; scrollbar-gutter:stable; }
+.hero-main .block-title { position:sticky; top:0; left:0; z-index:30; min-height:36px; box-sizing:border-box; }
+.hero-main .four-week-table { min-width:820px; table-layout:fixed; border-collapse:separate; border-spacing:0; }
+.hero-main .four-week-table thead th { position:sticky; top:36px; z-index:20; box-shadow:0 2px 0 rgba(15,23,42,.18); }
+.hero-main .four-week-table th:first-child,
+.hero-main .four-week-table td.metric-category { position:sticky; left:0; z-index:12; width:88px; min-width:88px; }
+.hero-main .four-week-table th:nth-child(2),
+.hero-main .four-week-table td.metric-name { position:sticky; left:88px; z-index:12; width:110px; min-width:110px; box-shadow:2px 0 0 #c8d0d8; }
+.hero-main .four-week-table thead th:first-child,
+.hero-main .four-week-table thead th:nth-child(2) { z-index:24; background:#7c2d12; }
 .metric-table td:last-child .cg { background:#dcf5e8; color:#047857; }
 .metric-table td:last-child .cy { background:#fff0d6; color:#a84f05; }
 .metric-table td:last-child .cr { background:#ffe3e7; color:#c81e3a; }
