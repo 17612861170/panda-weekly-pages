@@ -315,6 +315,8 @@ td { border-color:#dfe4ea; }
 .question-editor { display:block; width:100%; min-height:360px; box-sizing:border-box; resize:vertical; border:0; background:transparent; color:#27313b; padding:6px; font:inherit; font-size:12px; font-weight:700; line-height:1.75; white-space:pre-wrap; }
 .question-editor:focus { outline:0; background:#fff; box-shadow:inset 0 0 0 3px #2f6f95; }
 .closure-edit-status { display:inline-block; margin:0 0 8px; padding:6px 10px; background:#e7f4ed; color:#176b4b; border:1px solid #b9dfcc; font-size:11px; font-weight:900; }
+.closure-edit-status[data-save-state="saving"] { background:#fff7e6; color:#8a4b00; border-color:#efd49b; }
+.closure-edit-status[data-save-state="error"] { background:#fff0f2; color:#b4233d; border-color:#efb8c2; }
 .closure-table .object-cell b { color:#26313c; font-size:13px; }
 .step-line { grid-template-columns:20px 1fr; gap:7px; padding:4px 0; }
 .step-line span { width:18px; height:18px; background:#7b8794; font-size:10px; }
@@ -1072,35 +1074,164 @@ td { border-color:#dfe4ea; }
 })();
 </script><script>
 (function () {
+  var reportId = '20260713-20260719';
   var storageKey = 'panda-weekly-20260713-20260719-closure-edits-v1';
+  var supabaseUrl = 'https://smbelcuwcsuuxcspypae.supabase.co';
+  var supabaseKey = 'sb_publishable_KIJsYEjr2gt2K8IMwtEKhg_RR8x6Dqb';
+  var tableUrl = supabaseUrl + '/rest/v1/weekly_report_edits';
   var cells = Array.from(document.querySelectorAll('.closure-table td[contenteditable="true"], .closure-table .question-editor'));
-  var saved = {};
-  try { saved = JSON.parse(window.localStorage.getItem(storageKey) || '{}'); } catch (error) { saved = {}; }
+  var cellsByKey = {};
+  var cloudRows = {};
+  var pending = {};
+  var timers = {};
+  var localSaved = {};
+
+  try { localSaved = JSON.parse(window.localStorage.getItem(storageKey) || '{}'); } catch (error) { localSaved = {}; }
+
   function keyFor(cell) {
     return [cell.dataset.editArea, cell.dataset.editStore, cell.dataset.editField].join('|');
   }
-  function updateStatus(area) {
+  function valueFor(cell) {
+    return cell.matches('textarea') ? cell.value : cell.innerText.trim();
+  }
+  function setValue(cell, value) {
+    if (cell.matches('textarea')) cell.value = value;
+    else cell.textContent = value;
+  }
+  function headers(extra) {
+    return Object.assign({
+      apikey: supabaseKey,
+      Authorization: 'Bearer ' + supabaseKey,
+      'Content-Type': 'application/json'
+    }, extra || {});
+  }
+  function clock() {
+    return new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+  }
+  function updateStatus(area, text, state) {
     var status = Array.from(document.querySelectorAll('[data-save-area]')).find(function (item) {
       return item.dataset.saveArea === area;
     });
-    if (status) status.textContent = '已自动保存 ' + new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+    if (!status) return;
+    status.textContent = text;
+    status.dataset.saveState = state || '';
   }
+  function updateAllStatuses(text, state) {
+    ['1区', '2区', '3区'].forEach(function (area) { updateStatus(area, text, state); });
+  }
+  function saveLocal(key, value) {
+    localSaved[key] = value;
+    try { window.localStorage.setItem(storageKey, JSON.stringify(localSaved)); } catch (error) {}
+  }
+  function payloadFor(cell) {
+    return {
+      report_id: reportId,
+      area: cell.dataset.editArea,
+      store: cell.dataset.editStore,
+      field: cell.dataset.editField,
+      value: valueFor(cell)
+    };
+  }
+  function upsertCell(cell) {
+    var key = keyFor(cell);
+    var payload = payloadFor(cell);
+    pending[key] = true;
+    updateStatus(payload.area, '正在保存到共享云端...', 'saving');
+    return fetch(tableUrl + '?on_conflict=report_id,area,store,field', {
+      method: 'POST',
+      headers: headers({ Prefer: 'resolution=merge-duplicates,return=representation' }),
+      body: JSON.stringify(payload)
+    }).then(function (response) {
+      if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
+      return response.json();
+    }).then(function (rows) {
+      var row = rows && rows[0];
+      if (row) cloudRows[key] = row.updated_at || new Date().toISOString();
+      updateStatus(payload.area, '已云端保存 ' + clock() + ' · 所有人可见', 'saved');
+    }).catch(function (error) {
+      console.error('云端保存失败', error);
+      updateStatus(payload.area, '云端保存失败 · 已暂存在本机', 'error');
+    }).finally(function () {
+      delete pending[key];
+    });
+  }
+  function scheduleSave(cell, immediate) {
+    var key = keyFor(cell);
+    saveLocal(key, valueFor(cell));
+    window.clearTimeout(timers[key]);
+    if (immediate) return upsertCell(cell);
+    timers[key] = window.setTimeout(function () { upsertCell(cell); }, 450);
+  }
+  function queryCloud() {
+    var query = '?report_id=eq.' + encodeURIComponent(reportId)
+      + '&select=area,store,field,value,updated_at&order=updated_at.asc';
+    return fetch(tableUrl + query, { headers: headers() }).then(function (response) {
+      if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
+      return response.json();
+    });
+  }
+  function applyCloudRows(rows) {
+    var seen = {};
+    rows.forEach(function (row) {
+      var key = [row.area, row.store, row.field].join('|');
+      seen[key] = true;
+      var cell = cellsByKey[key];
+      if (!cell || pending[key] || document.activeElement === cell) return;
+      var previousTimestamp = cloudRows[key] || '';
+      if (!previousTimestamp || String(row.updated_at) > previousTimestamp) {
+        if (valueFor(cell) !== String(row.value || '')) setValue(cell, String(row.value || ''));
+        cloudRows[key] = row.updated_at || '';
+        saveLocal(key, String(row.value || ''));
+      }
+    });
+    return seen;
+  }
+  function migrateLocal(seen) {
+    var migrations = [];
+    cells.forEach(function (cell) {
+      var key = keyFor(cell);
+      var value = Object.prototype.hasOwnProperty.call(localSaved, key) ? String(localSaved[key] || '') : '';
+      if (!seen[key] && value.trim()) {
+        setValue(cell, value.indexOf('<') >= 0 && !cell.matches('textarea') ? cell.innerText : value);
+        migrations.push(upsertCell(cell));
+      }
+    });
+    return Promise.all(migrations);
+  }
+  function refreshCloud(initial) {
+    return queryCloud().then(function (rows) {
+      var seen = applyCloudRows(rows || []);
+      if (initial) return migrateLocal(seen).then(function () { return rows; });
+      return rows;
+    }).then(function () {
+      if (!Object.keys(pending).length) updateAllStatuses('共享云端已同步 ' + clock(), 'saved');
+    }).catch(function (error) {
+      console.error('云端同步失败', error);
+      updateAllStatuses('云端连接失败 · 当前仅本机暂存', 'error');
+    });
+  }
+
   cells.forEach(function (cell) {
     var key = keyFor(cell);
-    if (Object.prototype.hasOwnProperty.call(saved, key)) {
-      if (cell.matches('textarea')) {
-        if (String(saved[key]).indexOf('<') >= 0) {
-          var holder = document.createElement('div');
-          holder.innerHTML = saved[key];
-          cell.value = holder.innerText;
-        } else cell.value = saved[key];
-      } else cell.textContent = saved[key];
-    }
-    cell.addEventListener('input', function () {
-      saved[key] = cell.matches('textarea') ? cell.value : cell.innerText.trim();
-      try { window.localStorage.setItem(storageKey, JSON.stringify(saved)); } catch (error) {}
-      updateStatus(cell.dataset.editArea);
+    cellsByKey[key] = cell;
+    cell.addEventListener('input', function () { scheduleSave(cell, false); });
+    cell.addEventListener('blur', function () {
+      if (timers[key]) {
+        window.clearTimeout(timers[key]);
+        delete timers[key];
+        scheduleSave(cell, true);
+      }
     });
+  });
+
+  updateAllStatuses('正在连接共享云端...', 'saving');
+  refreshCloud(true);
+  window.setInterval(function () {
+    if (!document.hidden) refreshCloud(false);
+  }, 3000);
+  window.addEventListener('online', function () { refreshCloud(false); });
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) refreshCloud(false);
   });
 })();
 </script></body></html>
