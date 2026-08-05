@@ -400,6 +400,11 @@ td { border-color:#dfe4ea; }
       .closure-table th:nth-child(5) { background:#315f7d; }
       .closure-table th:nth-child(6) { background:#526477; }
       .previous-risk b.cr, .previous-risk span.cr { color:#cf1322; font-weight:900; }
+      .metric-chain { grid-template-columns:56px minmax(0,1fr) 12px minmax(0,1fr); min-width:0; }
+      .metric-chain > * { min-width:0; }
+      .metric-chain b, .metric-chain span, .metric-chain i { min-width:0; overflow-wrap:anywhere; word-break:break-word; }
+      .metric-chain span { white-space:normal; line-height:1.3; }
+      .metric-chain em { width:auto; max-width:100%; overflow-wrap:anywhere; word-break:break-word; }
     </style>
 </head>
 <body class="deck-mode"><div class="deck-toolbar" aria-label="周报翻页控制">
