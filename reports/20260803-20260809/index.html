@@ -406,7 +406,7 @@ td { border-color:#dfe4ea; }
       .metric-chain b, .metric-chain span, .metric-chain i { min-width:0; overflow-wrap:anywhere; word-break:break-word; }
       .metric-chain span { white-space:normal; line-height:1.3; }
       .metric-chain em { width:auto; max-width:100%; overflow-wrap:anywhere; word-break:break-word; }
-
+    
 .manager-table, .employee-table { min-width:1130px !important; table-layout:fixed; }
 .manager-table td, .employee-table td, .manager-table th, .employee-table th { font-size:10px; padding-left:4px; padding-right:4px; }
 .employee-table { min-width:1130px !important; }
@@ -449,6 +449,10 @@ td { border-color:#dfe4ea; }
 .closure-store-scroll .closure-table th:nth-child(3) { background:#475569; }
 .closure-store-scroll .closure-table th:nth-child(4) { background:#315f7d; }
 .closure-store-scroll .closure-table th:nth-child(5) { background:#526477; }
+.hero-main .area-metric-table { width:96% !important; min-width:780px !important; }
+.hero-main .area-metric-table th, .hero-main .area-metric-table td { padding-left:4px; padding-right:4px; }
+.hero-main .area-metric-table th:first-child, .hero-main .area-metric-table td.metric-category { width:82px; min-width:82px; }
+.hero-main .area-metric-table th:nth-child(2), .hero-main .area-metric-table td.metric-name { left:82px; width:104px; min-width:104px; }
 </style>
 </head>
 <body class="deck-mode"><div class="deck-toolbar" aria-label="周报翻页控制">
@@ -507,8 +511,8 @@ td { border-color:#dfe4ea; }
   <div class="ranking-group" data-role="period" data-label="日期">
     <button type="button" class="ranking-pill active" data-period="current">本周</button>
     <button type="button" class="ranking-pill" data-period="previous">上周</button>
-    <button type="button" class="ranking-pill" data-period="month" title="区域内门店排名本月数据暂未开放" disabled>本月</button>
-    <button type="button" class="ranking-pill" data-period="custom" title="区域内门店排名自定义时间暂未开放" disabled>自定义</button>
+    <button type="button" class="ranking-pill" data-period="month" title="显示真实月至今快照">本月</button>
+    <button type="button" class="ranking-pill" data-period="custom" title="选择真实可用的起止日期">自定义</button>
     <span class="ranking-custom-range"><label>从 <input type="date" data-custom-start value="2026-08-03"></label><label>至 <input type="date" data-custom-end value="2026-08-09"></label></span>
   </div>
   <div class="ranking-group" data-role="metric" data-label="指标排序"><button type="button" class="ranking-pill active" data-metric="revenue">营收</button><button type="button" class="ranking-pill" data-metric="completion">完成率</button><button type="button" class="ranking-pill" data-metric="newRate">新签办卡率</button><button type="button" class="ranking-pill" data-metric="renewAmount">续卡金额</button><button type="button" class="ranking-pill" data-metric="renewShare">续卡占比</button><button type="button" class="ranking-pill" data-metric="renewRate">续卡率</button><button type="button" class="ranking-pill" data-metric="newSmallRate">新签小卡率</button><button type="button" class="ranking-pill" data-metric="newMidLargeRate">新签中大卡率</button><button type="button" class="ranking-pill" data-metric="traffic">总引流金额</button><button type="button" class="ranking-pill" data-metric="trafficShare">总引流占比</button></div>
@@ -553,8 +557,8 @@ td { border-color:#dfe4ea; }
   <div class="ranking-group" data-role="period" data-label="日期">
     <button type="button" class="ranking-pill active" data-period="current">本周</button>
     <button type="button" class="ranking-pill" data-period="previous">上周</button>
-    <button type="button" class="ranking-pill" data-period="month" title="区域内门店排名本月数据暂未开放" disabled>本月</button>
-    <button type="button" class="ranking-pill" data-period="custom" title="区域内门店排名自定义时间暂未开放" disabled>自定义</button>
+    <button type="button" class="ranking-pill" data-period="month" title="显示真实月至今快照">本月</button>
+    <button type="button" class="ranking-pill" data-period="custom" title="选择真实可用的起止日期">自定义</button>
     <span class="ranking-custom-range"><label>从 <input type="date" data-custom-start value="2026-08-03"></label><label>至 <input type="date" data-custom-end value="2026-08-09"></label></span>
   </div>
   <div class="ranking-group" data-role="metric" data-label="指标排序"><button type="button" class="ranking-pill active" data-metric="revenue">营收</button><button type="button" class="ranking-pill" data-metric="completion">完成率</button><button type="button" class="ranking-pill" data-metric="newRate">新签办卡率</button><button type="button" class="ranking-pill" data-metric="renewAmount">续卡金额</button><button type="button" class="ranking-pill" data-metric="renewShare">续卡占比</button><button type="button" class="ranking-pill" data-metric="renewRate">续卡率</button><button type="button" class="ranking-pill" data-metric="newSmallRate">新签小卡率</button><button type="button" class="ranking-pill" data-metric="newMidLargeRate">新签中大卡率</button><button type="button" class="ranking-pill" data-metric="traffic">总引流金额</button><button type="button" class="ranking-pill" data-metric="trafficShare">总引流占比</button></div>
@@ -601,8 +605,8 @@ td { border-color:#dfe4ea; }
   <div class="ranking-group" data-role="period" data-label="日期">
     <button type="button" class="ranking-pill active" data-period="current">本周</button>
     <button type="button" class="ranking-pill" data-period="previous">上周</button>
-    <button type="button" class="ranking-pill" data-period="month" title="区域内门店排名本月数据暂未开放" disabled>本月</button>
-    <button type="button" class="ranking-pill" data-period="custom" title="区域内门店排名自定义时间暂未开放" disabled>自定义</button>
+    <button type="button" class="ranking-pill" data-period="month" title="显示真实月至今快照">本月</button>
+    <button type="button" class="ranking-pill" data-period="custom" title="选择真实可用的起止日期">自定义</button>
     <span class="ranking-custom-range"><label>从 <input type="date" data-custom-start value="2026-08-03"></label><label>至 <input type="date" data-custom-end value="2026-08-09"></label></span>
   </div>
   <div class="ranking-group" data-role="metric" data-label="指标排序"><button type="button" class="ranking-pill active" data-metric="revenue">营收</button><button type="button" class="ranking-pill" data-metric="completion">完成率</button><button type="button" class="ranking-pill" data-metric="newRate">新签办卡率</button><button type="button" class="ranking-pill" data-metric="renewAmount">续卡金额</button><button type="button" class="ranking-pill" data-metric="renewShare">续卡占比</button><button type="button" class="ranking-pill" data-metric="renewRate">续卡率</button><button type="button" class="ranking-pill" data-metric="newSmallRate">新签小卡率</button><button type="button" class="ranking-pill" data-metric="newMidLargeRate">新签中大卡率</button><button type="button" class="ranking-pill" data-metric="traffic">总引流金额</button><button type="button" class="ranking-pill" data-metric="trafficShare">总引流占比</button></div>
