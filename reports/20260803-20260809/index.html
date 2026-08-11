@@ -209,9 +209,10 @@ body { background:#edf0f3; color:#27313b; }
 .brand-mtd-cards .mtd-summary-grid b { margin-top:6px; font-size:17px; }
 .area-mtd-cards { border:0; background:transparent; }
 .area-mtd-cards .mtd-summary-title { padding:4px 0 7px; border:0; background:transparent; }
-.area-mtd-cards .mtd-summary-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+.area-mtd-cards .mtd-summary-grid { grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; }
 .area-mtd-cards .mtd-summary-grid > div { min-height:66px; padding:10px 12px; border:1px solid #dfe4ea; border-top:3px solid #ea580c; border-radius:6px; box-shadow:0 2px 7px rgba(30,41,59,.07); text-align:left; }
 .area-mtd-cards .mtd-summary-grid > div:nth-child(3), .area-mtd-cards .mtd-summary-grid > div:nth-child(4) { border-top-color:#e11d48; }
+.area-mtd-cards .mtd-summary-grid > div:nth-child(5) { border-top-color:#2563eb; }
 .area-mtd-cards .mtd-summary-grid b { margin-top:6px; font-size:17px; }
 .conclusion { margin:10px 0 14px; border:1px solid #dfe4ea; border-left:4px solid #c2410c; background:#fff; }
 .conclusion-title { padding:8px 12px; color:#7c2d12; font-size:14px; font-weight:800; background:#fff7ed; border-bottom:1px solid #ead7c7; }
@@ -252,7 +253,7 @@ body { background:#edf0f3; color:#27313b; }
 .brand-indicator-legend i { width:9px; height:9px; border-radius:2px; }
 .brand-indicator-legend b { color:#344054; font-size:10px; }
 @media (max-width:1000px) { .brand-brief-grid { grid-template-columns:1fr; } }
-@media (max-width:760px) { .brand-mtd-cards .mtd-summary-grid { grid-template-columns:1fr 1fr; } .brand-indicator-body { grid-template-columns:96px 1fr; } .brand-indicator-donut { width:90px; } }
+@media (max-width:760px) { .brand-mtd-cards .mtd-summary-grid, .area-mtd-cards .mtd-summary-grid { grid-template-columns:1fr 1fr; } .brand-indicator-body { grid-template-columns:96px 1fr; } .brand-indicator-donut { width:90px; } }
 .decision-board { margin:12px 0 16px; border-top:3px solid #c2410c; background:#fff; }
 .decision-board-title { padding:8px 10px; font-size:14px; font-weight:900; color:#7c2d12; background:#fff7ed; border:1px solid #ead7c7; border-top:0; }
 .decision-top { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:10px 0; }
@@ -1121,6 +1122,15 @@ td { border-color:#dfe4ea; }
   }
   document.querySelectorAll('.page:not(:first-of-type) .mtd-summary').forEach(function (summary) {
     summary.classList.add('area-mtd-cards');
+    var grid = summary.querySelector('.mtd-summary-grid');
+    if (grid && grid.children.length === 4) {
+      var page = summary.closest('.page');
+      var brief = page && page.querySelector('.area-brief:not(.employee-brief)');
+      var storeCount = brief && brief.querySelector('div:first-child b') ? brief.querySelector('div:first-child b').textContent.trim() : '-';
+      var storeCard = document.createElement('div');
+      storeCard.innerHTML = '<span>覆盖门店</span><b>' + storeCount + '家</b>';
+      grid.appendChild(storeCard);
+    }
   });
   var briefGrid = document.querySelector('.page:first-of-type .brand-brief-grid');
   if (briefGrid && !briefGrid.querySelector('.brand-indicator-panel')) {
