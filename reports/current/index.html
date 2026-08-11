@@ -836,6 +836,63 @@ td { border-color:#dfe4ea; }
   normalizeEmployeeRankingTables();
   removeDecisionTrackingBlocks();
   removeRankingHints();
+  renderStoreReviewCards();
+  function renderStoreReviewCards() {
+    document.querySelectorAll('.closure-store-scroll').forEach(function (scroll) {
+      var table = scroll.querySelector('table');
+      var row = table && table.tBodies[0] && table.tBodies[0].rows[0];
+      if (!row) return;
+      var state = row.children[0].cloneNode(true);
+      var store = row.children[1].cloneNode(true);
+      var support = row.children[2].cloneNode(true);
+      var question = row.children[3].querySelector('.question-editor');
+      var answer = row.children[4].cloneNode(true);
+      var area = store.querySelector('span') ? store.querySelector('span').textContent.trim() : '';
+      var storeName = store.querySelector('b') ? store.querySelector('b').textContent.trim() : '';
+      function editor(field, placeholder) {
+        var cell = document.createElement('div');
+        cell.className = 'review-editor';
+        cell.contentEditable = 'true';
+        cell.dataset.editArea = area;
+        cell.dataset.editStore = storeName + '-' + field;
+        cell.dataset.editField = field;
+        cell.dataset.placeholder = placeholder;
+        return cell;
+      }
+      function panel(title, body, name) {
+        var section = document.createElement('section');
+        section.className = 'review-panel ' + name;
+        var heading = document.createElement('h4');
+        heading.textContent = title;
+        section.append(heading, body);
+        return section;
+      }
+      var must = editor('must_complete', '点击填写本周必须完成事项、负责人和截止时间');
+      var prior = editor('prior_review', '点击填写上周承诺事项的完成情况和未完成原因');
+      var next = answer;
+      next.className = 'review-editor';
+      next.dataset.placeholder = '点击填写下周检查点、验收标准和检查时间';
+      var questionEditor = question ? question.cloneNode(true) : editor('question', '点击填写本周问题');
+      var head = document.createElement('div');
+      head.className = 'store-review-head';
+      head.append(state, store);
+      var supportWrap = document.createElement('section');
+      supportWrap.className = 'store-review-support';
+      var supportTitle = document.createElement('h4');
+      supportTitle.textContent = '本周数据支撑';
+      supportWrap.append(supportTitle, support);
+      var panels = document.createElement('div');
+      panels.className = 'store-review-panels';
+      panels.append(panel('本周问题', questionEditor, 'problem'), panel('本周必须完成', must, 'must'), panel('上周承诺完成（回顾）', prior, 'prior'), panel('下周检查点', next, 'next'));
+      var body = document.createElement('div');
+      body.className = 'store-review-body';
+      body.append(supportWrap, panels);
+      var card = document.createElement('article');
+      card.className = 'store-review-card';
+      card.append(head, body);
+      scroll.replaceWith(card);
+    });
+  }
   function removeRankingHints() {
     document.querySelectorAll('.ranking-hint').forEach(function (hint) { hint.remove(); });
   }
@@ -904,6 +961,22 @@ td { border-color:#dfe4ea; }
     panel.innerHTML += '<br><strong>共 ' + names.length + ' 家</strong><small>' + (names.length ? names.join('、') : '暂无') + '</small>';
   });
   brandPage.appendChild(board);
+  ['1区', '2区', '3区'].forEach(function (area) {
+    var areaConclusion = document.querySelector('.conclusion[data-conclusion-area="' + area + '"]');
+    if (!areaConclusion || areaConclusion.parentNode.querySelector('.area-tier-board')) return;
+    var areaBoard = board.cloneNode(true);
+    areaBoard.classList.add('area-tier-board');
+    areaBoard.querySelector('h3').textContent = area + '门店分层';
+    groups.forEach(function (group) {
+      var names = storeRows.filter(function (row) {
+        return row.children[2].textContent.trim() === area && group.test(Number(row.getAttribute('data-completion-current')), row);
+      }).map(function (row) { return row.children[0].textContent.trim(); });
+      var panel = areaBoard.querySelector(group.selector + ' span');
+      if (!panel) return;
+      panel.innerHTML = '完成率分层；' + (names.length ? names.join('、') : '暂无') + '<br><strong>共 ' + names.length + ' 家</strong>';
+    });
+    areaConclusion.parentNode.insertBefore(areaBoard, areaConclusion.nextSibling);
+  });
 })();
 </script><script>
 (function () {
@@ -1252,7 +1325,7 @@ td { border-color:#dfe4ea; }
   var supabaseUrl = 'https://smbelcuwcsuuxcspypae.supabase.co';
   var supabaseKey = 'sb_publishable_KIJsYEjr2gt2K8IMwtEKhg_RR8x6Dqb';
   var tableUrl = supabaseUrl + '/rest/v1/weekly_report_edits';
-  var cells = Array.from(document.querySelectorAll('.closure-table td[contenteditable="true"], .closure-table .question-editor, .conclusion-editor, .decision-editor'));
+  var cells = Array.from(document.querySelectorAll('.closure-table td[contenteditable="true"], .closure-table .question-editor, .store-review-card .review-editor, .store-review-card .question-editor, .conclusion-editor, .decision-editor'));
   var cellsByKey = {};
   var cloudRows = {};
   var pending = {};
