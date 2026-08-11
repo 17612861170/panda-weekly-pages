@@ -834,6 +834,20 @@ td { border-color:#dfe4ea; }
   document.addEventListener('keydown', function (event) { if (event.key === 'ArrowRight') { showPage(current + 1); } if (event.key === 'ArrowLeft') { showPage(current - 1); } });
   showPage(0);
   normalizeEmployeeRankingTables();
+  removeDecisionTrackingBlocks();
+  removeRankingHints();
+  function removeRankingHints() {
+    document.querySelectorAll('.ranking-hint').forEach(function (hint) { hint.remove(); });
+  }
+  function removeDecisionTrackingBlocks() {
+    document.querySelectorAll('.decision-table-wrap h4').forEach(function (heading) {
+      var title = heading.textContent.trim();
+      if (title === '重点门店整改追踪' || title === '城市经理本周动作') {
+        var block = heading.closest('.decision-table-wrap');
+        if (block) block.remove();
+      }
+    });
+  }
   function normalizeEmployeeRankingTables() {
     document.querySelectorAll('table.employee-table').forEach(function (table) {
       if (table.dataset.columnsNormalized) return;
