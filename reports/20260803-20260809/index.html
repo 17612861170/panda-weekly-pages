@@ -1703,4 +1703,8 @@ td { border-color:#dfe4ea; }
     if (label && countLabels.indexOf(label.textContent.trim()) >= 0) metric.remove();
   });
 })();
+</script><script>
+(function () {
+  document.querySelectorAll('.page:not(:first-of-type) .area-brief:not(.employee-brief)').forEach(function (brief) { brief.remove(); });
+})();
 </script></body></html>
