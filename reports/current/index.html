@@ -468,6 +468,10 @@ td { border-color:#dfe4ea; }
 .ranking-table td.metric-bad, .region-store-ranking td.metric-bad, .region-summary-full td.metric-bad { background:#fff0f2 !important; color:#c81e3a; font-weight:900; }
 .ranking-table th.metric-selected, .region-store-ranking th.metric-selected { background:#147d78 !important; color:#fff !important; }
 .ranking-table td.metric-selected:not(.metric-bad), .region-store-ranking td.metric-selected:not(.metric-bad) { background:#e8f5f2 !important; color:#164e4b !important; }
+.rank-medal { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; color:#fff; font-size:11px; font-weight:900; line-height:1; border:1px solid rgba(255,255,255,.72); box-shadow:0 1px 3px rgba(15,23,42,.24), inset 0 1px 0 rgba(255,255,255,.35); }
+.rank-medal.gold { background:#d99b12; }
+.rank-medal.silver { background:#8b98a8; }
+.rank-medal.bronze { background:#b66a3c; }
 .status-cell { max-width:520px; }
 .support-metric span { overflow-wrap:anywhere; word-break:break-word; }
 .support-group { margin:0 0 7px; border:1px solid #dde4eb; background:#fff; }
@@ -893,6 +897,25 @@ td { border-color:#dfe4ea; }
     else cell.textContent = formatPercent(value);
     setBad(cell, metric === 'diff' ? Number(value) < 0 : isBad(metric, Number(value), row));
   }
+  function writeRankCell(cell, rank, available) {
+    cell.textContent = '';
+    if (!available) {
+      cell.textContent = '-';
+      return;
+    }
+    if (rank > 3) {
+      cell.textContent = String(rank);
+      return;
+    }
+    var medal = document.createElement('span');
+    var styles = ['gold', 'silver', 'bronze'];
+    var labels = ['金牌，第1名', '银牌，第2名', '铜牌，第3名'];
+    medal.className = 'rank-medal ' + styles[rank - 1];
+    medal.textContent = String(rank);
+    medal.title = labels[rank - 1];
+    medal.setAttribute('aria-label', labels[rank - 1]);
+    cell.appendChild(medal);
+  }
   function updateRankingDisplay(shell, period, available) {
     var table = shell.querySelector('table[data-ranking-table]');
     if (!table) return;
@@ -966,7 +989,7 @@ td { border-color:#dfe4ea; }
     rows.forEach(function (row, index) {
       tbody.appendChild(row);
       var cell = row.querySelector('[data-rank-cell]');
-      if (cell) cell.textContent = available ? String(index + 1) : '-';
+      if (cell) writeRankCell(cell, index + 1, available);
     });
   }
   shells.forEach(function (shell) {
