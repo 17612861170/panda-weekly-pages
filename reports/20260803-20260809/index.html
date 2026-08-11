@@ -524,15 +524,16 @@ td { border-color:#dfe4ea; }
 .store-review-support h4 { margin:0 0 7px; color:#475569; font-size:12px; }
 .store-review-panels { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; min-width:0; }
 .review-panel { min-width:0; min-height:145px; padding:10px; border:1px solid #dfe4ea; background:#fff; }
-.review-panel.problem { background:#fff5f6; border-color:#f0b8c1; }
-.review-panel.must { background:#fff8ed; border-color:#f0d2a8; }
-.review-panel.prior { background:#f3f7fb; border-color:#cbd9e7; }
-.review-panel.next { background:#f4f8ef; border-color:#c9dbbb; }
+.review-panel.problem { background:#fff; border-color:#f0b8c1; }
+.review-panel.must { background:#fff; border-color:#f0d2a8; }
+.review-panel.prior { background:#fff; border-color:#cbd9e7; }
+.review-panel.next { background:#fff; border-color:#c9dbbb; }
 .review-panel h4 { margin:0 0 7px; font-size:13px; }
 .review-panel.problem h4 { color:#c81e3a; }
 .review-panel.must h4 { color:#b45309; }
 .review-panel.prior h4 { color:#315f7d; }
 .review-panel.next h4 { color:#4d7c0f; }
+.review-panel h4 { padding-bottom:7px; border-bottom:1px solid rgba(148,163,184,.24); }
 .review-editor { min-height:98px; padding:7px; border:1px solid transparent; background:rgba(255,255,255,.72); cursor:text; white-space:pre-wrap; line-height:1.6; font-size:12px; }
 .review-editor:empty::before { content:attr(data-placeholder); color:#8a98a8; font-weight:700; }
 .review-editor:focus { outline:0; border-color:#2f6f95; box-shadow:0 0 0 2px rgba(47,111,149,.16); background:#fff; }
@@ -987,7 +988,7 @@ td { border-color:#dfe4ea; }
       supportWrap.append(supportTitle, support);
       var panels = document.createElement('div');
       panels.className = 'store-review-panels';
-      panels.append(panel('本周问题', questionEditor, 'problem'), panel('本周必须完成', must, 'must'), panel('上周承诺完成（回顾）', prior, 'prior'), panel('下周检查点', next, 'next'));
+      panels.append(panel('我的店本周问题', questionEditor, 'problem'), panel('本周必须完成（行动看板）', must, 'must'), panel('上周承诺完成情况（回顾）', prior, 'prior'), panel('下周检查点（预告）', next, 'next'));
       var body = document.createElement('div');
       body.className = 'store-review-body';
       body.append(supportWrap, panels);
