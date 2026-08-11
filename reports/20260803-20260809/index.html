@@ -247,12 +247,16 @@ body { background:#edf0f3; color:#27313b; }
 .brand-indicator-title { padding:8px 12px; color:#7c2d12; font-size:14px; font-weight:800; background:#fff7ed; border-bottom:1px solid #ead7c7; }
 .brand-indicator-body { display:grid; grid-template-columns:112px 1fr; gap:12px; align-items:center; padding:12px; }
 .brand-indicator-donut { position:relative; width:106px; aspect-ratio:1; border-radius:50%; background:conic-gradient(#e53935 0 31.9%,#f57c00 31.9% 58%,#fbbf24 58% 76.8%,#16a05d 76.8% 88.4%,#9ca3af 88.4% 100%); }
-.brand-indicator-donut::after { content:'69项'; position:absolute; inset:25%; display:grid; place-items:center; border-radius:50%; background:#fff; color:#7c2d12; font-size:14px; font-weight:900; }
+.brand-indicator-donut::after { content:attr(data-total); position:absolute; inset:25%; display:grid; place-items:center; border-radius:50%; background:#fff; color:#7c2d12; font-size:14px; font-weight:900; }
 .brand-indicator-legend { display:grid; gap:7px; }
 .brand-indicator-legend div { display:grid; grid-template-columns:9px 1fr auto; gap:6px; align-items:center; color:#475569; font-size:10px; }
 .brand-indicator-legend i { width:9px; height:9px; border-radius:2px; }
 .brand-indicator-legend b { color:#344054; font-size:10px; }
 @media (max-width:1000px) { .brand-brief-grid { grid-template-columns:1fr; } }
+.employee-control-strip { display:grid; grid-template-columns:minmax(280px,1fr) minmax(0,2fr); gap:10px; align-items:stretch; margin:8px 0 10px; }
+.employee-control-strip .alert { margin:0; display:flex; align-items:center; }
+.employee-control-strip .ranking-toolbar { margin:0; }
+@media (max-width:760px) { .employee-control-strip { grid-template-columns:1fr; } }
 @media (max-width:760px) { .brand-mtd-cards .mtd-summary-grid, .area-mtd-cards .mtd-summary-grid { grid-template-columns:1fr 1fr; } .brand-indicator-body { grid-template-columns:96px 1fr; } .brand-indicator-donut { width:90px; } }
 .decision-board { margin:12px 0 16px; border-top:3px solid #c2410c; background:#fff; }
 .decision-board-title { padding:8px 10px; font-size:14px; font-weight:900; color:#7c2d12; background:#fff7ed; border:1px solid #ead7c7; border-top:0; }
@@ -936,6 +940,7 @@ td { border-color:#dfe4ea; }
   removeDecisionTrackingBlocks();
   removeRankingHints();
   renderStoreReviewCards();
+  normalizeSweepShares();
   function renderStoreReviewCards() {
     document.querySelectorAll('.closure-store-scroll').forEach(function (scroll) {
       var table = scroll.querySelector('table');
@@ -1022,6 +1027,53 @@ td { border-color:#dfe4ea; }
   }
   function removeRankingHints() {
     document.querySelectorAll('.ranking-hint').forEach(function (hint) { hint.remove(); });
+  }
+  function normalizeSweepShares() {
+    function amountPair(text) {
+      return (String(text || '').match(/¥\s*-?[\d,]+(?:\.\d+)?/g) || []).map(function (value) { return Number(value.replace(/[^\d.-]/g, '')); });
+    }
+    function percent(amount, revenue) {
+      return amount !== null && revenue ? (amount / revenue * 100).toFixed(2) + '%' : '-';
+    }
+    document.querySelectorAll('.status-cell').forEach(function (cell) {
+      var metrics = {};
+      cell.querySelectorAll('.support-metric').forEach(function (metric) {
+        var label = metric.querySelector('b');
+        if (label) metrics[label.textContent.trim()] = metric;
+      });
+      var sweep = metrics['扫楼金额'];
+      var revenue = metrics['新签营收'];
+      var share = metrics['扫楼占比'];
+      if (!sweep || !revenue || !share) return;
+      var sweepValues = amountPair(sweep.querySelector('span') && sweep.querySelector('span').textContent);
+      var revenueValues = amountPair(revenue.querySelector('span') && revenue.querySelector('span').textContent);
+      var values = [
+        sweepValues.length && revenueValues.length ? percent(sweepValues[0], revenueValues[0]) : '-',
+        sweepValues.length > 1 && revenueValues.length > 1 ? percent(sweepValues[1], revenueValues[1]) : (sweepValues.length && revenueValues.length ? percent(sweepValues[sweepValues.length - 1], revenueValues[revenueValues.length - 1]) : '-')
+      ];
+      var oldText = share.querySelector('span') && share.querySelector('span').textContent;
+      if (!oldText) return;
+      var parts = oldText.split('→');
+      share.querySelector('span').textContent = parts.length > 1 ? values[0] + ' → ' + values[1] : values[1];
+      share.classList.toggle('is-bad', values[1] !== '-' && Number(values[1].replace('%', '')) < 15);
+    });
+    document.querySelectorAll('table.metric-table').forEach(function (table) {
+      var rows = Array.from(table.querySelectorAll('tbody tr'));
+      var sweepRow = rows.find(function (row) { return row.querySelector('.metric-name') && row.querySelector('.metric-name').textContent.trim() === '扫楼金额'; });
+      var revenueRow = rows.find(function (row) { return row.querySelector('.metric-name') && row.querySelector('.metric-name').textContent.trim() === '新签营收'; });
+      var shareRow = rows.find(function (row) { return row.querySelector('.metric-name') && row.querySelector('.metric-name').textContent.trim() === '扫楼占比'; });
+      if (!sweepRow || !revenueRow || !shareRow) return;
+      var sweepCells = Array.from(sweepRow.querySelectorAll('.week-value'));
+      var revenueCells = Array.from(revenueRow.querySelectorAll('.week-value'));
+      var shareCells = Array.from(shareRow.querySelectorAll('.week-value'));
+      shareCells.forEach(function (cell, index) {
+        var sweepValues = amountPair(sweepCells[index] && sweepCells[index].textContent);
+        var revenueValues = amountPair(revenueCells[index] && revenueCells[index].textContent);
+        var value = sweepValues.length && revenueValues.length ? percent(sweepValues[0], revenueValues[0]) : '-';
+        cell.textContent = value;
+        cell.classList.toggle('metric-bad', value !== '-' && Number(value.replace('%', '')) < 15);
+      });
+    });
   }
   function removeDecisionTrackingBlocks() {
     document.querySelectorAll('.decision-table-wrap h4').forEach(function (heading) {
@@ -1137,7 +1189,7 @@ td { border-color:#dfe4ea; }
     var indicatorPanel = document.createElement('section');
     indicatorPanel.className = 'brand-indicator-panel';
     indicatorPanel.setAttribute('aria-label', '未达标指标分布');
-    indicatorPanel.innerHTML = '<div class="brand-indicator-title">未达标指标分布（69项）</div><div class="brand-indicator-body"><div class="brand-indicator-donut" aria-hidden="true"></div><div class="brand-indicator-legend"><div><i style="background:#e53935"></i><span>新签中大卡率</span><b>22</b></div><div><i style="background:#f57c00"></i><span>大卡率</span><b>18</b></div><div><i style="background:#fbbf24"></i><span>扫楼占比</span><b>13</b></div><div><i style="background:#16a05d"></i><span>续卡占比</span><b>8</b></div><div><i style="background:#9ca3af"></i><span>其他指标</span><b>8</b></div></div></div>';
+    indicatorPanel.innerHTML = '<div class="brand-indicator-title">未达标指标分布（69项）</div><div class="brand-indicator-body"><div class="brand-indicator-donut" data-total="69项" aria-hidden="true"></div><div class="brand-indicator-legend"><div><i style="background:#e53935"></i><span>新签中大卡率</span><b>22</b></div><div><i style="background:#f57c00"></i><span>大卡率</span><b>18</b></div><div><i style="background:#fbbf24"></i><span>扫楼占比</span><b>13</b></div><div><i style="background:#16a05d"></i><span>续卡占比</span><b>8</b></div><div><i style="background:#9ca3af"></i><span>其他指标</span><b>8</b></div></div></div>';
     briefGrid.appendChild(indicatorPanel);
   }
 })();
@@ -1154,15 +1206,16 @@ td { border-color:#dfe4ea; }
     var unmetText = brief.querySelectorAll('div')[4] && brief.querySelectorAll('div')[4].querySelector('b');
     var unmet = unmetText ? unmetText.textContent.trim() : '0';
     var buckets = { '完成率': 0, '办卡转化': 0, '续卡': 0, '引流': 0, '其他': 0 };
-    var metricTable = page.querySelector('table.area-metric-table');
-    if (metricTable) {
-      metricTable.querySelectorAll('tbody tr').forEach(function (row) {
-        var bad = row.querySelector('.current-week.metric-bad');
-        if (!bad) return;
-        var label = row.querySelector('.metric-name');
-        var name = label ? label.textContent.trim() : '';
-        var bucket = name === '完成率' ? '完成率' : (/新签|大卡/.test(name) ? '办卡转化' : (/续卡|续费/.test(name) ? '续卡' : (/引流|扫楼|扶梯/.test(name) ? '引流' : '其他')));
-        buckets[bucket] += 1;
+    var rankingTable = page.querySelector('table.region-store-ranking');
+    if (rankingTable) {
+      var headers = Array.from(rankingTable.querySelectorAll('thead th')).map(function (header) { return header.textContent.trim(); });
+      rankingTable.querySelectorAll('tbody tr').forEach(function (row) {
+        Array.from(row.children).forEach(function (cell, index) {
+          if (!cell.classList.contains('metric-bad')) return;
+          var name = headers[index] || '';
+          var bucket = name === '完成率' ? '完成率' : (/新签|大卡/.test(name) ? '办卡转化' : (/续卡|续费/.test(name) ? '续卡' : (/引流|扫楼|扶梯/.test(name) ? '引流' : '其他')));
+          buckets[bucket] += 1;
+        });
       });
     }
     var grid = document.createElement('div');
@@ -1174,7 +1227,7 @@ td { border-color:#dfe4ea; }
     var indicator = document.createElement('section');
     indicator.className = 'brand-indicator-panel';
     indicator.setAttribute('aria-label', area + '未达标指标分布');
-    indicator.innerHTML = '<div class="brand-indicator-title">' + area + '未达标指标分布（' + unmet + '项）</div><div class="brand-indicator-body"><div class="brand-indicator-donut" aria-hidden="true"></div><div class="brand-indicator-legend"></div></div>';
+    indicator.innerHTML = '<div class="brand-indicator-title">' + area + '未达标指标分布（' + unmet + '项）</div><div class="brand-indicator-body"><div class="brand-indicator-donut" data-total="' + unmet + '项" aria-hidden="true"></div><div class="brand-indicator-legend"></div></div>';
     Object.keys(buckets).forEach(function (label, index) {
       var colors = ['#e53935', '#f57c00', '#fbbf24', '#16a05d', '#9ca3af'];
       var item = document.createElement('div');
@@ -1184,6 +1237,19 @@ td { border-color:#dfe4ea; }
     page.insertBefore(grid, conclusion);
     grid.append(conclusion, status, indicator);
     conclusion.setAttribute('data-area-brand-layout', 'true');
+  });
+})();
+</script><script>
+(function () {
+  document.querySelectorAll('.employee-page').forEach(function (page) {
+    var alert = page.querySelector(':scope > .alert');
+    var shell = page.querySelector('[data-ranking-type="employee"]');
+    var toolbar = shell && shell.querySelector('.ranking-toolbar');
+    if (!alert || !shell || !toolbar) return;
+    var strip = document.createElement('div');
+    strip.className = 'employee-control-strip';
+    shell.insertBefore(strip, toolbar);
+    strip.append(alert, toolbar);
   });
 })();
 </script><script>
