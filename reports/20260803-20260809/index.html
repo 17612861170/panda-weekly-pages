@@ -532,6 +532,9 @@ td { border-color:#dfe4ea; }
 .ranking-group { display:flex; flex-wrap:wrap; gap:6px; align-items:center; padding:5px 7px; background:#fff; border:1px solid #d9e2ec; border-radius:8px; }
 .ranking-group[data-role="period"] { flex:0 0 auto; }
 .ranking-group[data-role="metric"] { flex:1 1 620px; }
+.ranking-group[data-role="metric"] { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:thin; }
+.ranking-group[data-role="metric"]::before,
+.ranking-group[data-role="metric"] .ranking-pill { flex:0 0 auto; }
 .ranking-group::before { content: attr(data-label); font-size:11px; color:#5f6b7a; margin-right:2px; }
 .ranking-pill { appearance:none; border:1px solid #cbd5e1; background:#fff; color:#243447; border-radius:16px; padding:4px 9px; font-size:11px; line-height:1.2; cursor:pointer; white-space:nowrap; }
 .ranking-pill.active { background:#143d59; border-color:#143d59; color:#fff; font-weight:700; }
@@ -830,6 +833,41 @@ td { border-color:#dfe4ea; }
   document.querySelector('[data-action="next"]').addEventListener('click', function () { showPage(current + 1); });
   document.addEventListener('keydown', function (event) { if (event.key === 'ArrowRight') { showPage(current + 1); } if (event.key === 'ArrowLeft') { showPage(current - 1); } });
   showPage(0);
+  normalizeEmployeeRankingTables();
+  function normalizeEmployeeRankingTables() {
+    document.querySelectorAll('table.employee-table').forEach(function (table) {
+      if (table.dataset.columnsNormalized) return;
+      var headers = Array.from(table.querySelectorAll('thead th'));
+      var combinedIndex = headers.findIndex(function (header) { return header.textContent.trim() === '本周办卡/新签/续卡'; });
+      if (combinedIndex < 0) return;
+      var renewCells = Array.from(table.querySelectorAll('tbody tr')).map(function (row) {
+        var cell = row.children[combinedIndex];
+        var parts = cell ? cell.textContent.trim().split('/').map(function (part) { return part.trim(); }) : [];
+        return parts.length >= 3 ? parts[2] : '-';
+      });
+      var renewHeader = document.createElement('th');
+      renewHeader.textContent = '续卡金额';
+      headers[7].after(renewHeader);
+      var renewCol = document.createElement('col');
+      renewCol.style.width = '84px';
+      table.querySelector('colgroup').children[7].after(renewCol);
+      Array.from(table.querySelectorAll('tbody tr')).forEach(function (row, rowIndex) {
+        var renewCell = document.createElement('td');
+        renewCell.textContent = renewCells[rowIndex] || '-';
+        row.children[7].after(renewCell);
+      });
+      [12, 11, 10, 9].forEach(function (index) {
+        var header = table.querySelector('thead tr').children[index];
+        if (header) header.remove();
+        table.querySelectorAll('tbody tr').forEach(function (row) {
+          if (row.children[index]) row.children[index].remove();
+        });
+        var col = table.querySelector('colgroup').children[index];
+        if (col) col.remove();
+      });
+      table.dataset.columnsNormalized = 'true';
+    });
+  }
 })();
 </script><script>
 (function () {
