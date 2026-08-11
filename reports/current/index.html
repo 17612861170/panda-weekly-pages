@@ -199,6 +199,14 @@ body { background:#edf0f3; color:#27313b; }
 .mtd-summary-grid span { display:block; color:#667085; font-size:11px; }
 .mtd-summary-grid b { display:block; margin-top:2px; color:#27313b; font-size:16px; line-height:1.2; }
 .mtd-summary-grid .metric-bad { color:#c81e3a; }
+.brand-mtd-cards { border:0; background:transparent; }
+.brand-mtd-cards .mtd-summary-title { padding:4px 0 7px; border:0; background:transparent; }
+.brand-mtd-cards .mtd-summary-grid { grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; }
+.brand-mtd-cards .mtd-summary-grid > div { min-height:66px; padding:10px 12px; border:1px solid #dfe4ea; border-top:3px solid #ea580c; border-radius:6px; box-shadow:0 2px 7px rgba(30,41,59,.07); text-align:left; }
+.brand-mtd-cards .mtd-summary-grid > div:nth-child(3),
+.brand-mtd-cards .mtd-summary-grid > div:nth-child(4) { border-top-color:#e11d48; }
+.brand-mtd-cards .mtd-summary-grid > div:nth-child(5) { border-top-color:#2563eb; }
+.brand-mtd-cards .mtd-summary-grid b { margin-top:6px; font-size:17px; }
 .conclusion { margin:10px 0 14px; border:1px solid #dfe4ea; border-left:4px solid #c2410c; background:#fff; }
 .conclusion-title { padding:8px 12px; color:#7c2d12; font-size:14px; font-weight:800; background:#fff7ed; border-bottom:1px solid #ead7c7; }
 .conclusion-grid { display:grid; grid-template-columns:repeat(3,1fr); }
@@ -211,7 +219,7 @@ body { background:#edf0f3; color:#27313b; }
 .conclusion-item.action h4 { color:#b45309; }
 .conclusion-editor,.decision-editor { min-height:42px; padding:6px 7px; border:1px solid transparent; background:#fff; cursor:text; white-space:pre-wrap; }
 .conclusion-editor:focus,.decision-editor:focus { outline:0; border-color:#2f6f95; box-shadow:0 0 0 2px rgba(47,111,149,.16); }
-.brand-brief-grid { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(280px,.9fr); gap:12px; margin:10px 0 14px; }
+.brand-brief-grid { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(220px,.72fr) minmax(280px,.95fr); gap:10px; margin:10px 0 14px; }
 .brand-brief-grid .conclusion { margin:0; border:1px solid #efd6ad; border-radius:6px; overflow:hidden; }
 .brand-brief-grid .conclusion-grid { grid-template-columns:1fr; }
 .brand-brief-grid .conclusion-item { min-height:0; padding:8px 12px; border-right:0; border-bottom:1px solid #f1e4d5; }
@@ -228,7 +236,17 @@ body { background:#edf0f3; color:#27313b; }
 .brand-status-row.ok { color:#16803c; border-color:#65b779; background:#f5fff7; }
 .brand-status-foot { margin:0 12px 10px; padding:7px 10px; color:#7c2d12; background:#fffaf0; border:1px solid #efd6ad; border-radius:4px; font-weight:800; }
 .brand-status-foot b { color:#c2410c; font-size:16px; }
-@media (max-width:760px) { .brand-brief-grid { grid-template-columns:1fr; } }
+.brand-indicator-panel { border:1px solid #efd6ad; border-radius:6px; overflow:hidden; background:#fff; }
+.brand-indicator-title { padding:8px 12px; color:#7c2d12; font-size:14px; font-weight:800; background:#fff7ed; border-bottom:1px solid #ead7c7; }
+.brand-indicator-body { display:grid; grid-template-columns:112px 1fr; gap:12px; align-items:center; padding:12px; }
+.brand-indicator-donut { position:relative; width:106px; aspect-ratio:1; border-radius:50%; background:conic-gradient(#e53935 0 31.9%,#f57c00 31.9% 58%,#fbbf24 58% 76.8%,#16a05d 76.8% 88.4%,#9ca3af 88.4% 100%); }
+.brand-indicator-donut::after { content:'69项'; position:absolute; inset:25%; display:grid; place-items:center; border-radius:50%; background:#fff; color:#7c2d12; font-size:14px; font-weight:900; }
+.brand-indicator-legend { display:grid; gap:7px; }
+.brand-indicator-legend div { display:grid; grid-template-columns:9px 1fr auto; gap:6px; align-items:center; color:#475569; font-size:10px; }
+.brand-indicator-legend i { width:9px; height:9px; border-radius:2px; }
+.brand-indicator-legend b { color:#344054; font-size:10px; }
+@media (max-width:1000px) { .brand-brief-grid { grid-template-columns:1fr; } }
+@media (max-width:760px) { .brand-mtd-cards .mtd-summary-grid { grid-template-columns:1fr 1fr; } .brand-indicator-body { grid-template-columns:96px 1fr; } .brand-indicator-donut { width:90px; } }
 .decision-board { margin:12px 0 16px; border-top:3px solid #c2410c; background:#fff; }
 .decision-board-title { padding:8px 10px; font-size:14px; font-weight:900; color:#7c2d12; background:#fff7ed; border:1px solid #ead7c7; border-top:0; }
 .decision-top { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:10px 0; }
@@ -840,8 +858,23 @@ td { border-color:#dfe4ea; }
   var brandMtd = document.querySelector('.page:first-of-type .mtd-summary[aria-label="品牌月至今"]');
   if (brandMtd) {
     brandMtd.setAttribute('aria-label', '品牌8月至今');
+    brandMtd.classList.add('brand-mtd-cards');
     var brandTitle = brandMtd.querySelector('.mtd-summary-title');
     if (brandTitle) brandTitle.textContent = '品牌8月至今';
+    var brandGrid = brandMtd.querySelector('.mtd-summary-grid');
+    if (brandGrid && brandGrid.children.length === 4) {
+      var storeCard = document.createElement('div');
+      storeCard.innerHTML = '<span>覆盖门店</span><b>21家</b>';
+      brandGrid.appendChild(storeCard);
+    }
+  }
+  var briefGrid = document.querySelector('.page:first-of-type .brand-brief-grid');
+  if (briefGrid && !briefGrid.querySelector('.brand-indicator-panel')) {
+    var indicatorPanel = document.createElement('section');
+    indicatorPanel.className = 'brand-indicator-panel';
+    indicatorPanel.setAttribute('aria-label', '未达标指标分布');
+    indicatorPanel.innerHTML = '<div class="brand-indicator-title">未达标指标分布（69项）</div><div class="brand-indicator-body"><div class="brand-indicator-donut" aria-hidden="true"></div><div class="brand-indicator-legend"><div><i style="background:#e53935"></i><span>新签中大卡率</span><b>22</b></div><div><i style="background:#f57c00"></i><span>大卡率</span><b>18</b></div><div><i style="background:#fbbf24"></i><span>扫楼占比</span><b>13</b></div><div><i style="background:#16a05d"></i><span>续卡占比</span><b>8</b></div><div><i style="background:#9ca3af"></i><span>其他指标</span><b>8</b></div></div></div>';
+    briefGrid.appendChild(indicatorPanel);
   }
 })();
 </script><script>
