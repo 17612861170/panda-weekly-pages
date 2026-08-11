@@ -944,12 +944,27 @@ td { border-color:#dfe4ea; }
 (function () {
   var reportId = '20260803-20260809';
   var storageKey = 'panda-weekly-20260803-20260809-closure-edits-v1';
+  var supabaseUrl = 'https://smbelcuwcsuuxcspypae.supabase.co';
+  var supabaseKey = 'sb_publishable_KIJsYEjr2gt2K8IMwtEKhg_RR8x6Dqb';
+  var tableUrl = supabaseUrl + '/rest/v1/weekly_report_edits';
   var cells = Array.from(document.querySelectorAll('.closure-table td[contenteditable="true"], .closure-table .question-editor'));
+  var cellsByKey = {};
+  var cloudRows = {};
+  var pending = {};
+  var timers = {};
   var localSaved = {};
   try { localSaved = JSON.parse(window.localStorage.getItem(storageKey) || '{}'); } catch (error) { localSaved = {}; }
   function keyFor(cell) { return [cell.dataset.editArea, cell.dataset.editStore, cell.dataset.editField].join('|'); }
   function valueFor(cell) { return cell.matches('textarea') ? cell.value : cell.innerText.trim(); }
   function setValue(cell, value) { if (cell.matches('textarea')) cell.value = value; else cell.textContent = value; }
+  function headers(extra) {
+    return Object.assign({
+      apikey: supabaseKey,
+      Authorization: 'Bearer ' + supabaseKey,
+      'Content-Type': 'application/json'
+    }, extra || {});
+  }
+  function clock() { return new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }); }
   function saveLocal(key, value) {
     localSaved[key] = value;
     try { window.localStorage.setItem(storageKey, JSON.stringify(localSaved)); } catch (error) {}
@@ -960,14 +975,96 @@ td { border-color:#dfe4ea; }
     status.textContent = text;
     status.dataset.saveState = state || '';
   }
+  function updateAllStatuses(text, state) {
+    ['1区', '2区', '3区'].forEach(function (area) { updateStatus(area, text, state); });
+  }
+  function upsertCell(cell) {
+    var key = keyFor(cell);
+    var payload = {
+      report_id: reportId,
+      area: cell.dataset.editArea,
+      store: cell.dataset.editStore,
+      field: cell.dataset.editField,
+      value: valueFor(cell)
+    };
+    pending[key] = true;
+    updateStatus(payload.area, '正在保存到共享云端...', 'saving');
+    return fetch(tableUrl + '?on_conflict=report_id,area,store,field', {
+      method: 'POST',
+      headers: headers({ Prefer: 'resolution=merge-duplicates,return=representation' }),
+      body: JSON.stringify(payload)
+    }).then(function (response) {
+      if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
+      return response.json();
+    }).then(function (rows) {
+      var row = rows && rows[0];
+      cloudRows[key] = row && row.updated_at ? row.updated_at : new Date().toISOString();
+      updateStatus(payload.area, '已云端保存 ' + clock() + ' · 所有人可见', 'saved');
+    }).catch(function (error) {
+      console.error('云端保存失败', error);
+      updateStatus(payload.area, '云端保存失败 · 已暂存在本机', 'error');
+    }).finally(function () { delete pending[key]; });
+  }
+  function scheduleSave(cell, immediate) {
+    var key = keyFor(cell);
+    saveLocal(key, valueFor(cell));
+    window.clearTimeout(timers[key]);
+    if (immediate) return upsertCell(cell);
+    timers[key] = window.setTimeout(function () { upsertCell(cell); }, 450);
+  }
+  function queryCloud() {
+    var query = '?report_id=eq.' + encodeURIComponent(reportId)
+      + '&select=area,store,field,value,updated_at&order=updated_at.asc';
+    return fetch(tableUrl + query, { headers: headers() }).then(function (response) {
+      if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
+      return response.json();
+    });
+  }
+  function refreshCloud(initial) {
+    return queryCloud().then(function (rows) {
+      var seen = {};
+      (rows || []).forEach(function (row) {
+        var key = [row.area, row.store, row.field].join('|');
+        seen[key] = true;
+        var cell = cellsByKey[key];
+        if (!cell || pending[key] || document.activeElement === cell) return;
+        if (!cloudRows[key] || String(row.updated_at) > cloudRows[key]) {
+          setValue(cell, String(row.value || ''));
+          saveLocal(key, String(row.value || ''));
+          cloudRows[key] = row.updated_at || '';
+        }
+      });
+      if (initial) {
+        cells.forEach(function (cell) {
+          var key = keyFor(cell);
+          if (!seen[key] && Object.prototype.hasOwnProperty.call(localSaved, key) && String(localSaved[key] || '').trim()) {
+            setValue(cell, String(localSaved[key] || ''));
+            upsertCell(cell);
+          }
+        });
+      }
+      if (!Object.keys(pending).length) updateAllStatuses('共享云端已同步 ' + clock(), 'saved');
+    }).catch(function (error) {
+      console.error('云端同步失败', error);
+      updateAllStatuses('云端连接失败 · 当前仅本机暂存', 'error');
+    });
+  }
   cells.forEach(function (cell) {
     var key = keyFor(cell);
-    if (Object.prototype.hasOwnProperty.call(localSaved, key)) setValue(cell, String(localSaved[key] || ''));
-    cell.addEventListener('input', function () {
-      saveLocal(key, valueFor(cell));
-      updateStatus(cell.dataset.editArea, '已暂存在本机 · ' + reportId, 'saved');
+    cellsByKey[key] = cell;
+    cell.addEventListener('input', function () { scheduleSave(cell, false); });
+    cell.addEventListener('blur', function () {
+      if (timers[key]) {
+        window.clearTimeout(timers[key]);
+        delete timers[key];
+        scheduleSave(cell, true);
+      }
     });
   });
-  ['1区','2区','3区'].forEach(function (area) { updateStatus(area, '本机可编辑 · 待发布后接云端', 'saved'); });
+  updateAllStatuses('正在连接共享云端...', 'saving');
+  refreshCloud(true);
+  window.setInterval(function () { if (!document.hidden) refreshCloud(false); }, 3000);
+  window.addEventListener('online', function () { refreshCloud(false); });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) refreshCloud(false); });
 })();
 </script></body></html>
