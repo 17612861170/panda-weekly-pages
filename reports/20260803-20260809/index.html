@@ -221,10 +221,10 @@ body { background:#edf0f3; color:#27313b; }
 .conclusion-editor:focus,.decision-editor:focus { outline:0; border-color:#2f6f95; box-shadow:0 0 0 2px rgba(47,111,149,.16); }
 .brand-brief-grid { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(220px,.72fr) minmax(280px,.95fr); gap:10px; margin:10px 0 14px; }
 .brand-brief-grid .conclusion { margin:0; border:1px solid #efd6ad; border-radius:6px; overflow:hidden; }
-.brand-brief-grid .conclusion-grid { grid-template-columns:1fr; }
-.brand-brief-grid .conclusion-item { min-height:0; padding:8px 12px; border-right:0; border-bottom:1px solid #f1e4d5; }
-.brand-brief-grid .conclusion-item:last-child { border-bottom:0; }
-.brand-brief-grid .conclusion-editor { min-height:30px; padding:3px 6px; }
+.brand-brief-grid .conclusion-grid { grid-template-columns:repeat(3,1fr); }
+.brand-brief-grid .conclusion-item { min-height:86px; padding:9px 12px; border-right:1px solid #f1e4d5; border-bottom:0; }
+.brand-brief-grid .conclusion-item:last-child { border-right:0; }
+.brand-brief-grid .conclusion-editor { min-height:42px; padding:6px 7px; }
 .brand-status-panel { border:1px solid #efd6ad; border-radius:6px; overflow:hidden; background:#fff; }
 .brand-status-title { padding:8px 12px; color:#7c2d12; font-size:14px; font-weight:800; background:#fff7ed; border-bottom:1px solid #ead7c7; }
 .brand-status-list { display:grid; gap:8px; padding:10px 12px 8px; }
