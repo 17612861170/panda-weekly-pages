@@ -149,6 +149,24 @@ td:last-child { text-align:left; }
 .region-card-metrics b { display:block; color:#333; font-size:12px; line-height:1.15; white-space:nowrap; }
 .region-card p { margin:0; padding:8px 10px; color:#555; font-size:11px; line-height:1.55; background:#fffaf3; }
 .region-card p b { color:#d4380d; }
+.region-completion-pk { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:8px 0 12px; }
+.region-completion-pk[hidden] { display:none; }
+.region-pk-card { border:1px solid #dfe4ea; border-radius:6px; overflow:hidden; background:#fff; }
+.region-pk-card.is-first { border-color:#f4a261; box-shadow:0 2px 8px rgba(194,65,12,.12); }
+.region-pk-head { display:grid; grid-template-columns:42px 1fr auto; align-items:center; gap:8px; padding:9px 10px; background:#fffaf5; border-bottom:1px solid #eadfd6; }
+.region-pk-rank { display:flex; justify-content:center; }
+.region-pk-name { color:#7c2d12; font-size:17px; font-weight:900; }
+.region-pk-status { color:#667085; font-size:11px; text-align:right; }
+.region-pk-metrics { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:#e5e7eb; }
+.region-pk-metrics div { min-height:52px; padding:8px 9px; background:#fff; }
+.region-pk-metrics span { display:block; color:#667085; font-size:11px; margin-bottom:4px; }
+.region-pk-metrics b { display:block; color:#344054; font-size:14px; white-space:nowrap; }
+.region-pk-metrics b.good { color:#07835a; }
+.region-pk-metrics b.bad { color:#e11d48; }
+.region-pk-note { min-height:42px; padding:8px 10px; color:#667085; background:#fffaf5; font-size:11px; line-height:1.45; }
+.region-pk-note strong { color:#c2410c; }
+.ranking-shell.completion-card-mode .table-scroll { display:none; }
+@media (max-width:1000px) { .region-completion-pk { grid-template-columns:1fr; } }
 .footer-note { background:#fff7e6; color:#8a4b00; padding:12px; border-radius:8px; text-align:center; margin-top:12px; }
 .rank-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:10px; }
 .rank-card { border:1px solid #d9e6f2; border-radius:2px; overflow:hidden; background:white; }
@@ -900,6 +918,67 @@ td { border-color:#dfe4ea; }
   function setBad(cell, bad) {
     cell.classList.toggle('metric-bad', Boolean(bad));
   }
+  function updateRegionCompletionCards(shell, period, available) {
+    if (shell.dataset.rankingType === 'employee') return;
+    var table = shell.querySelector('table[data-ranking-table="region"]');
+    if (!table) return;
+    var scroll = table.closest('.table-scroll');
+    var cards = shell.querySelector('[data-region-completion-pk]');
+    if (!cards) {
+      cards = document.createElement('div');
+      cards.className = 'region-completion-pk';
+      cards.setAttribute('data-region-completion-pk', '');
+      scroll.parentNode.insertBefore(cards, scroll);
+    }
+    var completionButton = shell.querySelector('[data-metric="completion"].active');
+    var showCards = completionButton && available;
+    cards.hidden = !showCards;
+    shell.classList.toggle('completion-card-mode', Boolean(showCards));
+    if (!showCards) return;
+    cards.textContent = '';
+    var rows = Array.from(table.querySelectorAll('tbody tr'));
+    var label = period === 'previous' ? '上周' : period === 'month' ? '本月' : '本周';
+    rows.forEach(function (row, index) {
+      var revenue = asNumber(row.getAttribute('data-revenue-' + period));
+      var completion = asNumber(row.getAttribute('data-completion-' + period));
+      var target = asNumber(row.getAttribute('data-target-' + period));
+      var card = document.createElement('article');
+      card.className = 'region-pk-card' + (index === 0 ? ' is-first' : '');
+      var head = document.createElement('div');
+      head.className = 'region-pk-head';
+      var rankWrap = document.createElement('div');
+      rankWrap.className = 'region-pk-rank';
+      var medal = document.createElement('span');
+      medal.className = 'rank-medal ' + ['gold', 'silver', 'bronze'][index];
+      medal.textContent = String(index + 1);
+      medal.setAttribute('aria-label', '第' + (index + 1) + '名');
+      rankWrap.appendChild(medal);
+      var name = document.createElement('div');
+      name.className = 'region-pk-name';
+      name.textContent = row.children[0].textContent.trim();
+      var status = document.createElement('div');
+      status.className = 'region-pk-status';
+      status.textContent = label + '完成率排名';
+      head.append(rankWrap, name, status);
+      var metrics = document.createElement('div');
+      metrics.className = 'region-pk-metrics';
+      [[label + '营收', formatMoney(revenue), false], ['完成率', formatPercent(completion), completion >= 70], ['目标差额', formatSignedMoney(revenue - target), revenue >= target], ['目标', formatMoney(target), false]].forEach(function (item) {
+        var cell = document.createElement('div');
+        var title = document.createElement('span');
+        title.textContent = item[0];
+        var value = document.createElement('b');
+        value.textContent = item[1];
+        value.className = item[2] ? 'good' : (item[0] === '完成率' || item[0] === '目标差额' ? 'bad' : '');
+        cell.append(title, value);
+        metrics.appendChild(cell);
+      });
+      var note = document.createElement('div');
+      note.className = 'region-pk-note';
+      note.innerHTML = '<strong>核心判断：</strong>' + (completion >= 70 ? '区域完成率已过区域标准线。' : '区域完成率未过区域标准线，需要重点追踪。');
+      card.append(head, metrics, note);
+      cards.appendChild(card);
+    });
+  }
   function isBad(metric, value, row) {
     if (!Number.isFinite(value)) return false;
     var table = row.closest('table');
@@ -1019,6 +1098,7 @@ td { border-color:#dfe4ea; }
       var cell = row.querySelector('[data-rank-cell]');
       if (cell) writeRankCell(cell, index + 1, available);
     });
+    updateRegionCompletionCards(shell, period, available);
   }
   shells.forEach(function (shell) {
     shell.addEventListener('click', function (event) {
@@ -1163,5 +1243,13 @@ td { border-color:#dfe4ea; }
   window.setInterval(function () { if (!document.hidden) refreshCloud(false); }, 3000);
   window.addEventListener('online', function () { refreshCloud(false); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) refreshCloud(false); });
+})();
+</script><script>
+(function () {
+  var countLabels = ['新签小卡数', '新签中卡数', '新签大卡数', '续卡小卡数', '续卡中卡数', '续卡大卡数'];
+  document.querySelectorAll('.closure-store-table .support-metric').forEach(function (metric) {
+    var label = metric.querySelector('b');
+    if (label && countLabels.indexOf(label.textContent.trim()) >= 0) metric.remove();
+  });
 })();
 </script></body></html>
