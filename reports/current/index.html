@@ -207,6 +207,12 @@ body { background:#edf0f3; color:#27313b; }
 .brand-mtd-cards .mtd-summary-grid > div:nth-child(4) { border-top-color:#e11d48; }
 .brand-mtd-cards .mtd-summary-grid > div:nth-child(5) { border-top-color:#2563eb; }
 .brand-mtd-cards .mtd-summary-grid b { margin-top:6px; font-size:17px; }
+.area-mtd-cards { border:0; background:transparent; }
+.area-mtd-cards .mtd-summary-title { padding:4px 0 7px; border:0; background:transparent; }
+.area-mtd-cards .mtd-summary-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+.area-mtd-cards .mtd-summary-grid > div { min-height:66px; padding:10px 12px; border:1px solid #dfe4ea; border-top:3px solid #ea580c; border-radius:6px; box-shadow:0 2px 7px rgba(30,41,59,.07); text-align:left; }
+.area-mtd-cards .mtd-summary-grid > div:nth-child(3), .area-mtd-cards .mtd-summary-grid > div:nth-child(4) { border-top-color:#e11d48; }
+.area-mtd-cards .mtd-summary-grid b { margin-top:6px; font-size:17px; }
 .conclusion { margin:10px 0 14px; border:1px solid #dfe4ea; border-left:4px solid #c2410c; background:#fff; }
 .conclusion-title { padding:8px 12px; color:#7c2d12; font-size:14px; font-weight:800; background:#fff7ed; border-bottom:1px solid #ead7c7; }
 .conclusion-grid { display:grid; grid-template-columns:repeat(3,1fr); }
@@ -487,6 +493,46 @@ td { border-color:#dfe4ea; }
 .badge.yellow { background:#d97706; }
 .badge.green { background:#0b9460; }
 .closure-store-list { display:grid; gap:18px; overflow:visible; }
+.store-filter-bar { display:flex; align-items:center; gap:10px; margin:10px 0 12px; padding:9px 11px; border:1px solid #d9e2ec; border-radius:6px; background:#f8fafc; }
+.store-filter-bar label { color:#475569; font-size:12px; font-weight:800; }
+.store-filter-bar select { min-width:220px; padding:7px 30px 7px 10px; border:1px solid #b8c5d1; border-radius:4px; background:#fff; color:#27313b; font-size:12px; }
+.store-review-body { grid-template-columns:minmax(250px,.82fr) minmax(0,1fr) minmax(0,1fr); grid-template-areas:"support problem must" "prior prior next"; align-items:stretch; }
+.store-review-support { grid-area:support; max-height:420px; overflow:auto; }
+.store-review-panels { display:contents; }
+.review-panel.problem { grid-area:problem; }
+.review-panel.must { grid-area:must; }
+.review-panel.prior { grid-area:prior; }
+.review-panel.next { grid-area:next; }
+.review-panel.problem, .review-panel.must { min-height:300px; }
+.review-panel.prior, .review-panel.next { min-height:150px; }
+.review-panel.problem .question-editor, .review-panel.must .review-editor { min-height:245px; }
+.review-panel.prior .review-editor, .review-panel.next .review-editor { min-height:96px; }
+@media (max-width:1000px) { .store-review-body { grid-template-columns:1fr; grid-template-areas:"support" "problem" "must" "prior" "next"; } .store-filter-bar { align-items:stretch; flex-direction:column; } .store-filter-bar select { width:100%; } }
+.store-review-card { border:1px solid #d5dbe2; border-radius:6px; overflow:hidden; background:#fff; box-shadow:0 2px 7px rgba(15,23,42,.07); }
+.store-review-head { display:flex; align-items:center; gap:14px; padding:10px 14px; background:#f8fafc; border-bottom:1px solid #dfe4ea; }
+.store-review-head .rating-cell { padding:0; background:transparent; }
+.store-review-head .object-cell { display:flex; align-items:baseline; gap:8px; padding:0; background:transparent; }
+.store-review-head .object-cell b { font-size:15px; }
+.store-review-head .object-cell span { color:#667085; font-size:11px; }
+.store-review-body { display:grid; grid-template-columns:minmax(260px,.72fr) minmax(0,1.7fr); gap:12px; padding:12px; }
+.store-review-support { min-width:0; padding:10px; border:1px solid #dfe4ea; background:#fff; }
+.store-review-support h4 { margin:0 0 7px; color:#475569; font-size:12px; }
+.store-review-panels { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; min-width:0; }
+.review-panel { min-width:0; min-height:145px; padding:10px; border:1px solid #dfe4ea; background:#fff; }
+.review-panel.problem { background:#fff5f6; border-color:#f0b8c1; }
+.review-panel.must { background:#fff8ed; border-color:#f0d2a8; }
+.review-panel.prior { background:#f3f7fb; border-color:#cbd9e7; }
+.review-panel.next { background:#f4f8ef; border-color:#c9dbbb; }
+.review-panel h4 { margin:0 0 7px; font-size:13px; }
+.review-panel.problem h4 { color:#c81e3a; }
+.review-panel.must h4 { color:#b45309; }
+.review-panel.prior h4 { color:#315f7d; }
+.review-panel.next h4 { color:#4d7c0f; }
+.review-editor { min-height:98px; padding:7px; border:1px solid transparent; background:rgba(255,255,255,.72); cursor:text; white-space:pre-wrap; line-height:1.6; font-size:12px; }
+.review-editor:empty::before { content:attr(data-placeholder); color:#8a98a8; font-weight:700; }
+.review-editor:focus { outline:0; border-color:#2f6f95; box-shadow:0 0 0 2px rgba(47,111,149,.16); background:#fff; }
+.store-review-card .question-editor { min-height:98px; padding:7px; background:rgba(255,255,255,.72); }
+@media (max-width:1000px) { .store-review-body { grid-template-columns:1fr; } }
 .closure-store-scroll { width:100%; overflow-x:auto; overflow-y:visible; scrollbar-gutter:stable; border:1px solid #d5dbe2; background:#fff; box-shadow:0 2px 7px rgba(15,23,42,.07); }
 .closure-store-scroll .closure-table { margin:0; width:1450px !important; min-width:1450px !important; }
 .closure-store-scroll thead th { position:sticky; top:0; z-index:6; box-shadow:0 1px 0 rgba(15,23,42,.18); }
@@ -581,6 +627,26 @@ td { border-color:#dfe4ea; }
 .hero-main .area-metric-table th, .hero-main .area-metric-table td { padding-left:4px; padding-right:4px; }
 .hero-main .area-metric-table th:first-child, .hero-main .area-metric-table td.metric-category { width:82px; min-width:82px; }
 .hero-main .area-metric-table th:nth-child(2), .hero-main .area-metric-table td.metric-name { left:82px; width:104px; min-width:104px; }
+.deck-tabs { display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; scrollbar-width:thin; }
+.deck-tab { flex:0 0 auto; min-width:122px; text-align:center; }
+.area-employee-page .section-title { margin-bottom:10px; }
+.store-review-body { display:grid; grid-template-columns:minmax(250px,.82fr) minmax(0,1fr) minmax(0,1fr); grid-template-areas:"support problem must" "prior prior next"; align-items:stretch; }
+.store-review-support { grid-area:support; max-height:420px; overflow:auto; }
+.store-review-panels { display:contents; }
+.review-panel.problem { grid-area:problem; }
+.review-panel.must { grid-area:must; }
+.review-panel.prior { grid-area:prior; }
+.review-panel.next { grid-area:next; }
+.review-panel.problem, .review-panel.must { min-height:300px; }
+.review-panel.prior, .review-panel.next { min-height:150px; }
+.review-panel.problem .question-editor, .review-panel.must .review-editor { min-height:245px; }
+.review-panel.prior .review-editor, .review-panel.next .review-editor { min-height:96px; }
+@media (max-width:1000px) {
+  .deck-tabs { display:flex; }
+  .store-review-body { grid-template-columns:1fr; grid-template-areas:"support" "problem" "must" "prior" "next"; }
+  .store-filter-bar { align-items:stretch; flex-direction:column; }
+  .store-filter-bar select { width:100%; }
+}
 </style>
 </head>
 <body class="deck-mode"><div class="deck-toolbar" aria-label="周报翻页控制">
@@ -819,9 +885,41 @@ td { border-color:#dfe4ea; }
 </div>
 <script>
 (function () {
+  splitAreaEmployeePages();
   var pages = Array.from(document.querySelectorAll('.page'));
   var tabs = Array.from(document.querySelectorAll('.deck-tab'));
   var current = 0;
+  function splitAreaEmployeePages() {
+    var container = document.querySelector('.container');
+    var tabList = document.querySelector('.deck-tabs');
+    if (!container || !tabList || container.querySelector('.area-employee-page')) return;
+    ['1区', '2区', '3区'].forEach(function (area) {
+      var heading = Array.from(container.querySelectorAll('.page > h3')).find(function (item) {
+        return item.textContent.indexOf(area + '店员排名') !== -1;
+      });
+      if (!heading) return;
+      var brief = heading.nextElementSibling;
+      var shell = brief && brief.nextElementSibling;
+      if (!brief || !brief.classList.contains('employee-brief') || !shell || !shell.classList.contains('ranking-shell')) return;
+      var page = document.createElement('section');
+      page.className = 'page employee-page area-employee-page';
+      var guide = document.createElement('div');
+      guide.className = 'page-guide';
+      guide.textContent = area + '店员业绩排名';
+      var title = document.createElement('h2');
+      title.className = 'section-title';
+      title.textContent = area + '店员排名';
+      page.append(guide, title, brief, shell);
+      heading.remove();
+      container.appendChild(page);
+      var tab = document.createElement('button');
+      tab.className = 'deck-tab';
+      tab.type = 'button';
+      tab.dataset.page = String(container.querySelectorAll('.page').length - 1);
+      tab.textContent = area + '店员排名';
+      tabList.appendChild(tab);
+    });
+  }
   function showPage(index) {
     current = (index + pages.length) % pages.length;
     pages.forEach(function (page, i) { page.classList.toggle('active', i === current); });
@@ -889,8 +987,36 @@ td { border-color:#dfe4ea; }
       body.append(supportWrap, panels);
       var card = document.createElement('article');
       card.className = 'store-review-card';
+      card.dataset.storeName = storeName;
       card.append(head, body);
       scroll.replaceWith(card);
+    });
+    document.querySelectorAll('.closure-store-list').forEach(function (list) {
+      var cards = Array.from(list.querySelectorAll('.store-review-card'));
+      if (!cards.length || list.previousElementSibling && list.previousElementSibling.classList.contains('store-filter-bar')) return;
+      var bar = document.createElement('div');
+      bar.className = 'store-filter-bar';
+      var label = document.createElement('label');
+      label.textContent = '门店筛选';
+      var select = document.createElement('select');
+      select.setAttribute('aria-label', '选择门店');
+      var all = document.createElement('option');
+      all.value = '';
+      all.textContent = '全部门店';
+      select.appendChild(all);
+      cards.forEach(function (card) {
+        var option = document.createElement('option');
+        option.value = card.dataset.storeName;
+        option.textContent = card.dataset.storeName;
+        select.appendChild(option);
+      });
+      select.addEventListener('change', function () {
+        cards.forEach(function (card) {
+          card.hidden = Boolean(select.value) && card.dataset.storeName !== select.value;
+        });
+      });
+      bar.append(label, select);
+      list.parentNode.insertBefore(bar, list);
     });
   }
   function removeRankingHints() {
