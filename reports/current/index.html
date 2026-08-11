@@ -247,6 +247,10 @@ body { background:#edf0f3; color:#27313b; }
 .tier-grid b { display:block; margin-bottom:4px; font-size:11px; }
 .tier-grid span { color:#475569; font-size:10px; line-height:1.5; }
 .tier-star b { color:#07835a; }.tier-potential b { color:#2563eb; }.tier-risk b { color:#b45309; }.tier-red b { color:#c81e3a; }
+.brand-tier-board { margin-top:14px; border:1px solid #dfe4ea; background:#fff; }
+.brand-tier-board h3 { margin:0; padding:8px 10px; border-left:0; border-bottom:1px solid #dfe4ea; background:#f8fafc; color:#475569; font-size:13px; }
+.brand-tier-board .tier-grid { margin:0; }
+.brand-tier-board .tier-grid > div { min-height:72px; }
 .decision-table { min-width:900px !important; margin:0; table-layout:fixed; }
 .decision-table th { background:#475569; color:#fff; border-color:#64748b; }
 .decision-table td { text-align:center !important; font-size:11px; }
@@ -506,12 +510,15 @@ td { border-color:#dfe4ea; }
 .manager-table td, .employee-table td, .manager-table th, .employee-table th { font-size:10px; padding-left:4px; padding-right:4px; }
 .employee-table { min-width:1130px !important; }
 .ranking-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px; margin:8px 0 10px; padding:8px; background:#f8fafc; border:1px solid #d9e2ec; border-radius:8px; }
-.ranking-group { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+.ranking-group { display:flex; flex-wrap:wrap; gap:6px; align-items:center; padding:5px 7px; background:#fff; border:1px solid #d9e2ec; border-radius:8px; }
+.ranking-group[data-role="period"] { flex:0 0 auto; }
+.ranking-group[data-role="metric"] { flex:1 1 620px; }
 .ranking-group::before { content: attr(data-label); font-size:11px; color:#5f6b7a; margin-right:2px; }
 .ranking-pill { appearance:none; border:1px solid #cbd5e1; background:#fff; color:#243447; border-radius:16px; padding:4px 9px; font-size:11px; line-height:1.2; cursor:pointer; white-space:nowrap; }
 .ranking-pill.active { background:#143d59; border-color:#143d59; color:#fff; font-weight:700; }
 .ranking-pill:disabled { cursor:not-allowed; opacity:1; background:#59636e; border-color:#59636e; color:#fff; }
 .ranking-hint { font-size:11px; color:#6b7280; }
+.ranking-toolbar > .ranking-hint { flex-basis:100%; padding:0 3px; }
 .ranking-table th, .ranking-table td, .region-store-ranking th, .region-store-ranking td { white-space:nowrap; }
 .ranking-table th, .ranking-table td, .region-store-ranking th, .region-store-ranking td { text-align:center !important; vertical-align:middle; }
 .ranking-table th:first-child, .ranking-table td:first-child, .region-store-ranking th:first-child, .region-store-ranking td:first-child, .region-summary-full th:first-child, .region-summary-full td:first-child { position:sticky; left:0; z-index:3; background:#fff; box-shadow:1px 0 0 #d8dee9; }
@@ -804,6 +811,24 @@ td { border-color:#dfe4ea; }
   document.querySelector('[data-action="next"]').addEventListener('click', function () { showPage(current + 1); });
   document.addEventListener('keydown', function (event) { if (event.key === 'ArrowRight') { showPage(current + 1); } if (event.key === 'ArrowLeft') { showPage(current - 1); } });
   showPage(0);
+})();
+</script><script>
+(function () {
+  var brandPage = document.querySelectorAll('.page')[0];
+  if (!brandPage || brandPage.querySelector('.brand-tier-board')) return;
+  var board = document.createElement('section');
+  board.className = 'brand-tier-board';
+  board.innerHTML = '<h3>品牌门店分层</h3><div class="tier-grid"><div class="tier-star"><b>明星店（完成率&gt;90% 且续卡表现好）</b><span>完成率达标；续卡表现稳定；经营质量较好<br><strong>共 3 家</strong></span></div><div class="tier-potential"><b>潜力店（完成率70%~90%）</b><span>完成率接近达标线；具备提升空间<br><strong>共 4 家</strong></span></div><div class="tier-risk"><b>风险店（完成率60%~70%）</b><span>完成率偏低；需要专项跟进<br><strong>共 3 家</strong></span></div><div class="tier-red"><b>连续打灯店（完成率&lt;60%连续打灯）</b><span>经营指标持续未达标；列入重点整改<br><strong>共 4 家</strong></span></div></div>';
+  brandPage.appendChild(board);
+})();
+</script><script>
+(function () {
+  var brandMtd = document.querySelector('.page:first-of-type .mtd-summary[aria-label="品牌月至今"]');
+  if (brandMtd) {
+    brandMtd.setAttribute('aria-label', '品牌8月至今');
+    var brandTitle = brandMtd.querySelector('.mtd-summary-title');
+    if (brandTitle) brandTitle.textContent = '品牌8月至今';
+  }
 })();
 </script><script>
 (function () {
