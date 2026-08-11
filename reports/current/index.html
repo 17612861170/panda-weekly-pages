@@ -251,6 +251,7 @@ body { background:#edf0f3; color:#27313b; }
 .brand-tier-board h3 { margin:0; padding:8px 10px; border-left:0; border-bottom:1px solid #dfe4ea; background:#f8fafc; color:#475569; font-size:13px; }
 .brand-tier-board .tier-grid { margin:0; }
 .brand-tier-board .tier-grid > div { min-height:72px; }
+.brand-tier-board small { display:block; margin-top:4px; color:#64748b; line-height:1.45; }
 .decision-table { min-width:900px !important; margin:0; table-layout:fixed; }
 .decision-table th { background:#475569; color:#fff; border-color:#64748b; }
 .decision-table td { text-align:center !important; font-size:11px; }
@@ -332,19 +333,19 @@ td { border-color:#dfe4ea; }
 .hero-main .four-week-table thead th:nth-child(2) { z-index:24; background:#7c2d12; }
 .brand-hero-grid { grid-template-columns:minmax(0,1fr); }
 .brand-hero-grid .hero-main { width:100%; max-height:min(72vh,720px); }
-.brand-hero-grid .four-week-table { width:1200px; min-width:1040px; max-width:none; table-layout:fixed; }
+.brand-hero-grid .four-week-table { width:1100px; min-width:1000px; max-width:none; table-layout:fixed; }
 .brand-hero-grid .four-week-table th,
 .brand-hero-grid .four-week-table td { padding:6px 4px; font-size:11px; }
 .brand-hero-grid .four-week-table th:first-child,
-.brand-hero-grid .four-week-table td.metric-category { width:78px; min-width:78px; }
+.brand-hero-grid .four-week-table td.metric-category { width:70px; min-width:70px; }
 .brand-hero-grid .four-week-table th:nth-child(2),
-.brand-hero-grid .four-week-table td.metric-name { left:78px; width:118px; min-width:118px; }
+.brand-hero-grid .four-week-table td.metric-name { left:70px; width:110px; min-width:110px; }
 .brand-hero-grid .four-week-table th:nth-child(3),
 .brand-hero-grid .four-week-table th:nth-child(4),
 .brand-hero-grid .four-week-table th:nth-child(5),
-.brand-hero-grid .four-week-table th:nth-child(6) { width:175px; }
+.brand-hero-grid .four-week-table th:nth-child(6) { width:150px; }
 .brand-hero-grid .four-week-table th:nth-child(7) { width:140px; }
-.brand-hero-grid .four-week-table th:nth-child(8) { width:164px; }
+.brand-hero-grid .four-week-table th:nth-child(8) { width:180px; }
 .metric-table td:last-child .cg { background:#dcf5e8; color:#047857; }
 .metric-table td:last-child .cy { background:#fff0d6; color:#a84f05; }
 .metric-table td:last-child .cr { background:#ffe3e7; color:#c81e3a; }
@@ -818,7 +819,20 @@ td { border-color:#dfe4ea; }
   if (!brandPage || brandPage.querySelector('.brand-tier-board')) return;
   var board = document.createElement('section');
   board.className = 'brand-tier-board';
-  board.innerHTML = '<h3>品牌门店分层</h3><div class="tier-grid"><div class="tier-star"><b>明星店（完成率&gt;90% 且续卡表现好）</b><span>完成率达标；续卡表现稳定；经营质量较好<br><strong>共 3 家</strong></span></div><div class="tier-potential"><b>潜力店（完成率70%~90%）</b><span>完成率接近达标线；具备提升空间<br><strong>共 4 家</strong></span></div><div class="tier-risk"><b>风险店（完成率60%~70%）</b><span>完成率偏低；需要专项跟进<br><strong>共 3 家</strong></span></div><div class="tier-red"><b>连续打灯店（完成率&lt;60%连续打灯）</b><span>经营指标持续未达标；列入重点整改<br><strong>共 4 家</strong></span></div></div>';
+  board.innerHTML = '<h3>品牌门店分层</h3><div class="tier-grid"><div class="tier-star"><b>明星店（完成率&gt;90%）</b><span>完成率达标；经营质量较好</span></div><div class="tier-potential"><b>潜力店（完成率70%~90%）</b><span>完成率接近达标线；具备提升空间</span></div><div class="tier-risk"><b>风险店（完成率60%~70%）</b><span>完成率偏低；需要专项跟进</span></div><div class="tier-red"><b>连续打灯店（本周、上周完成率均&lt;60%）</b><span>经营指标持续未达标；列入重点整改</span></div></div>';
+  var groups = [
+    { selector: '.tier-star', test: function (v) { return v > 90; } },
+    { selector: '.tier-potential', test: function (v) { return v >= 70 && v <= 90; } },
+    { selector: '.tier-risk', test: function (v) { return v >= 60 && v < 70; } },
+    { selector: '.tier-red', test: function (v, row) { return v < 60 && Number(row.getAttribute('data-completion-previous')) < 60; } }
+  ];
+  var storeRows = Array.from(document.querySelectorAll('[data-ranking-shell="brand-store"] table tbody tr'));
+  groups.forEach(function (group) {
+    var names = storeRows.filter(function (row) { return group.test(Number(row.getAttribute('data-completion-current')), row); }).map(function (row) { return row.children[0].textContent.trim(); });
+    var panel = board.querySelector(group.selector + ' span');
+    if (!panel) return;
+    panel.innerHTML += '<br><strong>共 ' + names.length + ' 家</strong><small>' + (names.length ? names.join('、') : '暂无') + '</small>';
+  });
   brandPage.appendChild(board);
 })();
 </script><script>
