@@ -1133,6 +1133,51 @@ td { border-color:#dfe4ea; }
 })();
 </script><script>
 (function () {
+  document.querySelectorAll('.conclusion[data-conclusion-area]:not([data-area-brand-layout])').forEach(function (conclusion) {
+    var area = conclusion.getAttribute('data-conclusion-area');
+    if (area === '品牌') return;
+    var page = conclusion.closest('.page');
+    var brief = page && page.querySelector('.area-brief:not(.employee-brief)');
+    if (!page || !brief) return;
+    var statusText = brief.querySelectorAll('div')[3] && brief.querySelectorAll('div')[3].querySelector('b');
+    var counts = (statusText ? statusText.textContent.trim() : '0/0/0').split('/');
+    var unmetText = brief.querySelectorAll('div')[4] && brief.querySelectorAll('div')[4].querySelector('b');
+    var unmet = unmetText ? unmetText.textContent.trim() : '0';
+    var buckets = { '完成率': 0, '办卡转化': 0, '续卡': 0, '引流': 0, '其他': 0 };
+    var metricTable = page.querySelector('table.area-metric-table');
+    if (metricTable) {
+      metricTable.querySelectorAll('tbody tr').forEach(function (row) {
+        var bad = row.querySelector('.current-week.metric-bad');
+        if (!bad) return;
+        var label = row.querySelector('.metric-name');
+        var name = label ? label.textContent.trim() : '';
+        var bucket = name === '完成率' ? '完成率' : (/新签|大卡/.test(name) ? '办卡转化' : (/续卡|续费/.test(name) ? '续卡' : (/引流|扫楼|扶梯/.test(name) ? '引流' : '其他')));
+        buckets[bucket] += 1;
+      });
+    }
+    var grid = document.createElement('div');
+    grid.className = 'brand-brief-grid area-brand-brief-grid';
+    var status = document.createElement('section');
+    status.className = 'brand-status-panel';
+    status.setAttribute('aria-label', area + '红黄绿门店状态');
+    status.innerHTML = '<div class="brand-status-title">' + area + '红黄绿门店状态</div><div class="brand-status-list"><div class="brand-status-row danger"><span>红灯店</span><b>' + (counts[0] || 0) + '</b><small>家</small></div><div class="brand-status-row warning"><span>黄灯店</span><b>' + (counts[1] || 0) + '</b><small>家</small></div><div class="brand-status-row ok"><span>绿灯店</span><b>' + (counts[2] || 0) + '</b><small>家</small></div></div><div class="brand-status-foot">未达标指标　<b>' + unmet + '</b> 项</div>';
+    var indicator = document.createElement('section');
+    indicator.className = 'brand-indicator-panel';
+    indicator.setAttribute('aria-label', area + '未达标指标分布');
+    indicator.innerHTML = '<div class="brand-indicator-title">' + area + '未达标指标分布（' + unmet + '项）</div><div class="brand-indicator-body"><div class="brand-indicator-donut" aria-hidden="true"></div><div class="brand-indicator-legend"></div></div>';
+    Object.keys(buckets).forEach(function (label, index) {
+      var colors = ['#e53935', '#f57c00', '#fbbf24', '#16a05d', '#9ca3af'];
+      var item = document.createElement('div');
+      item.innerHTML = '<i style="background:' + colors[index] + '"></i><span>' + label + '</span><b>' + buckets[label] + '</b>';
+      indicator.querySelector('.brand-indicator-legend').appendChild(item);
+    });
+    page.insertBefore(grid, conclusion);
+    grid.append(conclusion, status, indicator);
+    conclusion.setAttribute('data-area-brand-layout', 'true');
+  });
+})();
+</script><script>
+(function () {
   var buttons = Array.from(document.querySelectorAll('.status-filter'));
   function controlsFor(panelId) {
     return buttons.filter(function (button) { return button.getAttribute('aria-controls') === panelId; });
