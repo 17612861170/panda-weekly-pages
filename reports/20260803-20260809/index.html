@@ -1413,7 +1413,7 @@ td { border-color:#dfe4ea; }
       head.append(rankWrap, name, status);
       var metrics = document.createElement('div');
       metrics.className = 'region-pk-metrics';
-      [[label + '营收', formatMoney(revenue), false], ['完成率', formatPercent(completion), completion >= 70], ['目标差额', formatSignedMoney(revenue - target), revenue >= target], ['目标', formatMoney(target), false]].forEach(function (item) {
+      [[label + '营收', formatMoney(revenue), false], ['完成率', formatPercent(completion), completion >= 100], ['目标差额', formatSignedMoney(revenue - target), revenue >= target], ['目标', formatMoney(target), false]].forEach(function (item) {
         var cell = document.createElement('div');
         var title = document.createElement('span');
         title.textContent = item[0];
@@ -1425,7 +1425,7 @@ td { border-color:#dfe4ea; }
       });
       var note = document.createElement('div');
       note.className = 'region-pk-note';
-      note.innerHTML = '<strong>核心判断：</strong>' + (completion >= 70 ? '区域完成率已过区域标准线。' : '区域完成率未过区域标准线，需要重点追踪。');
+      note.innerHTML = '<strong>核心判断：</strong>' + (completion >= 100 ? '完成率已达标。' : '完成率未达标。');
       card.append(head, metrics, note);
       cards.appendChild(card);
     });
