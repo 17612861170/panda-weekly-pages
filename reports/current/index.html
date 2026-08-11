@@ -993,6 +993,9 @@ td { border-color:#dfe4ea; }
       brandGrid.appendChild(storeCard);
     }
   }
+  document.querySelectorAll('.page:not(:first-of-type) .mtd-summary').forEach(function (summary) {
+    summary.classList.add('area-mtd-cards');
+  });
   var briefGrid = document.querySelector('.page:first-of-type .brand-brief-grid');
   if (briefGrid && !briefGrid.querySelector('.brand-indicator-panel')) {
     var indicatorPanel = document.createElement('section');
