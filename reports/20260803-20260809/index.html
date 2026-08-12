@@ -1154,7 +1154,7 @@ td { border-color:#dfe4ea; }
       }).map(function (row) { return row.children[0].textContent.trim(); });
       var panel = areaBoard.querySelector(group.selector + ' span');
       if (!panel) return;
-      panel.innerHTML = '完成率分层；' + (names.length ? names.join('、') : '暂无') + '<br><strong>共 ' + names.length + ' 家</strong>';
+      panel.innerHTML = (names.length ? names.join('、') : '暂无') + '<br><strong>共 ' + names.length + ' 家</strong>';
     });
     areaConclusion.parentNode.insertBefore(areaBoard, areaConclusion.nextSibling);
   });
