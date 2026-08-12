@@ -287,6 +287,39 @@ body { background:#edf0f3; color:#27313b; }
 .decision-table .decision-editor { text-align:left; }
 .decision-table-wrap { margin:10px 0; overflow-x:auto; border:1px solid #dfe4ea; }
 .decision-table-wrap h4 { margin:0; padding:7px 9px; color:#475569; font-size:12px; background:#f8fafc; border-bottom:1px solid #e5e7eb; }
+.area-judgment { border:1px solid #dfe4ea; border-radius:6px; background:#fff; }
+.area-judgment .conclusion-title { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; background:#fff; color:#1f2937; }
+.area-judgment-badge { padding:5px 10px; border-radius:5px; background:#f59e0b; color:#fff; font-size:10px; }
+.area-judgment .conclusion-grid { display:grid; grid-template-columns:1fr; gap:7px; padding:8px; }
+.area-judgment .conclusion-item { display:grid; grid-template-columns:96px minmax(0,1fr); min-height:56px; border:1px solid #f0dfcd; border-radius:5px; overflow:hidden; }
+.area-judgment .conclusion-item h4 { display:flex; align-items:center; justify-content:center; margin:0; padding:8px; border:0; background:#fff8f0; font-size:11px; }
+.area-judgment .conclusion-item.problem h4 { color:#d71920; }
+.area-judgment .conclusion-item.highlight h4 { color:#16825d; background:#f2fbf7; }
+.area-judgment .conclusion-item.action h4 { color:#e85d04; }
+.area-judgment .conclusion-editor { display:flex; align-items:center; min-height:56px; padding:8px 12px; line-height:1.55; }
+.area-manager-board { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.08fr); gap:10px; padding:10px; border:1px solid #dfe4ea; border-top:3px solid #ea580c; border-radius:6px; }
+.area-manager-board .decision-board-title { grid-column:1/-1; margin:-10px -10px 0; padding:9px 12px; border:0; border-bottom:1px solid #e5e7eb; background:#fff; color:#1f2937; }
+.area-manager-board .decision-table-wrap { min-width:0; margin:0; border-radius:5px; overflow:hidden; }
+.area-manager-board .decision-table-wrap h4 { padding-left:12px; border-left:4px solid #ea580c; background:#fff; color:#1f2937; }
+.area-manager-board .decision-table { min-width:720px !important; table-layout:auto; }
+.area-manager-board .decision-table th { background:#e94e0f; border-color:#f17b4c; }
+.area-manager-board .decision-table th:first-child, .area-manager-board .decision-table td:first-child { width:34px; color:#ea580c; font-weight:900; }
+.area-manager-board .manager-core-problems .decision-table, .area-manager-board .manager-rectification .decision-table { width:100%; min-width:0 !important; table-layout:fixed; }
+.area-manager-board .manager-core-problems .decision-table th, .area-manager-board .manager-core-problems .decision-table td, .area-manager-board .manager-rectification .decision-table th, .area-manager-board .manager-rectification .decision-table td { padding:5px 3px; font-size:8.5px; line-height:1.35; overflow-wrap:anywhere; }
+.area-manager-board .manager-core-problems .decision-table th:first-child, .area-manager-board .manager-core-problems .decision-table td:first-child, .area-manager-board .manager-rectification .decision-table th:first-child, .area-manager-board .manager-rectification .decision-table td:first-child { width:26px; }
+.area-manager-board .manager-core-problems .decision-table th:nth-child(2) { width:26%; }
+.area-manager-board .manager-core-problems .decision-table th:nth-child(3) { width:16%; }
+.area-manager-board .manager-core-problems .decision-table th:nth-child(4) { width:22%; }
+.area-manager-board .manager-rectification .decision-table th:nth-child(2) { width:16%; }
+.area-manager-board .manager-rectification .decision-table th:nth-child(3) { width:18%; }
+.area-manager-board .manager-rectification .decision-table th:nth-child(4) { width:25%; }
+.area-manager-board .manager-action-list { grid-column:1/-1; }
+.area-manager-board .manager-action-list .decision-table { min-width:760px !important; }
+.area-manager-board .decision-editor { min-height:32px; }
+@media (max-width:1000px) {
+  .area-manager-board { grid-template-columns:1fr; }
+  .area-manager-board .decision-board-title, .area-manager-board .manager-action-list { grid-column:1; }
+}
 .section-title { color:#343a40; border-bottom-color:#c2410c; }
 h3 { color:#3f454c; border-left-color:#ea580c; }
 .block-title { background:#fff7ed; color:#7c2d12; border-bottom-color:#ead7c7; }
@@ -1629,13 +1662,77 @@ td { border-color:#dfe4ea; }
     });
   }
   function removeDecisionTrackingBlocks() {
-    document.querySelectorAll('.decision-board').forEach(function (board) { board.remove(); });
-    document.querySelectorAll('.decision-table-wrap h4').forEach(function (heading) {
-      var title = heading.textContent.trim();
-      if (title === '重点门店整改追踪' || title === '城市经理本周动作' || title === '核心问题TOP5') {
-        var block = heading.closest('.decision-table-wrap');
-        if (block) block.remove();
+    document.querySelectorAll('.conclusion[data-conclusion-area]').forEach(function (conclusion) {
+      var area = conclusion.dataset.conclusionArea;
+      if (!area || area === '品牌') return;
+      conclusion.classList.add('area-judgment');
+      var title = conclusion.querySelector('.conclusion-title');
+      if (title) {
+        title.textContent = '区域经营判断';
+        var badge = document.createElement('span');
+        badge.className = 'area-judgment-badge';
+        badge.textContent = '黄色预警';
+        title.appendChild(badge);
       }
+      var actionHeading = Array.from(conclusion.querySelectorAll('.conclusion-item h4')).find(function (heading) { return heading.textContent.trim() === '本周动作'; });
+      if (actionHeading) actionHeading.textContent = '本周重点';
+    });
+    document.querySelectorAll('.decision-board').forEach(function (board) {
+      board.classList.add('area-manager-board');
+      var areaTitle = board.querySelector('.decision-board-title');
+      if (areaTitle) areaTitle.textContent = areaTitle.textContent.replace('经营决策看板', '区域经理闭环看板');
+      var top = board.querySelector('.decision-top');
+      if (top) top.remove();
+      Array.from(board.querySelectorAll('.decision-table-wrap')).forEach(function (wrap) {
+        var heading = wrap.querySelector('h4');
+        var table = wrap.querySelector('table');
+        if (!heading || !table) return;
+        var blockTitle = heading.textContent.trim();
+        if (blockTitle === '核心问题TOP5') {
+          wrap.classList.add('manager-core-problems');
+          var headerRow = table.querySelector('thead tr');
+          var numberHeader = document.createElement('th');
+          numberHeader.textContent = '#';
+          headerRow.insertBefore(numberHeader, headerRow.firstElementChild);
+          var impactHeader = document.createElement('th');
+          impactHeader.textContent = '预计影响金额';
+          headerRow.insertBefore(impactHeader, headerRow.lastElementChild);
+          headerRow.children[2].textContent = '涉及门店数';
+          headerRow.lastElementChild.textContent = '重点门店（示例）';
+          Array.from(table.querySelectorAll('tbody tr')).forEach(function (row, index) {
+            var numberCell = document.createElement('td');
+            numberCell.textContent = String(index + 1);
+            row.insertBefore(numberCell, row.firstElementChild);
+            var impactCell = document.createElement('td');
+            var impactEditor = document.createElement('div');
+            impactEditor.className = 'decision-editor';
+            impactEditor.contentEditable = 'true';
+            impactEditor.dataset.editArea = board.closest('.page').querySelector('.conclusion').dataset.conclusionArea;
+            impactEditor.dataset.editStore = impactEditor.dataset.editArea + '-核心问题' + (index + 1) + '-预计影响金额';
+            impactEditor.dataset.editField = 'answer';
+            impactEditor.textContent = '点击填写';
+            impactCell.appendChild(impactEditor);
+            row.insertBefore(impactCell, row.lastElementChild);
+          });
+        } else if (blockTitle === '重点门店整改追踪') {
+          wrap.classList.add('manager-rectification');
+          var trackHeader = table.querySelector('thead tr');
+          var trackNumberHeader = document.createElement('th');
+          trackNumberHeader.textContent = '#';
+          trackHeader.insertBefore(trackNumberHeader, trackHeader.firstElementChild);
+          trackHeader.children[2].textContent = '关键问题';
+          trackHeader.children[3].textContent = '本周动作（城市经理层面）';
+          Array.from(table.querySelectorAll('tbody tr')).forEach(function (row, index) {
+            var numberCell = document.createElement('td');
+            numberCell.textContent = String(index + 1);
+            row.insertBefore(numberCell, row.firstElementChild);
+          });
+        } else if (blockTitle === '城市经理本周动作') {
+          wrap.classList.add('manager-action-list');
+          var actionHeaders = table.querySelectorAll('thead th');
+          if (actionHeaders[2]) actionHeaders[2].textContent = '目标 / 衡量标准';
+        }
+      });
     });
   }
   function normalizeEmployeeRankingTables() {
