@@ -1093,6 +1093,7 @@ td { border-color:#dfe4ea; }
           list.appendChild(item);
         });
         questionEditor.classList.add('issue-notes');
+        questionEditor.hidden = true;
         list.appendChild(questionEditor);
         return panel('我的店本周问题', list, 'problem');
       }
@@ -1113,14 +1114,26 @@ td { border-color:#dfe4ea; }
         for (var index = 0; index < 5; index += 1) {
           var item = document.createElement('div');
           item.className = 'action-item';
-          var box = document.createElement('span');
+          var box = document.createElement('input');
           box.className = 'action-check';
+          box.type = 'checkbox';
+          box.setAttribute('aria-label', '标记行动完成');
+          box.dataset.editArea = area;
+          box.dataset.editStore = storeName + '-must_done_' + (index + 1);
+          box.dataset.editField = 'must_done_' + (index + 1);
           var action = editor(index === 0 ? 'must_complete' : 'must_complete_' + (index + 1), '点击填写行动、负责人和截止时间');
           action.classList.add('action-editor');
           action.textContent = suggestedActions[index] || '填写本周关键行动、负责人和截止时间';
+          var meta = editor('must_meta_' + (index + 1), '负责人 · 截止时间');
+          meta.classList.add('action-meta');
+          meta.textContent = '负责人：待填写 · 截止：08/09';
           var status = document.createElement('em');
           status.textContent = '进行中';
-          item.append(box, action, status);
+          box.addEventListener('change', function () {
+            item.classList.toggle('is-complete', box.checked);
+            status.textContent = box.checked ? '已完成' : '进行中';
+          });
+          item.append(box, action, meta, status);
           list.appendChild(item);
         }
         return panel('本周必须完成（行动看板）', list, 'must');
@@ -1155,7 +1168,7 @@ td { border-color:#dfe4ea; }
       kpis.className = 'store-review-kpis';
       var newCustomers = metricParts('新客数');
       var oldCustomers = metricParts('老客数');
-      kpis.append(kpi('总营收'), kpi('完成率'), kpiValues('排名', currentRank ? String(currentRank) : '-', previousRank ? String(previousRank) : '-'), kpiValues('排名变化', rankChange === null || rankChange === 0 ? '-' : (rankChange > 0 ? '↑' : '↓') + Math.abs(rankChange), previousRank ? '第' + previousRank + '名' : '-'), kpiValues('新客数', newCustomers.current, newCustomers.previous + ' · 老客 ' + oldCustomers.current), kpi('续卡金额'));
+      kpis.append(kpi('总营收'), kpi('完成率'), kpiValues('排名', currentRank ? String(currentRank) : '-', previousRank ? String(previousRank) : '-'), kpiValues('排名变化', rankChange === null || rankChange === 0 ? '-' : (rankChange > 0 ? '↑' : '↓') + Math.abs(rankChange), previousRank ? '第' + previousRank + '名' : '-'), kpiValues('新客 / 老客', newCustomers.current + ' / ' + oldCustomers.current, newCustomers.previous + ' / ' + oldCustomers.previous), kpi('续卡金额'));
       var supportWrap = document.createElement('section');
       supportWrap.className = 'store-review-support';
       var supportTitle = document.createElement('h4');
@@ -1797,7 +1810,7 @@ td { border-color:#dfe4ea; }
   var supabaseUrl = 'https://smbelcuwcsuuxcspypae.supabase.co';
   var supabaseKey = 'sb_publishable_KIJsYEjr2gt2K8IMwtEKhg_RR8x6Dqb';
   var tableUrl = supabaseUrl + '/rest/v1/weekly_report_edits';
-  var cells = Array.from(document.querySelectorAll('.closure-table td[contenteditable="true"], .closure-table .question-editor, .store-review-card .review-editor, .store-review-card .question-editor, .conclusion-editor, .decision-editor'));
+  var cells = Array.from(document.querySelectorAll('.closure-table td[contenteditable="true"], .closure-table .question-editor, .store-review-card .review-editor, .store-review-card .question-editor, .store-review-card .action-check, .conclusion-editor, .decision-editor'));
   var cellsByKey = {};
   var cloudRows = {};
   var pending = {};
@@ -1805,8 +1818,19 @@ td { border-color:#dfe4ea; }
   var localSaved = {};
   try { localSaved = JSON.parse(window.localStorage.getItem(storageKey) || '{}'); } catch (error) { localSaved = {}; }
   function keyFor(cell) { return [cell.dataset.editArea, cell.dataset.editStore, cell.dataset.editField].join('|'); }
-  function valueFor(cell) { return cell.matches('textarea') ? cell.value : cell.innerText.trim(); }
-  function setValue(cell, value) { if (cell.matches('textarea')) cell.value = value; else cell.textContent = value; }
+  function valueFor(cell) { return cell.matches('[type="checkbox"]') ? (cell.checked ? '1' : '0') : cell.matches('textarea') ? cell.value : cell.innerText.trim(); }
+  function setValue(cell, value) {
+    if (cell.matches('[type="checkbox"]')) {
+      cell.checked = String(value) === '1';
+      var item = cell.closest('.action-item');
+      if (item) {
+        item.classList.toggle('is-complete', cell.checked);
+        var status = item.querySelector('em');
+        if (status) status.textContent = cell.checked ? '已完成' : '进行中';
+      }
+    } else if (cell.matches('textarea')) cell.value = value;
+    else cell.textContent = value;
+  }
   function headers(extra) {
     return Object.assign({
       apikey: supabaseKey,
@@ -1902,7 +1926,7 @@ td { border-color:#dfe4ea; }
   cells.forEach(function (cell) {
     var key = keyFor(cell);
     cellsByKey[key] = cell;
-    cell.addEventListener('input', function () { scheduleSave(cell, false); });
+    cell.addEventListener(cell.matches('[type="checkbox"]') ? 'change' : 'input', function () { scheduleSave(cell, false); });
     cell.addEventListener('blur', function () {
       if (timers[key]) {
         window.clearTimeout(timers[key]);
@@ -1961,7 +1985,7 @@ td { border-color:#dfe4ea; }
 .review-panel { border-radius:6px; padding:14px; }
 .review-panel h4, .store-review-support h4 { margin-bottom:10px; font-size:15px; }
 .review-panel.peers { grid-area:peers; min-height:0; border-color:#dfe4ea; }
-.review-panel.problem, .review-panel.must { min-height:250px; }
+.review-panel.problem, .review-panel.must { min-height:280px; }
 .review-panel.problem .question-editor, .review-panel.must .review-editor { min-height:0; }
 .review-panel.prior, .review-panel.next { min-height:150px; }
 .issue-list, .action-list { display:grid; gap:10px; }
@@ -1972,10 +1996,14 @@ td { border-color:#dfe4ea; }
 .issue-item b { color:#9a3412; font-size:13px; }
 .issue-item span { margin-top:4px; color:#5f6b7a; font-size:11px; }
 .issue-notes { min-height:54px !important; max-height:64px; margin-top:2px; border:1px dashed #e6b88f !important; font-size:11px !important; line-height:1.45 !important; overflow:auto; }
-.action-item { display:grid; grid-template-columns:22px minmax(0,1fr) 52px; align-items:center; gap:9px; min-height:47px; padding:7px 9px; border:1px solid #dce3ea; border-radius:6px; background:#fff; }
-.action-check { width:16px; height:16px; border:1px solid #94a3b8; border-radius:3px; }
+.issue-notes[hidden] { display:none !important; }
+.action-item { display:grid; grid-template-columns:22px minmax(0,1fr) 150px 52px; align-items:center; gap:9px; min-height:47px; padding:7px 9px; border:1px solid #dce3ea; border-radius:6px; background:#fff; }
+.action-check { width:17px; height:17px; margin:0; accent-color:#15803d; }
 .action-editor { min-height:27px !important; padding:4px 5px !important; font-size:11px; font-weight:700; color:#374151; }
+.action-meta { min-height:25px; padding:4px 6px; border-left:1px solid #e5e7eb; color:#64748b; font-size:9px; white-space:nowrap; }
 .action-item em { padding:3px 4px; border:1px solid #a7d7b9; border-radius:4px; background:#eefaf2; color:#15803d; font-size:9px; font-style:normal; text-align:center; }
+.action-item.is-complete { background:#f0fdf4; }
+.action-item.is-complete .action-editor { color:#15803d; text-decoration:line-through; }
 .store-core-table, .store-peer-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:11px; }
 .store-core-table th, .store-core-table td, .store-peer-table th, .store-peer-table td { padding:8px 6px; border:1px solid #dfe4ea; text-align:center; }
 .store-core-table th, .store-peer-table th { background:#f8fafc; color:#475569; font-weight:900; }
@@ -1999,6 +2027,11 @@ td { border-color:#dfe4ea; }
   .store-review-identity { flex:1 1 240px; }
   .store-review-summary { flex-basis:100%; padding:10px 0 0; border-left:0; border-top:1px solid rgba(255,255,255,.45); }
   .store-review-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .store-review-kpi { padding:11px 10px; }
+  .store-review-kpi b { font-size:18px; white-space:nowrap; }
+  .store-review-kpi small { font-size:10px; }
+  .action-item { grid-template-columns:22px minmax(0,1fr) 52px; }
+  .action-meta { grid-column:2/4; border-left:0; border-top:1px solid #e5e7eb; }
   .brand-indicator-legend.is-detailed { grid-template-columns:1fr; }
 }
 </style><script>
