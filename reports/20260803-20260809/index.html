@@ -1569,7 +1569,7 @@ td { border-color:#dfe4ea; }
     updateRegionCompletionCards(shell, period, available);
   }
   function normalizeStoreRankingColumns() {
-    document.querySelectorAll('table.region-store-ranking').forEach(function (table) {
+    document.querySelectorAll('table.region-store-ranking, table.region-ranking-table, table.store-ranking-table').forEach(function (table) {
       if (table.dataset.hasNewSignRevenue) return;
       var headers = table.querySelector('thead tr');
       var revenueIndex = Array.from(headers.children).findIndex(function (cell) { return cell.textContent.trim() === '本周营收'; });
