@@ -1106,9 +1106,37 @@ td { border-color:#dfe4ea; }
       function buildMetricTable() {
         var visibleMetrics = ['总营收', '完成率', '新签办卡率', '新签中大卡率', '整体大卡率', '续卡金额', '续卡占比', '总引流占比', '扫楼占比'];
         var table = document.createElement('table');
-        table.className = 'store-core-table';
-        table.innerHTML = '<thead><tr><th>指标</th><th>7/13-7/19</th><th>7/20-7/26</th><th>7/27-8/2</th><th>8/3-8/9</th></tr></thead><tbody></tbody>';
+        table.className = 'metric-table area-metric-table four-week-table store-core-table';
+        table.innerHTML = '<thead><tr><th>归类</th><th>指标</th><th>7/13-7/19</th><th>7/20-7/26</th><th>上周<br><small>7/27-8/2</small></th><th class="current-week-head">本周<br><small>8/3-8/9</small></th><th>较上周变化</th><th>本周判断</th></tr></thead><tbody></tbody>';
         var tbody = table.querySelector('tbody');
+        var categoryByMetric = {
+          '总营收': ['营收板块', 'cat-revenue'], '完成率': ['营收板块', 'cat-revenue'],
+          '新签办卡率': ['办卡转化', 'cat-card'], '新签中大卡率': ['办卡转化', 'cat-card'], '整体大卡率': ['办卡转化', 'cat-card'],
+          '续卡金额': ['续卡板块', 'cat-renew'], '续卡占比': ['续卡板块', 'cat-renew'],
+          '总引流占比': ['引流板块', 'cat-flow'], '扫楼占比': ['引流板块', 'cat-flow']
+        };
+        var categoryCounts = visibleMetrics.reduce(function (counts, name) {
+          var category = categoryByMetric[name][0];
+          counts[category] = (counts[category] || 0) + 1;
+          return counts;
+        }, {});
+        function metricNumber(value) {
+          var number = Number(String(value || '').replace(/[¥,%\s]/g, '').replace(/,/g, ''));
+          return Number.isFinite(number) ? number : NaN;
+        }
+        function trend(metric) {
+          var previous = metricNumber(metric.previous);
+          var current = metricNumber(metric.current);
+          if (!Number.isFinite(previous) || !Number.isFinite(current)) return { text: '-', up: false };
+          var percentMetric = /率|占比/.test(metric.name);
+          var change = percentMetric ? current - previous : (previous ? (current - previous) / Math.abs(previous) * 100 : 0);
+          return { text: (change >= 0 ? '+' : '') + change.toFixed(1) + '%', up: change >= 0 };
+        }
+        function judgment(metric, change) {
+          if (metric.bad) return { text: '未过线', good: false };
+          if (/完成率|办卡率|中大卡率|整体大卡率|占比/.test(metric.name)) return { text: '达标', good: true };
+          return { text: change.up ? '较上周增长' : '较上周下降', good: change.up };
+        }
         var metrics = visibleMetrics.map(function (name) {
           var sourceName = name === '整体大卡率' ? '大卡率' : name;
           var source = Array.from(support.querySelectorAll('.support-metric')).find(function (metric) {
@@ -1119,21 +1147,39 @@ td { border-color:#dfe4ea; }
           var values = metricParts(sourceName);
           return { name: name, sourceName: sourceName, previous: values.previous, current: values.current, bad: source.classList.contains('is-bad') };
         }).filter(Boolean);
+        var renderedCategories = {};
         for (var index = 0; index < metrics.length; index += 1) {
           var row = document.createElement('tr');
           var metric = metrics[index];
+          var category = categoryByMetric[metric.name];
+          if (!renderedCategories[category[0]]) {
+            var categoryCell = document.createElement('td');
+            categoryCell.className = 'metric-category ' + category[1];
+            categoryCell.rowSpan = categoryCounts[category[0]];
+            categoryCell.textContent = category[0];
+            row.appendChild(categoryCell);
+            renderedCategories[category[0]] = true;
+          }
+          var change = trend(metric);
+          var result = judgment(metric, change);
           [metric.name, '-', '-', metric.previous, metric.current].forEach(function (text, cellIndex) {
             var cell = document.createElement('td');
             cell.textContent = text || '';
-            if (cellIndex === 0) cell.className = 'metric-label';
+            cell.className = cellIndex === 0 ? 'metric-name' : 'week-value';
             if (cellIndex === 1 || cellIndex === 2) {
               cell.dataset.historyWeek = cellIndex === 1 ? 'w1' : 'w2';
               cell.dataset.historyStore = storeName;
               cell.dataset.historyMetric = metric.sourceName;
             }
-            if (metric.bad) cell.classList.add('is-bad');
+            if (cellIndex === 4) cell.classList.add('current-week');
+            if (metric.bad && cellIndex === 4) cell.classList.add('metric-bad');
             row.appendChild(cell);
           });
+          var changeCell = document.createElement('td');
+          changeCell.innerHTML = '<span class="' + (change.up ? 'cg' : 'cr') + '">' + change.text + '</span>';
+          var judgmentCell = document.createElement('td');
+          judgmentCell.innerHTML = '<span class="' + (result.good ? 'cg' : 'cr') + '">' + result.text + '</span>';
+          row.append(changeCell, judgmentCell);
           tbody.appendChild(row);
         }
         return table;
@@ -1182,7 +1228,7 @@ td { border-color:#dfe4ea; }
         board.className = 'tracked-board ' + config.prefix + '-board';
         var toolbar = document.createElement('div');
         toolbar.className = 'tracked-toolbar';
-        toolbar.innerHTML = '<div class="tracked-period-tabs"><button type="button" class="active" data-tracked-period="current">本周</button><button type="button" data-tracked-period="all">全部时间</button><button type="button" data-tracked-period="custom">自定义</button></div><div class="tracked-date-range"><input type="date" min="2026-07-20" aria-label="开始日期"><span>至</span><input type="date" min="2026-07-20" aria-label="结束日期"></div>';
+        toolbar.innerHTML = '<div class="tracked-period-tabs"><button type="button" data-tracked-period="previous">上周</button><button type="button" class="active" data-tracked-period="current">本周</button><button type="button" data-tracked-period="custom">自定义</button></div><div class="tracked-date-range"><input type="date" min="2026-07-20" aria-label="开始日期"><span>至</span><input type="date" min="2026-07-20" aria-label="结束日期"></div>';
         var list = document.createElement('div');
         list.className = 'tracked-list';
         var history = document.createElement('div');
@@ -1247,6 +1293,26 @@ td { border-color:#dfe4ea; }
             item.appendChild(status);
             cells.push(status);
           }
+          var deleted = document.createElement('input');
+          deleted.type = 'hidden';
+          deleted.className = 'tracked-deleted';
+          deleted.value = '0';
+          deleted.dataset.editArea = area;
+          deleted.dataset.editStore = storeName + '-' + config.prefix + '_deleted_' + index;
+          deleted.dataset.editField = 'answer';
+          var remove = document.createElement('button');
+          remove.type = 'button';
+          remove.className = 'row-remove';
+          remove.title = '删除此条';
+          remove.setAttribute('aria-label', '删除第' + index + '条');
+          remove.textContent = '×';
+          remove.addEventListener('click', function () {
+            deleted.value = '1';
+            deleted.dispatchEvent(new Event('change', { bubbles: true }));
+            item.hidden = true;
+          });
+          item.append(remove, deleted);
+          cells.push(deleted);
           list.appendChild(item);
           cells.forEach(registerCell);
         }
@@ -1275,6 +1341,7 @@ td { border-color:#dfe4ea; }
           var grouped = {};
           historyRows.filter(function (row) {
             if (row.area !== area || String(row.store || '').indexOf(storeName + '-' + config.prefix + '_') !== 0) return false;
+            if (periodMode === 'previous') return row.report_id === '20260727-20260802';
             if (periodMode !== 'custom') return true;
             var dates = reportDates(row.report_id);
             return (!dateInputs[0].value || dates[1] >= dateInputs[0].value) && (!dateInputs[1].value || dates[0] <= dateInputs[1].value);
@@ -1369,7 +1436,7 @@ td { border-color:#dfe4ea; }
         board.className = 'action-board';
         var toolbar = document.createElement('div');
         toolbar.className = 'action-board-toolbar';
-        toolbar.innerHTML = '<div class="action-period-tabs"><button type="button" class="active" data-action-period="current">本周</button><button type="button" data-action-period="all">全部时间</button><button type="button" data-action-period="custom">自定义</button></div><div class="action-date-range"><input type="date" min="2026-07-20" aria-label="行动开始日期"><span>至</span><input type="date" min="2026-07-20" aria-label="行动结束日期"></div>';
+        toolbar.innerHTML = '<div class="action-period-tabs"><button type="button" data-action-period="previous">上周</button><button type="button" class="active" data-action-period="current">本周</button><button type="button" data-action-period="custom">自定义</button></div><div class="action-date-range"><input type="date" min="2026-07-20" aria-label="行动开始日期"><span>至</span><input type="date" min="2026-07-20" aria-label="行动结束日期"></div>';
         var list = document.createElement('div');
         list.className = 'action-list';
         var history = document.createElement('div');
@@ -1434,8 +1501,27 @@ td { border-color:#dfe4ea; }
           status.addEventListener('change', function () { setActionState(item, status.value); });
           setActionState(item, status.value);
           item.append(action, meta, status);
+          var deleted = document.createElement('input');
+          deleted.type = 'hidden';
+          deleted.className = 'action-deleted';
+          deleted.value = '0';
+          deleted.dataset.editArea = area;
+          deleted.dataset.editStore = storeName + '-must_deleted_' + index;
+          deleted.dataset.editField = 'answer';
+          var remove = document.createElement('button');
+          remove.type = 'button';
+          remove.className = 'row-remove';
+          remove.title = '删除此条';
+          remove.setAttribute('aria-label', '删除第' + index + '条行动');
+          remove.textContent = '×';
+          remove.addEventListener('click', function () {
+            deleted.value = '1';
+            deleted.dispatchEvent(new Event('change', { bubbles: true }));
+            item.hidden = true;
+          });
+          item.append(remove, deleted);
           list.appendChild(item);
-          [action, meta, status].forEach(registerCell);
+          [action, meta, status, deleted].forEach(registerCell);
         }
         function ensureRows(count) {
           var target = Math.max(1, Number(count) || 5);
@@ -1466,6 +1552,7 @@ td { border-color:#dfe4ea; }
           var grouped = {};
           historyRows.filter(function (row) {
             if (row.area !== area || String(row.store || '').indexOf(storeName + '-') !== 0) return false;
+            if (periodMode === 'previous') return row.report_id === '20260727-20260802';
             if (periodMode !== 'custom') return true;
             var dates = reportDates(row.report_id);
             var start = dateInputs[0].value;
@@ -2315,7 +2402,7 @@ td { border-color:#dfe4ea; }
   var supabaseUrl = 'https://smbelcuwcsuuxcspypae.supabase.co';
   var supabaseKey = 'sb_publishable_KIJsYEjr2gt2K8IMwtEKhg_RR8x6Dqb';
   var tableUrl = supabaseUrl + '/rest/v1/weekly_report_edits';
-  var cellSelector = '.closure-table td[contenteditable="true"], .closure-table .question-editor, .store-review-card .review-editor, .store-review-card .question-editor, .store-review-card .action-check, .store-review-card .action-status, .store-review-card .action-count-sync, .store-review-card .tracked-status, .store-review-card .tracked-count-sync, .conclusion-editor, .decision-editor';
+  var cellSelector = '.closure-table td[contenteditable="true"], .closure-table .question-editor, .store-review-card .review-editor, .store-review-card .question-editor, .store-review-card .action-check, .store-review-card .action-status, .store-review-card .action-count-sync, .store-review-card .action-deleted, .store-review-card .tracked-status, .store-review-card .tracked-count-sync, .store-review-card .tracked-deleted, .conclusion-editor, .decision-editor';
   var cells = [];
   var cellsByKey = {};
   var cloudRows = {};
@@ -2345,6 +2432,10 @@ td { border-color:#dfe4ea; }
         }
       }
       if (cell.matches('.action-count-sync') && cell._ensureRows) cell._ensureRows(value);
+      if (cell.matches('.action-deleted')) {
+        var deletedAction = cell.closest('.action-item');
+        if (deletedAction) deletedAction.hidden = String(value) === '1';
+      }
       if (cell.matches('.tracked-status')) {
         var trackedItem = cell.closest('.tracked-item');
         if (trackedItem) {
@@ -2354,6 +2445,10 @@ td { border-color:#dfe4ea; }
         }
       }
       if (cell.matches('.tracked-count-sync') && cell._ensureRows) cell._ensureRows(value);
+      if (cell.matches('.tracked-deleted')) {
+        var deletedTracked = cell.closest('.tracked-item');
+        if (deletedTracked) deletedTracked.hidden = String(value) === '1';
+      }
     } else cell.textContent = value;
   }
   function headers(extra) {
@@ -2561,7 +2656,7 @@ td { border-color:#dfe4ea; }
 .tracked-toolbar.is-custom .tracked-date-range { display:flex; }
 .tracked-date-range input { width:116px; height:29px; padding:2px 5px; border:1px solid #d6dee7; border-radius:4px; background:#fff; color:#334155; font-size:9px; }
 .tracked-list { display:grid; max-height:370px; gap:9px; overflow-y:auto; padding-right:3px; }
-.tracked-item { display:grid; grid-template-columns:30px minmax(0,1fr); align-items:center; gap:10px; min-height:62px; padding:9px 10px; border:1px solid #f3d2b6; border-radius:6px; background:#fffaf5; }
+.tracked-item { position:relative; display:grid; grid-template-columns:30px minmax(0,1fr); align-items:center; gap:10px; min-height:62px; padding:9px 38px 9px 10px; border:1px solid #f3d2b6; border-radius:6px; background:#fffaf5; }
 .tracked-item > i { display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; background:#e85d04; color:#fff; font-size:11px; font-style:normal; font-weight:900; }
 .tracked-fields { display:grid; min-width:0; gap:3px; }
 .tracked-primary, .tracked-secondary { min-height:24px !important; padding:3px 5px !important; }
@@ -2591,7 +2686,7 @@ td { border-color:#dfe4ea; }
 .action-board-toolbar.is-custom .action-date-range { display:flex; }
 .action-date-range input { width:116px; height:29px; padding:2px 5px; border:1px solid #d6dee7; border-radius:4px; background:#fff; color:#334155; font-size:9px; }
 .action-list { max-height:360px; overflow-y:auto; padding-right:3px; }
-.action-item { display:grid; grid-template-columns:minmax(0,1fr) 150px 76px; align-items:center; gap:9px; min-height:47px; padding:7px 9px; border:1px solid #dce3ea; border-radius:6px; background:#fff; }
+.action-item { position:relative; display:grid; grid-template-columns:minmax(0,1fr) 150px 76px; align-items:center; gap:9px; min-height:47px; padding:7px 38px 7px 9px; border:1px solid #dce3ea; border-radius:6px; background:#fff; }
 .action-editor { min-height:27px !important; padding:4px 5px !important; font-size:11px; font-weight:700; color:#374151; }
 .action-meta { min-height:25px; padding:4px 6px; border-left:1px solid #e5e7eb; color:#64748b; font-size:9px; white-space:nowrap; }
 .action-status { width:76px; height:29px; padding:3px 5px; border:1px solid #cbd5e1; border-radius:4px; background:#f8fafc; color:#475569; font-size:9px; font-weight:800; text-align:center; cursor:pointer; }
@@ -2612,10 +2707,15 @@ td { border-color:#dfe4ea; }
 .action-history-item[data-status="已完成"] em { border-color:#a7d7b9; background:#eefaf2; color:#15803d; }
 .action-history-empty { margin:20px 0; color:#94a3b8; font-size:10px; text-align:center; }
 .store-core-table, .store-peer-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:11px; }
+.store-core-table { min-width:1100px !important; }
 .store-core-table th, .store-core-table td, .store-peer-table th, .store-peer-table td { padding:8px 6px; border:1px solid #dfe4ea; text-align:center; }
-.store-core-table th, .store-peer-table th { background:#f8fafc; color:#475569; font-weight:900; }
+.store-core-table th { background:#9a3412; color:#fff; font-weight:900; }
+.store-peer-table th { background:#f8fafc; color:#475569; font-weight:900; }
 .store-core-table td:first-child, .store-peer-table td:nth-child(2) { text-align:left; font-weight:800; }
-.store-core-table td.is-bad { background:#fff0f2; color:#c81e3a; font-weight:800; }
+.store-core-table td.metric-category { text-align:center; }
+.store-core-table td.metric-bad { background:#fff0f2; color:#c81e3a; font-weight:800; }
+.row-remove { position:absolute; top:7px; right:7px; display:flex; align-items:center; justify-content:center; width:24px; height:24px; padding:0; border:1px solid #d9dee5; border-radius:4px; background:#fff; color:#94a3b8; font-size:18px; line-height:1; cursor:pointer; }
+.row-remove:hover { border-color:#f2a1ad; background:#fff0f2; color:#c81e3a; }
 .store-peer-table tr.is-current td { background:#fff7ed; color:#9a3412; font-weight:900; }
 .store-review-reminder { margin-top:12px; padding:10px; border:1px solid #f2d6b3; border-radius:6px; background:#fffbf5; color:#7c3f0a; font-size:11px; font-weight:800; text-align:center; }
 .brand-indicator-legend.is-detailed {
