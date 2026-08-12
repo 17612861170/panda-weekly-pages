@@ -999,10 +999,10 @@ td { border-color:#dfe4ea; }
       var previousRank = previousRanking.findIndex(function (item) { return item.name === storeName; }) + 1;
       var rankChange = currentRank && previousRank ? previousRank - currentRank : null;
       function buildMetricTable() {
-        var visibleMetrics = ['总营收', '完成率', '新签营收', '新签办卡率', '新签小卡率', '新签中卡率', '新签大卡率', '新签中大卡率', '续费率', '续卡小卡率', '续卡中卡率', '续卡大卡率', '续卡占比', '续卡金额', '总引流占比', '总引流金额', '扫楼占比', '扫楼金额', '扶梯口金额', '大卡率'];
+        var visibleMetrics = ['总营收', '完成率', '新签办卡率', '新签中大卡率', '续卡金额', '续卡占比', '总引流占比', '扫楼占比'];
         var table = document.createElement('table');
         table.className = 'store-core-table';
-        table.innerHTML = '<thead><tr><th>指标</th><th>上周</th><th>本周</th><th>变化</th><th>指标</th><th>上周</th><th>本周</th><th>变化</th></tr></thead><tbody></tbody>';
+        table.innerHTML = '<thead><tr><th>指标</th><th>上周</th><th>本周</th><th>变化</th></tr></thead><tbody></tbody>';
         var tbody = table.querySelector('tbody');
         var metrics = visibleMetrics.map(function (name) {
           var source = Array.from(support.querySelectorAll('.support-metric')).find(function (metric) {
@@ -1013,17 +1013,15 @@ td { border-color:#dfe4ea; }
           var values = metricParts(name);
           return { name: name, previous: values.previous, current: values.current, change: source.querySelector('em') ? source.querySelector('em').textContent.trim() : '-', bad: source.classList.contains('is-bad') };
         }).filter(Boolean);
-        var half = Math.ceil(metrics.length / 2);
-        for (var index = 0; index < half; index += 1) {
+        for (var index = 0; index < metrics.length; index += 1) {
           var row = document.createElement('tr');
-          [metrics[index], metrics[index + half]].forEach(function (metric) {
-            [metric && metric.name, metric && metric.previous, metric && metric.current, metric && metric.change].forEach(function (text, cellIndex) {
-              var cell = document.createElement('td');
-              cell.textContent = text || '';
-              if (cellIndex === 0) cell.className = 'metric-label';
-              if (metric && metric.bad) cell.classList.add('is-bad');
-              row.appendChild(cell);
-            });
+          var metric = metrics[index];
+          [metric.name, metric.previous, metric.current, metric.change].forEach(function (text, cellIndex) {
+            var cell = document.createElement('td');
+            cell.textContent = text || '';
+            if (cellIndex === 0) cell.className = 'metric-label';
+            if (metric.bad) cell.classList.add('is-bad');
+            row.appendChild(cell);
           });
           tbody.appendChild(row);
         }
@@ -1078,7 +1076,13 @@ td { border-color:#dfe4ea; }
       function buildProblemPanel(questionEditor) {
         var list = document.createElement('div');
         list.className = 'issue-list';
-        Array.from(support.querySelectorAll('.support-metric.is-bad')).slice(0, 3).forEach(function (metric, index) {
+        var problemPriority = ['完成率', '新签办卡率', '新签中大卡率', '续卡占比', '总引流占比', '扫楼占比'];
+        var badMetrics = Array.from(support.querySelectorAll('.support-metric.is-bad'));
+        var orderedProblems = problemPriority.map(function (name) {
+          return badMetrics.find(function (metric) { return metric.querySelector('b').textContent.trim() === name; });
+        }).filter(Boolean);
+        badMetrics.forEach(function (metric) { if (orderedProblems.indexOf(metric) < 0) orderedProblems.push(metric); });
+        orderedProblems.slice(0, 3).forEach(function (metric, index) {
           var name = metric.querySelector('b').textContent.trim();
           var values = metricParts(name);
           var item = document.createElement('div');
@@ -1904,48 +1908,48 @@ td { border-color:#dfe4ea; }
   grid-template-areas:"problem must" "support peers" "prior next" !important;
   gap:12px !important;
 }
-.store-review-card { border-color:#d7dee7; box-shadow:0 2px 10px rgba(15,23,42,.08); padding:16px; }
+.store-review-card { border-color:#d7dee7; box-shadow:0 3px 14px rgba(15,23,42,.08); padding:20px; }
 .store-meeting-title { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:2px 4px 14px; }
 .store-meeting-title h3 { margin:0 0 5px; color:#17202a; font-size:22px; letter-spacing:0; }
 .store-meeting-title p { margin:0; color:#667085; font-size:11px; }
 .store-meeting-title > span { color:#475569; font-size:11px; white-space:nowrap; }
-.store-review-head { min-height:78px; padding:12px 16px; background:#d24b00; border:0; border-radius:7px; color:#fff; }
+.store-review-head { min-height:86px; padding:15px 18px; background:#c94700; border:0; border-radius:7px; color:#fff; }
 .store-review-head .object-cell { flex:0 0 210px; display:block; color:#fff; }
 .store-review-head .object-cell b { color:#fff; font-size:18px; }
 .store-review-head .object-cell span { color:#ffe8d5; }
 .store-review-head .closure-rating { border:1px solid rgba(255,255,255,.65); }
-.store-review-summary { flex:1 1 auto; padding-left:18px; border-left:1px solid rgba(255,255,255,.55); font-size:14px; font-weight:800; line-height:1.65; }
-.store-review-kpis { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px; padding:14px 0; background:#fff; border-bottom:0; }
-.store-review-kpi { min-width:0; min-height:98px; padding:11px 12px; border:1px solid #d9e1e9; border-radius:6px; background:#fff; text-align:left; box-shadow:0 1px 4px rgba(15,23,42,.04); }
-.store-review-kpi span { display:block; color:#64748b; font-size:11px; font-weight:800; }
-.store-review-kpi b { display:block; margin:9px 0 8px; color:#111827; font-size:20px; line-height:1.15; overflow-wrap:anywhere; }
-.store-review-kpi small { display:block; padding-top:6px; border-top:1px solid #edf0f3; color:#64748b; font-size:10px; }
+.store-review-summary { flex:1 1 auto; padding-left:20px; border-left:1px solid rgba(255,255,255,.55); font-size:15px; font-weight:800; line-height:1.7; }
+.store-review-kpis { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; padding:16px 0; background:#fff; border-bottom:0; }
+.store-review-kpi { min-width:0; min-height:108px; padding:13px 14px; border:1px solid #d9e1e9; border-radius:6px; background:#fff; text-align:left; box-shadow:0 2px 7px rgba(15,23,42,.05); }
+.store-review-kpi span { display:block; color:#64748b; font-size:12px; font-weight:800; }
+.store-review-kpi b { display:block; margin:10px 0 9px; color:#111827; font-size:22px; line-height:1.15; overflow-wrap:anywhere; }
+.store-review-kpi small { display:block; padding-top:7px; border-top:1px solid #edf0f3; color:#64748b; font-size:11px; }
 .store-review-body { padding:0 !important; }
 .store-review-support { grid-area:support; max-height:none; padding:12px; border:1px solid #dfe4ea; border-radius:6px; }
 .store-review-support h4 { color:#1f2937; font-size:14px; }
 .store-review-panels { display:contents !important; }
-.review-panel { border-radius:6px; padding:12px; }
+.review-panel { border-radius:6px; padding:14px; }
+.review-panel h4, .store-review-support h4 { margin-bottom:10px; font-size:15px; }
 .review-panel.peers { grid-area:peers; min-height:0; border-color:#dfe4ea; }
-.review-panel.problem, .review-panel.must { min-height:220px; }
+.review-panel.problem, .review-panel.must { min-height:250px; }
 .review-panel.problem .question-editor, .review-panel.must .review-editor { min-height:0; }
 .review-panel.prior, .review-panel.next { min-height:150px; }
-.issue-list, .action-list { display:grid; gap:8px; }
-.issue-item { display:flex; align-items:center; gap:10px; min-height:48px; padding:8px 10px; border:1px solid #f3d2b6; border-radius:6px; background:#fffaf5; }
+.issue-list, .action-list { display:grid; gap:10px; }
+.issue-item { display:flex; align-items:center; gap:12px; min-height:54px; padding:10px 12px; border:1px solid #f3d2b6; border-radius:6px; background:#fffaf5; }
 .issue-item i { display:flex; align-items:center; justify-content:center; flex:0 0 30px; height:30px; border-radius:50%; background:#e85d04; color:#fff; font-style:normal; font-weight:900; }
 .issue-item div { min-width:0; }
 .issue-item b, .issue-item span { display:block; }
-.issue-item b { color:#9a3412; font-size:12px; }
-.issue-item span { margin-top:3px; color:#5f6b7a; font-size:10px; }
-.issue-notes { min-height:56px !important; max-height:72px; margin-top:2px; border:1px dashed #e6b88f !important; font-size:10px !important; }
-.action-item { display:grid; grid-template-columns:20px minmax(0,1fr) 46px; align-items:center; gap:8px; min-height:43px; padding:6px 8px; border:1px solid #dce3ea; border-radius:6px; background:#fff; }
+.issue-item b { color:#9a3412; font-size:13px; }
+.issue-item span { margin-top:4px; color:#5f6b7a; font-size:11px; }
+.issue-notes { min-height:64px !important; max-height:78px; margin-top:2px; border:1px dashed #e6b88f !important; font-size:11px !important; }
+.action-item { display:grid; grid-template-columns:22px minmax(0,1fr) 52px; align-items:center; gap:9px; min-height:47px; padding:7px 9px; border:1px solid #dce3ea; border-radius:6px; background:#fff; }
 .action-check { width:16px; height:16px; border:1px solid #94a3b8; border-radius:3px; }
-.action-editor { min-height:25px !important; padding:4px 5px !important; font-size:10px; }
+.action-editor { min-height:27px !important; padding:4px 5px !important; font-size:11px; }
 .action-item em { padding:3px 4px; border:1px solid #a7d7b9; border-radius:4px; background:#eefaf2; color:#15803d; font-size:9px; font-style:normal; text-align:center; }
-.store-core-table, .store-peer-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:9px; }
-.store-core-table th, .store-core-table td, .store-peer-table th, .store-peer-table td { padding:6px 4px; border:1px solid #dfe4ea; text-align:center; }
+.store-core-table, .store-peer-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:11px; }
+.store-core-table th, .store-core-table td, .store-peer-table th, .store-peer-table td { padding:8px 6px; border:1px solid #dfe4ea; text-align:center; }
 .store-core-table th, .store-peer-table th { background:#f8fafc; color:#475569; font-weight:900; }
 .store-core-table td:first-child, .store-peer-table td:nth-child(2) { text-align:left; font-weight:800; }
-.store-core-table td:nth-child(5) { text-align:left; font-weight:800; }
 .store-core-table td.is-bad { background:#fff0f2; color:#c81e3a; font-weight:800; }
 .store-peer-table tr.is-current td { background:#fff7ed; color:#9a3412; font-weight:900; }
 .store-review-reminder { margin-top:12px; padding:10px; border:1px solid #f2d6b3; border-radius:6px; background:#fffbf5; color:#7c3f0a; font-size:11px; font-weight:800; text-align:center; }
