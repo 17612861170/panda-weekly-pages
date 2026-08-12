@@ -633,6 +633,8 @@ td { border-color:#dfe4ea; }
 .ranking-table td.metric-bad, .region-store-ranking td.metric-bad, .region-summary-full td.metric-bad { background:#fff0f2 !important; color:#c81e3a; font-weight:900; }
 .ranking-table th.metric-selected, .region-store-ranking th.metric-selected { background:#147d78 !important; color:#fff !important; }
 .ranking-table td.metric-selected:not(.metric-bad), .region-store-ranking td.metric-selected:not(.metric-bad) { background:#e8f5f2 !important; color:#164e4b !important; }
+.ranking-table tfoot td, .region-store-ranking tfoot td { position:static !important; background:#fff3e8 !important; color:#7c2d12 !important; border-top:2px solid #c2410c; font-weight:900; text-align:center !important; }
+.ranking-table tfoot td:first-child, .region-store-ranking tfoot td:first-child { position:sticky !important; left:0; z-index:4; background:#fde6d2 !important; }
 .rank-medal { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; color:#fff; font-size:11px; font-weight:900; line-height:1; border:1px solid rgba(255,255,255,.72); box-shadow:0 1px 3px rgba(15,23,42,.24), inset 0 1px 0 rgba(255,255,255,.35); }
 .rank-medal.gold { background:#d99b12; }
 .rank-medal.silver { background:#8b98a8; }
@@ -2132,6 +2134,47 @@ td { border-color:#dfe4ea; }
     medal.setAttribute('aria-label', labels[rank - 1]);
     cell.appendChild(medal);
   }
+  function updateRankingTotal(table, available) {
+    if (!table || !(table.matches('.region-store-ranking, .region-ranking-table, .store-ranking-table'))) return;
+    var headers = Array.from(table.querySelectorAll('thead th'));
+    var rows = Array.from(table.querySelectorAll('tbody tr'));
+    var foot = table.tFoot || table.createTFoot();
+    foot.innerHTML = '';
+    var totalRow = foot.insertRow();
+    totalRow.className = 'ranking-total-row';
+    function visibleNumber(cell) {
+      if (!cell) return NaN;
+      var text = cell.textContent.trim().replace(/,/g, '').replace(/¥/g, '');
+      if (!text || text === '-') return NaN;
+      var match = text.match(/[+-]?\d+(?:\.\d+)?/);
+      return match ? Number(match[0]) : NaN;
+    }
+    headers.forEach(function (header, index) {
+      var cell = totalRow.insertCell();
+      var label = header.textContent.trim().replace(/^本周|^上周|^本月|^自定义|^暂无/, '');
+      if (index === 0) {
+        cell.textContent = '合计';
+        return;
+      }
+      if (!available || label === '排名' || label === '区域') {
+        cell.textContent = '-';
+        return;
+      }
+      var values = rows.map(function (row) { return visibleNumber(row.cells[index]); }).filter(Number.isFinite);
+      if (!values.length) {
+        cell.textContent = '-';
+        return;
+      }
+      if (/率|占比/.test(label)) {
+        cell.textContent = formatPercent(values.reduce(function (sum, value) { return sum + value; }, 0) / values.length);
+        return;
+      }
+      var total = values.reduce(function (sum, value) { return sum + value; }, 0);
+      if (label === '新客数') cell.textContent = formatCount(total);
+      else if (/营收|目标|差额|金额/.test(label)) cell.textContent = label === '目标差额' ? formatSignedMoney(total) : formatMoney(total);
+      else cell.textContent = '-';
+    });
+  }
   function updateRankingDisplay(shell, period, available) {
     var table = shell.querySelector('table[data-ranking-table]');
     if (!table) return;
@@ -2172,6 +2215,7 @@ td { border-color:#dfe4ea; }
       var rank = row.querySelector('[data-rank-cell]');
       if (rank && !available) rank.textContent = '-';
     });
+    updateRankingTotal(table, available);
   }
   function sortShell(shell) {
     var metricBtn = shell.querySelector('[data-role="metric"] .ranking-pill.active');
