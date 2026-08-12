@@ -1451,7 +1451,7 @@ td { border-color:#dfe4ea; }
       return;
     }
     if (metric === 'newCustomers') cell.textContent = formatCount(value);
-    else if (metric === 'revenue' || metric === 'target' || metric === 'renewAmount' || metric === 'traffic') cell.textContent = formatMoney(value);
+    else if (metric === 'revenue' || metric === 'newSignRevenue' || metric === 'target' || metric === 'renewAmount' || metric === 'traffic') cell.textContent = formatMoney(value);
     else if (metric === 'diff') cell.textContent = formatSignedMoney(value);
     else cell.textContent = formatPercent(value);
     setBad(cell, metric === 'diff' ? Number(value) < 0 : isBad(metric, Number(value), row));
@@ -1504,9 +1504,12 @@ td { border-color:#dfe4ea; }
       var cells = Array.from(row.children);
       headers.forEach(function (header, index) {
         var label = header.textContent.trim().replace(/^本周|^上周|^本月|^自定义|^暂无/, '');
-        var metric = label === '新客数' ? 'newCustomers' : label === '营收' ? 'revenue' : label === '目标' ? 'target' : label === '目标差额' ? 'diff' : label === '完成率' ? 'completion' : label === '续卡率' ? 'renewRate' : label === '续卡金额' ? 'renewAmount' : label === '续卡占比' ? 'renewShare' : label === '新签办卡率' ? 'newRate' : label === '新签小卡率' ? 'newSmallRate' : label === '新签中大卡率' ? 'newMidLargeRate' : label === '总引流金额' ? 'traffic' : label === '总引流占比' ? 'trafficShare' : null;
+        var metric = label === '新客数' ? 'newCustomers' : label === '营收' ? 'revenue' : label === '新签营收' ? 'newSignRevenue' : label === '目标' ? 'target' : label === '目标差额' ? 'diff' : label === '完成率' ? 'completion' : label === '续卡率' ? 'renewRate' : label === '续卡金额' ? 'renewAmount' : label === '续卡占比' ? 'renewShare' : label === '新签办卡率' ? 'newRate' : label === '新签小卡率' ? 'newSmallRate' : label === '新签中大卡率' ? 'newMidLargeRate' : label === '总引流金额' ? 'traffic' : label === '总引流占比' ? 'trafficShare' : null;
         if (!metric || !cells[index] || cells[index].hasAttribute('data-rank-cell')) return;
-        var value = metric === 'target' ? target : metric === 'diff' ? revenue - target : asNumber(row.getAttribute('data-' + metric + '-' + period));
+        var renewAmount = asNumber(row.getAttribute('data-renewAmount-' + period));
+        var traffic = asNumber(row.getAttribute('data-traffic-' + period));
+        var newSignRevenue = Number.isFinite(revenue) && Number.isFinite(renewAmount) ? revenue - renewAmount : Number.NEGATIVE_INFINITY;
+        var value = metric === 'target' ? target : metric === 'diff' ? revenue - target : metric === 'newSignRevenue' ? newSignRevenue : metric === 'trafficShare' ? (Number.isFinite(traffic) && Number.isFinite(newSignRevenue) && newSignRevenue !== 0 ? traffic / newSignRevenue * 100 : Number.NEGATIVE_INFINITY) : asNumber(row.getAttribute('data-' + metric + '-' + period));
         writeRankingCell(cells[index], metric, value, row, available);
       });
       var rank = row.querySelector('[data-rank-cell]');
@@ -1544,7 +1547,20 @@ td { border-color:#dfe4ea; }
     var tbody = shell.querySelector('tbody');
     if (!tbody) return;
     var rows = Array.from(tbody.querySelectorAll('tr'));
-    rows.sort(function (a, b) { return available ? asNumber(b.getAttribute(key)) - asNumber(a.getAttribute(key)) : 0; });
+    rows.sort(function (a, b) {
+      if (!available) return 0;
+      if (shell.dataset.rankingType === 'employee') return asNumber(b.getAttribute(key)) - asNumber(a.getAttribute(key));
+      function value(row) {
+        if (metric === 'newSignRevenue') return asNumber(row.getAttribute('data-revenue-' + period)) - asNumber(row.getAttribute('data-renewAmount-' + period));
+        if (metric === 'trafficShare') {
+          var traffic = asNumber(row.getAttribute('data-traffic-' + period));
+          var revenue = asNumber(row.getAttribute('data-revenue-' + period)) - asNumber(row.getAttribute('data-renewAmount-' + period));
+          return Number.isFinite(traffic) && Number.isFinite(revenue) && revenue !== 0 ? traffic / revenue * 100 : Number.NEGATIVE_INFINITY;
+        }
+        return asNumber(row.getAttribute(key));
+      }
+      return value(b) - value(a);
+    });
     rows.forEach(function (row, index) {
       tbody.appendChild(row);
       var cell = row.querySelector('[data-rank-cell]');
@@ -1552,6 +1568,28 @@ td { border-color:#dfe4ea; }
     });
     updateRegionCompletionCards(shell, period, available);
   }
+  function normalizeStoreRankingColumns() {
+    document.querySelectorAll('table.region-store-ranking').forEach(function (table) {
+      if (table.dataset.hasNewSignRevenue) return;
+      var headers = table.querySelector('thead tr');
+      var revenueIndex = Array.from(headers.children).findIndex(function (cell) { return cell.textContent.trim() === '本周营收'; });
+      if (revenueIndex < 0) return;
+      var header = document.createElement('th');
+      header.textContent = '新签营收';
+      headers.children[revenueIndex].after(header);
+      var col = document.createElement('col');
+      col.style.width = '122px';
+      table.querySelector('colgroup').children[revenueIndex].after(col);
+      table.querySelectorAll('tbody tr').forEach(function (row) {
+        var cell = document.createElement('td');
+        cell.dataset.derivedNewSignRevenue = 'true';
+        cell.className = 'week-derived-value';
+        row.children[revenueIndex].after(cell);
+      });
+      table.dataset.hasNewSignRevenue = 'true';
+    });
+  }
+  normalizeStoreRankingColumns();
   shells.forEach(function (shell) {
     shell.addEventListener('click', function (event) {
       var btn = event.target.closest('.ranking-pill');
