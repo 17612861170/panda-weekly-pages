@@ -1402,16 +1402,54 @@ td { border-color:#dfe4ea; }
         return board;
       }
       function buildProblemPanel(questionEditor) {
-        var problemPriority = ['完成率', '新签办卡率', '新签中大卡率', '续卡占比', '总引流占比', '扫楼占比'];
+        var problemPriority = ['完成率', '新签中大卡率', '大卡率', '续卡占比', '总引流占比', '扫楼占比', '新签办卡率', '新签小卡率'];
         var badMetrics = Array.from(support.querySelectorAll('.support-metric.is-bad'));
         var orderedProblems = problemPriority.map(function (name) {
           return badMetrics.find(function (metric) { return metric.querySelector('b').textContent.trim() === name; });
         }).filter(Boolean);
         badMetrics.forEach(function (metric) { if (orderedProblems.indexOf(metric) < 0) orderedProblems.push(metric); });
-        var initial = orderedProblems.map(function (metric) {
+        var storeRankRow = rankingTable && Array.from(rankingTable.querySelectorAll('tbody tr')).find(function (row) {
+          return row.children[0] && row.children[0].textContent.trim() === storeName;
+        });
+        var titleByMetric = {
+          '完成率': '营收目标未完成', '新签办卡率': '新签转化偏低', '新签小卡率': '卡型结构偏小',
+          '新签中大卡率': '新签中大卡率偏低', '大卡率': '整体大卡率偏低',
+          '续卡占比': '续卡贡献不足', '总引流占比': '引流贡献不足', '扫楼占比': '扫楼贡献不足'
+        };
+        var focusByMetric = {
+          '完成率': '每日营收缺口与闭店复盘', '新签办卡率': '新客接待与办卡转化', '新签小卡率': '中大卡需求挖掘',
+          '新签中大卡率': '需求挖掘与中大卡成交话术', '大卡率': '大卡成交与续卡结构',
+          '续卡占比': '到期客户清单与逐人跟进', '总引流占比': '高产出引流渠道', '扫楼占比': '扫楼名单、频次与转化'
+        };
+        function standardFor(name) {
+          if (name === '完成率') return 100;
+          if (name === '新签办卡率') return 40;
+          if (name === '新签小卡率') return 40;
+          if (name === '新签中大卡率') return Number(storeRankRow && storeRankRow.getAttribute('data-mid-large-line')) || 55;
+          if (name === '续卡占比') return Number(storeRankRow && storeRankRow.getAttribute('data-renew-line')) || 20;
+          if (name === '总引流占比') return 25;
+          if (name === '扫楼占比') return 15;
+          if (name === '大卡率') return /开封|洛阳泉舜|洛阳中州|襄阳|武汉|许昌/.test(storeName) ? 60 : 70;
+          return NaN;
+        }
+        function percentValue(value) {
+          var match = String(value || '').replace(/,/g, '').match(/-?\d+(?:\.\d+)?/);
+          return match ? Number(match[0]) : NaN;
+        }
+        var initial = orderedProblems.slice(0, 3).map(function (metric) {
           var name = metric.querySelector('b').textContent.trim();
           var values = metricParts(name);
-          return { primary: name + '需改善', secondary: '本周 ' + values.current + '，上周 ' + values.previous + '。' };
+          var current = percentValue(values.current);
+          var standard = standardFor(name);
+          var evidence = '本周' + values.current + '，上周' + values.previous;
+          if (Number.isFinite(current) && Number.isFinite(standard)) {
+            var gap = name === '新签小卡率' ? current - standard : standard - current;
+            evidence = '本周' + values.current + '，距标准' + standard.toFixed(0) + '%差' + Math.abs(gap).toFixed(1) + '%';
+          }
+          return {
+            primary: titleByMetric[name] || name + '偏低',
+            secondary: evidence + '；重点关注：' + (focusByMetric[name] || '明确责任人和每日改善动作') + '。'
+          };
         });
         var board = buildTrackedBoard({ prefix: 'issue', initial: initial, addLabel: '新增问题', primaryPlaceholder: '点击填写问题标题', secondaryKey: 'detail', secondaryPlaceholder: '点击填写问题描述或数据依据' });
         questionEditor.classList.add('issue-notes');
@@ -2413,6 +2451,11 @@ td { border-color:#dfe4ea; }
   function keyFor(cell) { return [cell.dataset.editArea, cell.dataset.editStore, cell.dataset.editField].join('|'); }
   function valueFor(cell) { return cell.matches('[type="checkbox"]') ? (cell.checked ? '1' : '0') : cell.matches('textarea, select, input') ? cell.value : cell.innerText.trim(); }
   function setValue(cell, value) {
+    if (cell.closest('.issue-board')) {
+      var legacyTitle = /需改善$/.test(String(value || ''));
+      var legacyDetail = /^本周\s*[^；]+，上周\s*[^；]+。?$/.test(String(value || '').trim());
+      if ((cell.matches('.tracked-primary') && legacyTitle) || (cell.matches('.tracked-secondary') && legacyDetail)) return;
+    }
     if (cell.matches('[type="checkbox"]')) {
       cell.checked = String(value) === '1';
       var item = cell.closest('.action-item');
@@ -2551,6 +2594,13 @@ td { border-color:#dfe4ea; }
           }
         });
       }
+      document.querySelectorAll('.issue-board .tracked-item').forEach(function (item, index) {
+        var primary = item.querySelector('.tracked-primary');
+        var secondary = item.querySelector('.tracked-secondary');
+        if (index >= 3 && primary && secondary
+          && primary.textContent.trim() === '点击填写问题标题'
+          && secondary.textContent.trim() === '点击填写问题描述或数据依据') item.hidden = true;
+      });
       if (!Object.keys(pending).length) updateAllStatuses('共享云端已同步 ' + clock(), 'saved');
     }).catch(function (error) {
       console.error('云端同步失败', error);
