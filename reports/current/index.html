@@ -1866,15 +1866,7 @@ td { border-color:#dfe4ea; }
       panel.innerHTML = (names.length ? names.join('、') : '暂无') + '<br><strong>共 ' + names.length + ' 家</strong>';
     });
     var page = areaConclusion.parentNode;
-    page.insertBefore(areaBoard, areaConclusion.nextSibling);
-    var comparisonHeading = Array.from(page.querySelectorAll(':scope > h3')).find(function (heading) {
-      return heading.textContent.indexOf(area + '门店关键指标排名') >= 0;
-    });
-    var comparisonShell = comparisonHeading && comparisonHeading.nextElementSibling;
-    if (comparisonHeading && comparisonShell && comparisonShell.classList.contains('ranking-shell')) {
-      page.insertBefore(comparisonHeading, areaBoard);
-      page.insertBefore(comparisonShell, areaBoard);
-    }
+    page.appendChild(areaBoard);
   });
 })();
 </script><script>
