@@ -2574,7 +2574,7 @@ td { border-color:#dfe4ea; }
 </script><script>
 (function () {
   var countLabels = ['新签小卡数', '新签中卡数', '新签大卡数', '续卡小卡数', '续卡中卡数', '续卡大卡数'];
-  document.querySelectorAll('.closure-store-table .support-metric').forEach(function (metric) {
+  document.querySelectorAll('.closure-store-table .support-metric, .store-review-card .support-metric').forEach(function (metric) {
     var label = metric.querySelector('b');
     if (label && countLabels.indexOf(label.textContent.trim()) >= 0) metric.remove();
   });
