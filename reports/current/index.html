@@ -940,8 +940,8 @@ td { border-color:#dfe4ea; }
   normalizeEmployeeRankingTables();
   removeDecisionTrackingBlocks();
   removeRankingHints();
-  renderStoreReviewCards();
   normalizeSweepShares();
+  renderStoreReviewCards();
   function renderStoreReviewCards() {
     document.querySelectorAll('.closure-store-scroll').forEach(function (scroll) {
       var table = scroll.querySelector('table');
@@ -970,16 +970,82 @@ td { border-color:#dfe4ea; }
       }
       function kpi(name) {
         var values = metricParts(name);
+        return kpiValues(name, values.current, values.previous);
+      }
+      function kpiValues(name, current, previousValue) {
         var item = document.createElement('div');
         item.className = 'store-review-kpi';
         var label = document.createElement('span');
         label.textContent = name;
         var value = document.createElement('b');
-        value.textContent = values.current;
+        value.textContent = current;
         var previous = document.createElement('small');
-        previous.textContent = '上周 ' + values.previous;
+        previous.textContent = '上周 ' + previousValue;
         item.append(label, value, previous);
         return item;
+      }
+      var rankingTable = scroll.closest('.page') && scroll.closest('.page').querySelector('table.region-store-ranking');
+      var peerRows = rankingTable ? Array.from(rankingTable.querySelectorAll('tbody tr')).map(function (peerRow) {
+        return {
+          name: peerRow.children[0] ? peerRow.children[0].textContent.trim() : '',
+          revenue: Number(peerRow.getAttribute('data-revenue-current')),
+          previousRevenue: Number(peerRow.getAttribute('data-revenue-previous')),
+          completion: Number(peerRow.getAttribute('data-completion-current'))
+        };
+      }) : [];
+      var currentRanking = peerRows.slice().sort(function (a, b) { return b.revenue - a.revenue; });
+      var previousRanking = peerRows.filter(function (item) { return Number.isFinite(item.previousRevenue); }).sort(function (a, b) { return b.previousRevenue - a.previousRevenue; });
+      var currentRank = currentRanking.findIndex(function (item) { return item.name === storeName; }) + 1;
+      var previousRank = previousRanking.findIndex(function (item) { return item.name === storeName; }) + 1;
+      function buildMetricTable() {
+        var visibleMetrics = ['新签营收', '新签办卡率', '新签小卡率', '新签中卡率', '新签大卡率', '新签中大卡率', '续费率', '续卡小卡率', '续卡中卡率', '续卡大卡率', '续卡占比', '续卡金额', '总引流占比', '总引流金额', '扫楼占比', '扫楼金额', '扶梯口金额', '大卡率'];
+        var table = document.createElement('table');
+        table.className = 'store-core-table';
+        table.innerHTML = '<thead><tr><th>指标</th><th>上周</th><th>本周</th><th>变化</th></tr></thead><tbody></tbody>';
+        var tbody = table.querySelector('tbody');
+        visibleMetrics.forEach(function (name) {
+          var source = Array.from(support.querySelectorAll('.support-metric')).find(function (metric) {
+            var label = metric.querySelector('b');
+            return label && label.textContent.trim() === name;
+          });
+          if (!source) return;
+          var values = metricParts(name);
+          var row = document.createElement('tr');
+          if (source.classList.contains('is-bad')) row.className = 'is-bad';
+          var change = source.querySelector('em') ? source.querySelector('em').textContent.trim() : '-';
+          row.innerHTML = '<td class="metric-label"></td><td></td><td></td><td></td>';
+          row.children[0].textContent = name;
+          row.children[1].textContent = values.previous;
+          row.children[2].textContent = values.current;
+          row.children[3].textContent = change;
+          tbody.appendChild(row);
+        });
+        return table;
+      }
+      function buildPeerPanel() {
+        var section = document.createElement('section');
+        section.className = 'review-panel peers';
+        var heading = document.createElement('h4');
+        heading.textContent = '同区域门店对比';
+        var table = document.createElement('table');
+        table.className = 'store-peer-table';
+        table.innerHTML = '<thead><tr><th>排名</th><th>门店</th><th>本周营收</th><th>完成率</th></tr></thead><tbody></tbody>';
+        var shown = currentRanking.slice(0, 5);
+        var own = currentRanking.find(function (item) { return item.name === storeName; });
+        if (own && !shown.some(function (item) { return item.name === storeName; })) shown.push(own);
+        shown.forEach(function (item) {
+          var rank = currentRanking.indexOf(item) + 1;
+          var row = document.createElement('tr');
+          if (item.name === storeName) row.className = 'is-current';
+          row.innerHTML = '<td></td><td></td><td></td><td></td>';
+          row.children[0].textContent = rank;
+          row.children[1].textContent = item.name;
+          row.children[2].textContent = Number.isFinite(item.revenue) ? '¥' + item.revenue.toLocaleString('zh-CN', {maximumFractionDigits:2}) : '-';
+          row.children[3].textContent = Number.isFinite(item.completion) ? item.completion.toFixed(2) + '%' : '-';
+          table.tBodies[0].appendChild(row);
+        });
+        section.append(heading, table);
+        return section;
       }
       function editor(field, placeholder) {
         var cell = document.createElement('div');
@@ -1009,19 +1075,20 @@ td { border-color:#dfe4ea; }
       head.className = 'store-review-head';
       var headSummary = document.createElement('div');
       headSummary.className = 'store-review-summary';
-      headSummary.textContent = '本周营收 ' + metricParts('总营收').current + '，完成率 ' + metricParts('完成率').current + '；新签办卡率 ' + metricParts('新签办卡率').current + '，续卡金额 ' + metricParts('续卡金额').current + '。';
+      headSummary.textContent = '本周营收 ' + metricParts('总营收').current + '，完成率 ' + metricParts('完成率').current + (currentRank ? '，区域营收排名第' + currentRank : '') + '；新签办卡率 ' + metricParts('新签办卡率').current + '，续卡金额 ' + metricParts('续卡金额').current + '。';
       head.append(state, store, headSummary);
       var kpis = document.createElement('div');
       kpis.className = 'store-review-kpis';
-      ['总营收', '完成率', '新签办卡率', '续卡金额', '总引流金额', '扫楼占比'].forEach(function (name) { kpis.appendChild(kpi(name)); });
+      kpis.append(kpi('总营收'), kpi('完成率'), kpiValues('区域排名', currentRank ? String(currentRank) : '-', previousRank ? String(previousRank) : '-'), kpi('新客数'), kpi('老客数'), kpi('续卡金额'));
       var supportWrap = document.createElement('section');
       supportWrap.className = 'store-review-support';
       var supportTitle = document.createElement('h4');
       supportTitle.textContent = '本店核心指标对比';
-      supportWrap.append(supportTitle, support);
+      support.hidden = true;
+      supportWrap.append(supportTitle, buildMetricTable(), support);
       var panels = document.createElement('div');
       panels.className = 'store-review-panels';
-      panels.append(panel('我的店本周问题', questionEditor, 'problem'), panel('本周必须完成（行动看板）', must, 'must'), panel('上周承诺完成情况（回顾）', prior, 'prior'), panel('下周检查点（预告）', next, 'next'));
+      panels.append(panel('我的店本周问题', questionEditor, 'problem'), panel('本周必须完成（行动看板）', must, 'must'), buildPeerPanel(), panel('上周承诺完成情况（回顾）', prior, 'prior'), panel('下周检查点（预告）', next, 'next'));
       var body = document.createElement('div');
       body.className = 'store-review-body';
       body.append(supportWrap, panels);
@@ -1782,7 +1849,7 @@ td { border-color:#dfe4ea; }
 </script><style>
 .store-review-body {
   grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-  grid-template-areas:"problem must" "support support" "prior next" !important;
+  grid-template-areas:"problem must" "support peers" "prior next" !important;
   gap:12px !important;
 }
 .store-review-card { border-color:#d7dee7; box-shadow:0 2px 10px rgba(15,23,42,.08); }
@@ -1799,12 +1866,17 @@ td { border-color:#dfe4ea; }
 .store-review-kpi small { display:block; color:#64748b; font-size:10px; }
 .store-review-support { grid-area:support; max-height:none; padding:12px; }
 .store-review-support h4 { color:#1f2937; font-size:14px; }
-.store-review-support .status-cell { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); max-width:none; border:1px solid #dfe4ea; }
-.store-review-support .support-metric { grid-template-columns:88px minmax(0,1fr) minmax(60px,auto); min-height:42px; border-right:1px solid #e3e8ed; padding:6px 8px; }
 .store-review-panels { display:contents !important; }
+.review-panel.peers { grid-area:peers; min-height:0; }
 .review-panel.problem, .review-panel.must { min-height:220px; }
 .review-panel.problem .question-editor, .review-panel.must .review-editor { min-height:165px; }
 .review-panel.prior, .review-panel.next { min-height:150px; }
+.store-core-table, .store-peer-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:11px; }
+.store-core-table th, .store-core-table td, .store-peer-table th, .store-peer-table td { padding:7px 6px; border:1px solid #dfe4ea; text-align:center; }
+.store-core-table th, .store-peer-table th { background:#f8fafc; color:#475569; font-weight:900; }
+.store-core-table td:first-child, .store-peer-table td:nth-child(2) { text-align:left; font-weight:800; }
+.store-core-table tr.is-bad td { background:#fff0f2; color:#c81e3a; font-weight:800; }
+.store-peer-table tr.is-current td { background:#fff7ed; color:#9a3412; font-weight:900; }
 .brand-indicator-legend.is-detailed {
   grid-template-columns:repeat(2,minmax(0,1fr));
   column-gap:12px;
@@ -1813,13 +1885,12 @@ td { border-color:#dfe4ea; }
 @media (max-width:1000px) {
   .store-review-body {
     grid-template-columns:1fr !important;
-    grid-template-areas:"support" "problem" "must" "prior" "next" !important;
+    grid-template-areas:"problem" "must" "support" "peers" "prior" "next" !important;
   }
   .store-review-head { align-items:flex-start; flex-wrap:wrap; }
   .store-review-head .object-cell { flex:1 1 180px; }
   .store-review-summary { flex-basis:100%; padding:10px 0 0; border-left:0; border-top:1px solid rgba(255,255,255,.45); }
   .store-review-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .store-review-support .status-cell { grid-template-columns:1fr; }
   .brand-indicator-legend.is-detailed { grid-template-columns:1fr; }
 }
 </style><script>
