@@ -2294,9 +2294,11 @@ td { border-color:#dfe4ea; }
       });
       return;
     }
-    var revenueHeader = headers.find(function (item) { return /营收/.test(item.textContent); });
     var periodLabel = period === 'previous' ? '上周' : period === 'month' ? '本月' : period === 'unavailable' ? '暂无' : '本周';
+    var revenueHeader = headers.find(function (item) { return /营收/.test(item.textContent); });
+    var newCustomersHeader = headers.find(function (item) { return item.textContent.trim().replace(/^本周|^上周|^本月|^自定义|^暂无/, '') === '新客数'; });
     if (revenueHeader) revenueHeader.textContent = periodLabel + '营收';
+    if (newCustomersHeader) newCustomersHeader.textContent = periodLabel + '新客数';
     table.classList.toggle('ranking-no-data', !available);
     Array.from(table.querySelectorAll('tbody tr')).forEach(function (row) {
       var revenue = asNumber(row.getAttribute('data-revenue-' + period));
