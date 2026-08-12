@@ -1661,10 +1661,11 @@ td { border-color:#dfe4ea; }
         board.append(toolbar, list, history, addButton, countSync);
         return panel('本周必须完成（行动看板）', board, 'must');
       }
+      var must = editor('must_complete', '点击填写本周必须完成事项、负责人和截止时间');
       var prior = editor('prior_review', '点击填写上周承诺事项的完成情况和未完成原因');
       var next = answer;
       next.className = 'review-editor';
-      next.dataset.placeholder = '点击填写下周检查点、验收标准和检查时间';
+      next.dataset.placeholder = '点击填写门店回答和下周计划';
       var questionEditor = question ? question.cloneNode(true) : editor('question', '点击填写本周问题');
       var head = document.createElement('div');
       head.className = 'store-review-head';
@@ -1677,7 +1678,10 @@ td { border-color:#dfe4ea; }
       supportWrap.append(supportTitle, support);
       var panels = document.createElement('div');
       panels.className = 'store-review-panels';
-      panels.append(buildProblemPanel(questionEditor), buildActionPanel(), buildOnsiteDecisionPanel(), panel('上周承诺完成情况（回顾）', prior, 'prior'), panel('下周检查点（预告）', next, 'next'));
+      var problemContent = document.createElement('div');
+      problemContent.className = 'review-problem-content';
+      problemContent.append(questionEditor, next);
+      panels.append(panel('本周问题', problemContent, 'problem'), panel('本周必须完成', must, 'must'), panel('上周承诺完成（回顾）', prior, 'prior'));
       var body = document.createElement('div');
       body.className = 'store-review-body';
       body.append(supportWrap, panels);
@@ -1859,7 +1863,16 @@ td { border-color:#dfe4ea; }
       if (!panel) return;
       panel.innerHTML = (names.length ? names.join('、') : '暂无') + '<br><strong>共 ' + names.length + ' 家</strong>';
     });
-    areaConclusion.parentNode.insertBefore(areaBoard, areaConclusion.nextSibling);
+    var page = areaConclusion.parentNode;
+    page.insertBefore(areaBoard, areaConclusion.nextSibling);
+    var comparisonHeading = Array.from(page.querySelectorAll(':scope > h3')).find(function (heading) {
+      return heading.textContent.indexOf(area + '同区域关键指标对比') >= 0;
+    });
+    var comparisonShell = comparisonHeading && comparisonHeading.nextElementSibling;
+    if (comparisonHeading && comparisonShell && comparisonShell.classList.contains('ranking-shell')) {
+      page.insertBefore(comparisonHeading, areaBoard);
+      page.insertBefore(comparisonShell, areaBoard);
+    }
   });
 })();
 </script><script>
@@ -2570,8 +2583,9 @@ td { border-color:#dfe4ea; }
 })();
 </script><style>
 .store-review-body {
-  grid-template-columns:minmax(300px,.72fr) minmax(0,1fr) minmax(0,1fr) !important;
-  grid-template-areas:"support problem must" "support onsite onsite" "support prior next" !important;
+  grid-template-columns:minmax(300px,.58fr) minmax(0,1fr) !important;
+  grid-template-areas:"support problem" "support must" "support prior" !important;
+  grid-template-rows:auto auto 1fr;
   gap:12px !important;
 }
 .store-review-card { border-color:#d7dee7; box-shadow:0 3px 14px rgba(15,23,42,.08); padding:0; }
@@ -2613,9 +2627,11 @@ td { border-color:#dfe4ea; }
 .store-peer-ranking [data-region-completion-pk] { display:none !important; }
 .store-peer-ranking tr.peer-current-store td { background:#fff7ed !important; color:#9a3412; font-weight:900; box-shadow:inset 0 2px 0 #ea580c,inset 0 -2px 0 #ea580c; }
 .store-peer-ranking tr.peer-current-store td:first-child { box-shadow:inset 3px 0 0 #ea580c,inset 0 2px 0 #ea580c,inset 0 -2px 0 #ea580c,1px 0 0 #d8dee9; }
-.review-panel.problem, .review-panel.must { min-height:280px; }
+.review-panel.problem, .review-panel.must { min-height:210px; }
 .review-panel.problem .question-editor, .review-panel.must .review-editor { min-height:0; }
-.review-panel.prior, .review-panel.next { min-height:150px; }
+.review-problem-content { display:grid; gap:10px; }
+.review-problem-content .review-editor, .review-problem-content .question-editor { min-height:82px; }
+.review-panel.prior { min-height:300px; }
 .issue-list, .action-list { display:grid; gap:10px; }
 .issue-item { display:flex; align-items:center; gap:12px; min-height:54px; padding:10px 12px; border:1px solid #f3d2b6; border-radius:6px; background:#fffaf5; }
 .issue-item i { display:flex; align-items:center; justify-content:center; flex:0 0 30px; height:30px; border-radius:50%; background:#e85d04; color:#fff; font-style:normal; font-weight:900; }
@@ -2707,7 +2723,8 @@ td { border-color:#dfe4ea; }
 @media (max-width:1000px) {
   .store-review-body {
     grid-template-columns:1fr !important;
-    grid-template-areas:"support" "problem" "must" "onsite" "prior" "next" !important;
+    grid-template-areas:"support" "problem" "must" "prior" !important;
+    grid-template-rows:auto;
   }
   .store-review-head { align-items:flex-start; flex-wrap:wrap; }
   .store-meeting-title { flex-direction:column; }
