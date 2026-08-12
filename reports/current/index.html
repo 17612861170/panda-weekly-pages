@@ -1680,8 +1680,10 @@ td { border-color:#dfe4ea; }
       panels.className = 'store-review-panels';
       var problemContent = document.createElement('div');
       problemContent.className = 'review-problem-content';
-      problemContent.append(questionEditor, next);
-      panels.append(panel('本周问题', problemContent, 'problem'), panel('本周必须完成', must, 'must'), panel('上周承诺完成（回顾）', prior, 'prior'));
+      problemContent.append(next);
+      questionEditor.classList.add('preserved-cloud-field');
+      questionEditor.hidden = true;
+      panels.append(panel('上周承诺完成（回顾）', prior, 'prior'), panel('本周问题', problemContent, 'problem'), panel('本周计划', must, 'must'), questionEditor);
       var body = document.createElement('div');
       body.className = 'store-review-body';
       body.append(supportWrap, panels);
@@ -2584,7 +2586,7 @@ td { border-color:#dfe4ea; }
 </script><style>
 .store-review-body {
   grid-template-columns:minmax(300px,.58fr) minmax(0,1fr) !important;
-  grid-template-areas:"support problem" "support must" "support prior" !important;
+  grid-template-areas:"support prior" "support problem" "support must" !important;
   grid-template-rows:auto auto 1fr;
   gap:12px !important;
 }
@@ -2632,6 +2634,7 @@ td { border-color:#dfe4ea; }
 .review-problem-content { display:grid; gap:10px; }
 .review-problem-content .review-editor, .review-problem-content .question-editor { min-height:82px; }
 .review-panel.prior { min-height:300px; }
+.preserved-cloud-field { display:none !important; }
 .issue-list, .action-list { display:grid; gap:10px; }
 .issue-item { display:flex; align-items:center; gap:12px; min-height:54px; padding:10px 12px; border:1px solid #f3d2b6; border-radius:6px; background:#fffaf5; }
 .issue-item i { display:flex; align-items:center; justify-content:center; flex:0 0 30px; height:30px; border-radius:50%; background:#e85d04; color:#fff; font-style:normal; font-weight:900; }
@@ -2723,7 +2726,7 @@ td { border-color:#dfe4ea; }
 @media (max-width:1000px) {
   .store-review-body {
     grid-template-columns:1fr !important;
-    grid-template-areas:"support" "problem" "must" "prior" !important;
+    grid-template-areas:"support" "prior" "problem" "must" !important;
     grid-template-rows:auto;
   }
   .store-review-head { align-items:flex-start; flex-wrap:wrap; }
