@@ -1235,7 +1235,7 @@ td { border-color:#dfe4ea; }
       kpis.className = 'store-review-kpis';
       var newCustomers = metricParts('新客数');
       var oldCustomers = metricParts('老客数');
-      kpis.append(kpi('总营收'), kpi('完成率'), kpiValues('排名', currentRank ? String(currentRank) : '-', previousRank ? String(previousRank) : '-'), kpiValues('排名变化', rankChange === null || rankChange === 0 ? '-' : (rankChange > 0 ? '↑' : '↓') + Math.abs(rankChange), previousRank ? '第' + previousRank + '名' : '-'), kpiValues('新客 / 老客', newCustomers.current + ' / ' + oldCustomers.current, newCustomers.previous + ' / ' + oldCustomers.previous), kpi('续卡金额'));
+      kpis.append(kpi('总营收'), kpi('完成率'), kpiValues('排名', currentRank ? String(currentRank) : '-', previousRank ? String(previousRank) : '-'), kpi('总引流金额'), kpiValues('新客 / 老客', newCustomers.current + ' / ' + oldCustomers.current, newCustomers.previous + ' / ' + oldCustomers.previous), kpi('续卡金额'));
       var supportWrap = document.createElement('section');
       supportWrap.className = 'store-review-support';
       var supportTitle = document.createElement('h4');
