@@ -1140,29 +1140,192 @@ td { border-color:#dfe4ea; }
         section.append(heading, body);
         return section;
       }
-      function buildProblemPanel(questionEditor) {
+      function buildTrackedBoard(config) {
+        var board = document.createElement('div');
+        board.className = 'tracked-board ' + config.prefix + '-board';
+        var toolbar = document.createElement('div');
+        toolbar.className = 'tracked-toolbar';
+        toolbar.innerHTML = '<div class="tracked-period-tabs"><button type="button" class="active" data-tracked-period="current">本周</button><button type="button" data-tracked-period="all">全部时间</button><button type="button" data-tracked-period="custom">自定义</button></div><div class="tracked-date-range"><input type="date" min="2026-07-20" aria-label="开始日期"><span>至</span><input type="date" min="2026-07-20" aria-label="结束日期"></div>';
         var list = document.createElement('div');
-        list.className = 'issue-list';
+        list.className = 'tracked-list';
+        var history = document.createElement('div');
+        history.className = 'tracked-history';
+        history.hidden = true;
+        var addButton = document.createElement('button');
+        addButton.type = 'button';
+        addButton.className = 'tracked-add';
+        addButton.textContent = '+ ' + config.addLabel;
+        var countSync = document.createElement('input');
+        countSync.type = 'hidden';
+        countSync.className = 'tracked-count-sync';
+        countSync.value = String(Math.max(1, config.initial.length));
+        countSync.dataset.editArea = area;
+        countSync.dataset.editStore = storeName + '-' + config.prefix + '_count';
+        countSync.dataset.editField = 'answer';
+        function registerCell(cell) {
+          if (window.registerWeeklyCloudCell) window.registerWeeklyCloudCell(cell);
+        }
+        function setState(item, value) {
+          if (!config.statuses) return;
+          var state = value || config.statuses[0];
+          item.dataset.recordStatus = state;
+          item.classList.toggle('is-complete', state === config.statuses[config.statuses.length - 1]);
+          item.classList.toggle('is-progress', state === config.statuses[1]);
+        }
+        function createRow(index) {
+          var preset = config.initial[index - 1] || {};
+          var item = document.createElement('div');
+          item.className = 'tracked-item';
+          var badge = document.createElement('i');
+          badge.textContent = String(index);
+          var fields = document.createElement('div');
+          fields.className = 'tracked-fields';
+          var primary = editor(config.prefix + '_problem_' + index, config.primaryPlaceholder);
+          primary.classList.add('tracked-primary');
+          primary.dataset.editField = 'question';
+          primary.textContent = preset.primary || config.primaryPlaceholder;
+          var secondary = editor(config.prefix + '_' + config.secondaryKey + '_' + index, config.secondaryPlaceholder);
+          secondary.classList.add('tracked-secondary');
+          secondary.dataset.editField = 'answer';
+          secondary.textContent = preset.secondary || config.secondaryPlaceholder;
+          fields.append(primary, secondary);
+          item.append(badge, fields);
+          var cells = [primary, secondary];
+          if (config.statuses) {
+            var status = document.createElement('select');
+            status.className = 'tracked-status';
+            status.setAttribute('aria-label', config.statusLabel);
+            status.dataset.editArea = area;
+            status.dataset.editStore = storeName + '-' + config.prefix + '_status_' + index;
+            status.dataset.editField = 'answer';
+            config.statuses.forEach(function (name) {
+              var option = document.createElement('option');
+              option.value = name;
+              option.textContent = name;
+              status.appendChild(option);
+            });
+            status.value = preset.status || config.statuses[0];
+            status.addEventListener('change', function () { setState(item, status.value); });
+            setState(item, status.value);
+            item.appendChild(status);
+            cells.push(status);
+          }
+          list.appendChild(item);
+          cells.forEach(registerCell);
+        }
+        function ensureRows(count) {
+          var target = Math.max(1, Number(count) || config.initial.length || 1);
+          while (list.children.length < target) createRow(list.children.length + 1);
+        }
+        countSync._ensureRows = ensureRows;
+        ensureRows(config.initial.length || 1);
+        addButton.addEventListener('click', function () {
+          ensureRows(list.children.length + 1);
+          countSync.value = String(list.children.length);
+          countSync.dispatchEvent(new Event('change', { bubbles: true }));
+          var latest = list.lastElementChild && list.lastElementChild.querySelector('.tracked-primary');
+          if (latest) latest.focus();
+        });
+        var historyRows = [];
+        var periodMode = 'current';
+        var dateInputs = toolbar.querySelectorAll('.tracked-date-range input');
+        function reportDates(reportId) {
+          var match = String(reportId || '').match(/^(\d{4})(\d{2})(\d{2})-(\d{4})(\d{2})(\d{2})$/);
+          return match ? [match[1] + '-' + match[2] + '-' + match[3], match[4] + '-' + match[5] + '-' + match[6]] : ['', ''];
+        }
+        function renderHistory() {
+          if (periodMode === 'current') return;
+          var grouped = {};
+          historyRows.filter(function (row) {
+            if (row.area !== area || String(row.store || '').indexOf(storeName + '-' + config.prefix + '_') !== 0) return false;
+            if (periodMode !== 'custom') return true;
+            var dates = reportDates(row.report_id);
+            return (!dateInputs[0].value || dates[1] >= dateInputs[0].value) && (!dateInputs[1].value || dates[0] <= dateInputs[1].value);
+          }).forEach(function (row) {
+            var semanticField = String(row.store || '').slice((storeName + '-').length) || String(row.field || '');
+            var pattern = new RegExp('^' + config.prefix + '_(problem|' + config.secondaryKey + '|status)_(\\d+)$');
+            var match = semanticField.match(pattern);
+            if (!match) return;
+            var key = row.report_id + '|' + match[2];
+            grouped[key] = grouped[key] || { reportId: row.report_id, index: Number(match[2]), primary: '', secondary: '', status: config.statuses ? config.statuses[0] : '' };
+            if (match[1] === 'problem') grouped[key].primary = row.value;
+            if (match[1] === config.secondaryKey) grouped[key].secondary = row.value;
+            if (match[1] === 'status') grouped[key].status = row.value;
+          });
+          var records = Object.keys(grouped).map(function (key) { return grouped[key]; }).filter(function (item) { return String(item.primary || '').trim(); }).sort(function (a, b) {
+            return a.reportId === b.reportId ? a.index - b.index : b.reportId.localeCompare(a.reportId);
+          });
+          history.innerHTML = '';
+          if (!records.length) {
+            history.innerHTML = '<p class="tracked-history-empty">该时间范围暂无记录</p>';
+            return;
+          }
+          var currentPeriod = '';
+          records.forEach(function (record) {
+            if (record.reportId !== currentPeriod) {
+              currentPeriod = record.reportId;
+              var heading = document.createElement('h5');
+              var dates = reportDates(record.reportId);
+              heading.textContent = dates[0] ? dates[0].slice(5).replace('-', '/') + ' - ' + dates[1].slice(5).replace('-', '/') : record.reportId;
+              history.appendChild(heading);
+            }
+            var row = document.createElement('div');
+            row.className = 'tracked-history-item';
+            row.innerHTML = '<b></b><span></span>' + (config.statuses ? '<em></em>' : '');
+            row.querySelector('b').textContent = record.primary;
+            row.querySelector('span').textContent = record.secondary || config.secondaryPlaceholder;
+            if (config.statuses) row.querySelector('em').textContent = record.status || config.statuses[0];
+            history.appendChild(row);
+          });
+        }
+        toolbar.querySelectorAll('[data-tracked-period]').forEach(function (button) {
+          button.addEventListener('click', function () {
+            periodMode = button.dataset.trackedPeriod;
+            toolbar.querySelectorAll('[data-tracked-period]').forEach(function (item) { item.classList.toggle('active', item === button); });
+            toolbar.classList.toggle('is-custom', periodMode === 'custom');
+            list.hidden = periodMode !== 'current';
+            addButton.hidden = periodMode !== 'current';
+            history.hidden = periodMode === 'current';
+            renderHistory();
+          });
+        });
+        dateInputs.forEach(function (input) { input.addEventListener('change', renderHistory); });
+        window.addEventListener('weekly-action-history', function (event) {
+          historyRows = event.detail || [];
+          renderHistory();
+        });
+        board.append(toolbar, list, history, addButton, countSync);
+        return board;
+      }
+      function buildProblemPanel(questionEditor) {
         var problemPriority = ['完成率', '新签办卡率', '新签中大卡率', '续卡占比', '总引流占比', '扫楼占比'];
         var badMetrics = Array.from(support.querySelectorAll('.support-metric.is-bad'));
         var orderedProblems = problemPriority.map(function (name) {
           return badMetrics.find(function (metric) { return metric.querySelector('b').textContent.trim() === name; });
         }).filter(Boolean);
         badMetrics.forEach(function (metric) { if (orderedProblems.indexOf(metric) < 0) orderedProblems.push(metric); });
-        orderedProblems.slice(0, 3).forEach(function (metric, index) {
+        var initial = orderedProblems.map(function (metric) {
           var name = metric.querySelector('b').textContent.trim();
           var values = metricParts(name);
-          var item = document.createElement('div');
-          item.className = 'issue-item';
-          item.innerHTML = '<i>' + (index + 1) + '</i><div><b></b><span></span></div>';
-          item.querySelector('b').textContent = name + '需改善';
-          item.querySelector('span').textContent = '本周 ' + values.current + '，上周 ' + values.previous + '。';
-          list.appendChild(item);
+          return { primary: name + '需改善', secondary: '本周 ' + values.current + '，上周 ' + values.previous + '。' };
         });
+        var board = buildTrackedBoard({ prefix: 'issue', initial: initial, addLabel: '新增问题', primaryPlaceholder: '点击填写问题标题', secondaryKey: 'detail', secondaryPlaceholder: '点击填写问题描述或数据依据' });
         questionEditor.classList.add('issue-notes');
         questionEditor.hidden = true;
-        list.appendChild(questionEditor);
-        return panel('我的店本周问题', list, 'problem');
+        board.appendChild(questionEditor);
+        return panel('我的店本周问题', board, 'problem');
+      }
+      function buildOnsiteDecisionPanel() {
+        return panel('现场问题与城市经理决策', buildTrackedBoard({
+          prefix: 'onsite',
+          initial: [{ primary: '点击填写店长现场提出的问题', secondary: '点击填写城市经理解决方法', status: '未解决' }],
+          addLabel: '新增现场问题',
+          primaryPlaceholder: '点击填写问题描述',
+          secondaryKey: 'solution',
+          secondaryPlaceholder: '点击填写解决方法',
+          statusLabel: '是否解决',
+          statuses: ['未解决', '解决中', '已解决']
+        }), 'onsite-decision');
       }
       function buildActionPanel() {
         var board = document.createElement('div');
@@ -1185,7 +1348,7 @@ td { border-color:#dfe4ea; }
         countSync.value = '5';
         countSync.dataset.editArea = area;
         countSync.dataset.editStore = storeName + '-must_action_count';
-        countSync.dataset.editField = 'must_action_count';
+        countSync.dataset.editField = 'answer';
         var issueNames = Array.from(support.querySelectorAll('.support-metric.is-bad b')).map(function (label) { return label.textContent.trim(); });
         var suggestedActions = [];
         function addAction(metrics, text) {
@@ -1212,16 +1375,18 @@ td { border-color:#dfe4ea; }
           item.dataset.actionIndex = String(index);
           var action = editor(index === 1 ? 'must_complete' : 'must_complete_' + index, '点击填写具体行动');
           action.classList.add('action-editor');
+          action.dataset.editField = 'question';
           action.textContent = suggestedActions[index - 1] || '点击填写具体行动';
           var meta = editor('must_meta_' + index, '负责人 · 截止时间');
           meta.classList.add('action-meta');
+          meta.dataset.editField = 'answer';
           meta.textContent = '负责人：待填写 · 截止：08/09';
           var status = document.createElement('select');
           status.className = 'action-status';
           status.setAttribute('aria-label', '行动状态');
           status.dataset.editArea = area;
           status.dataset.editStore = storeName + '-must_status_' + index;
-          status.dataset.editField = 'must_status_' + index;
+          status.dataset.editField = 'answer';
           ['未开始', '进行中', '已完成'].forEach(function (name) {
             var option = document.createElement('option');
             option.value = name;
@@ -1270,10 +1435,11 @@ td { border-color:#dfe4ea; }
             var end = dateInputs[1].value;
             return (!start || dates[1] >= start) && (!end || dates[0] <= end);
           }).forEach(function (row) {
-            var actionMatch = row.field === 'must_complete' ? ['must_complete', '1'] : String(row.field || '').match(/^must_complete_(\d+)$/);
-            var metaMatch = String(row.field || '').match(/^must_meta_(\d+)$/);
-            var statusMatch = String(row.field || '').match(/^must_status_(\d+)$/);
-            var doneMatch = String(row.field || '').match(/^must_done_(\d+)$/);
+            var semanticField = String(row.store || '').slice((storeName + '-').length) || String(row.field || '');
+            var actionMatch = semanticField === 'must_complete' ? ['must_complete', '1'] : semanticField.match(/^must_complete_(\d+)$/);
+            var metaMatch = semanticField.match(/^must_meta_(\d+)$/);
+            var statusMatch = semanticField.match(/^must_status_(\d+)$/);
+            var doneMatch = semanticField.match(/^must_done_(\d+)$/);
             var match = actionMatch || metaMatch || statusMatch || doneMatch;
             if (!match) return;
             var key = row.report_id + '|' + match[1];
@@ -1367,7 +1533,7 @@ td { border-color:#dfe4ea; }
       supportWrap.append(supportTitle, buildMetricTable(), support);
       var panels = document.createElement('div');
       panels.className = 'store-review-panels';
-      panels.append(buildProblemPanel(questionEditor), buildActionPanel(), buildPeerPanel(), panel('上周承诺完成情况（回顾）', prior, 'prior'), panel('下周检查点（预告）', next, 'next'));
+      panels.append(buildProblemPanel(questionEditor), buildActionPanel(), buildOnsiteDecisionPanel(), buildPeerPanel(), panel('上周承诺完成情况（回顾）', prior, 'prior'), panel('下周检查点（预告）', next, 'next'));
       var body = document.createElement('div');
       body.className = 'store-review-body';
       body.append(supportWrap, panels);
@@ -2006,7 +2172,7 @@ td { border-color:#dfe4ea; }
   var supabaseUrl = 'https://smbelcuwcsuuxcspypae.supabase.co';
   var supabaseKey = 'sb_publishable_KIJsYEjr2gt2K8IMwtEKhg_RR8x6Dqb';
   var tableUrl = supabaseUrl + '/rest/v1/weekly_report_edits';
-  var cellSelector = '.closure-table td[contenteditable="true"], .closure-table .question-editor, .store-review-card .review-editor, .store-review-card .question-editor, .store-review-card .action-check, .store-review-card .action-status, .store-review-card .action-count-sync, .conclusion-editor, .decision-editor';
+  var cellSelector = '.closure-table td[contenteditable="true"], .closure-table .question-editor, .store-review-card .review-editor, .store-review-card .question-editor, .store-review-card .action-check, .store-review-card .action-status, .store-review-card .action-count-sync, .store-review-card .tracked-status, .store-review-card .tracked-count-sync, .conclusion-editor, .decision-editor';
   var cells = [];
   var cellsByKey = {};
   var cloudRows = {};
@@ -2036,6 +2202,15 @@ td { border-color:#dfe4ea; }
         }
       }
       if (cell.matches('.action-count-sync') && cell._ensureRows) cell._ensureRows(value);
+      if (cell.matches('.tracked-status')) {
+        var trackedItem = cell.closest('.tracked-item');
+        if (trackedItem) {
+          trackedItem.dataset.recordStatus = value || '';
+          trackedItem.classList.toggle('is-complete', value === '已解决');
+          trackedItem.classList.toggle('is-progress', value === '解决中');
+        }
+      }
+      if (cell.matches('.tracked-count-sync') && cell._ensureRows) cell._ensureRows(value);
     } else cell.textContent = value;
   }
   function headers(extra) {
@@ -2102,7 +2277,7 @@ td { border-color:#dfe4ea; }
     });
   }
   function queryActionHistory() {
-    var query = '?select=report_id,area,store,field,value,updated_at&field=like.must_*&order=report_id.desc&limit=5000';
+    var query = '?select=report_id,area,store,field,value,updated_at&or=(store.like.*-must_*,store.like.*-issue_*,store.like.*-onsite_*,field.like.must_*,field.like.issue_*,field.like.onsite_*)&order=report_id.desc&limit=5000';
     return fetch(tableUrl + query, { headers: headers() }).then(function (response) {
       if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
       return response.json();
@@ -2117,7 +2292,7 @@ td { border-color:#dfe4ea; }
     return queryCloud().then(function (rows) {
       var seen = {};
       (rows || []).sort(function (a, b) {
-        return (b.field === 'must_action_count' ? 1 : 0) - (a.field === 'must_action_count' ? 1 : 0);
+        return (/_count$/.test(b.store) ? 1 : 0) - (/_count$/.test(a.store) ? 1 : 0);
       }).forEach(function (row) {
         var key = [row.area, row.store, row.field].join('|');
         seen[key] = true;
@@ -2183,7 +2358,7 @@ td { border-color:#dfe4ea; }
 </script><style>
 .store-review-body {
   grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-  grid-template-areas:"problem must" "support support" "peers peers" "prior next" !important;
+  grid-template-areas:"problem must" "onsite onsite" "support support" "peers peers" "prior next" !important;
   gap:12px !important;
 }
 .store-review-card { border-color:#d7dee7; box-shadow:0 3px 14px rgba(15,23,42,.08); padding:20px; }
@@ -2231,6 +2406,38 @@ td { border-color:#dfe4ea; }
 .issue-item span { margin-top:4px; color:#5f6b7a; font-size:11px; }
 .issue-notes { min-height:54px !important; max-height:64px; margin-top:2px; border:1px dashed #e6b88f !important; font-size:11px !important; line-height:1.45 !important; overflow:auto; }
 .issue-notes[hidden] { display:none !important; }
+.review-panel.onsite-decision { grid-area:onsite; min-width:0; border-color:#cbdde7; background:#fbfdff; }
+.review-panel.onsite-decision > h4 { padding-left:10px; border-left:4px solid #0f766e; color:#134e4a; }
+.tracked-board { min-width:0; }
+.tracked-toolbar { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+.tracked-period-tabs { display:flex; gap:5px; padding:3px; border:1px solid #dce3ea; border-radius:6px; background:#f8fafc; }
+.tracked-period-tabs button, .tracked-add { border:1px solid transparent; border-radius:4px; background:transparent; color:#475569; font-size:10px; font-weight:800; cursor:pointer; }
+.tracked-period-tabs button { min-height:27px; padding:3px 10px; }
+.tracked-period-tabs button.active { border-color:#0f4765; background:#0f4765; color:#fff; }
+.tracked-date-range { display:none; align-items:center; gap:5px; color:#64748b; font-size:9px; }
+.tracked-toolbar.is-custom .tracked-date-range { display:flex; }
+.tracked-date-range input { width:116px; height:29px; padding:2px 5px; border:1px solid #d6dee7; border-radius:4px; background:#fff; color:#334155; font-size:9px; }
+.tracked-list { display:grid; max-height:370px; gap:9px; overflow-y:auto; padding-right:3px; }
+.tracked-item { display:grid; grid-template-columns:30px minmax(0,1fr); align-items:center; gap:10px; min-height:62px; padding:9px 10px; border:1px solid #f3d2b6; border-radius:6px; background:#fffaf5; }
+.tracked-item > i { display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; background:#e85d04; color:#fff; font-size:11px; font-style:normal; font-weight:900; }
+.tracked-fields { display:grid; min-width:0; gap:3px; }
+.tracked-primary, .tracked-secondary { min-height:24px !important; padding:3px 5px !important; }
+.tracked-primary { color:#9a3412; font-size:12px !important; font-weight:900; }
+.tracked-secondary { color:#5f6b7a; font-size:10px !important; line-height:1.4 !important; }
+.tracked-item:has(.tracked-status) { grid-template-columns:30px minmax(0,1fr) 82px; border-color:#cbdde7; background:#fff; }
+.tracked-status { width:82px; height:30px; padding:3px 5px; border:1px solid #f0b879; border-radius:4px; background:#fff7ed; color:#c2410c; font-size:9px; font-weight:800; text-align:center; }
+.tracked-item.is-progress .tracked-status { border-color:#93c5fd; background:#eff6ff; color:#1d4ed8; }
+.tracked-item.is-complete .tracked-status { border-color:#a7d7b9; background:#eefaf2; color:#15803d; }
+.tracked-add { margin-top:9px; padding:6px 10px; border-color:#cbd5e1; background:#fff; color:#0f4765; }
+.tracked-add:hover { border-color:#0f4765; background:#f0f8fb; }
+.tracked-history { max-height:370px; overflow-y:auto; }
+.tracked-history h5 { margin:10px 0 6px; color:#9a3412; font-size:11px; }
+.tracked-history h5:first-child { margin-top:0; }
+.tracked-history-item { display:grid; grid-template-columns:minmax(0,1fr) minmax(180px,.75fr) 64px; align-items:center; gap:8px; min-height:44px; margin-bottom:7px; padding:7px 9px; border:1px solid #dce3ea; border-radius:6px; background:#fff; }
+.tracked-history-item b { color:#374151; font-size:10px; }
+.tracked-history-item span { color:#64748b; font-size:9px; }
+.tracked-history-item em { padding:3px 4px; border:1px solid #cbd5e1; border-radius:4px; color:#475569; font-size:9px; font-style:normal; text-align:center; }
+.tracked-history-empty { margin:20px 0; color:#94a3b8; font-size:10px; text-align:center; }
 .action-board { min-width:0; }
 .action-board-toolbar { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
 .action-period-tabs { display:flex; gap:5px; padding:3px; border:1px solid #dce3ea; border-radius:6px; background:#f8fafc; }
@@ -2276,7 +2483,7 @@ td { border-color:#dfe4ea; }
 @media (max-width:1000px) {
   .store-review-body {
     grid-template-columns:1fr !important;
-    grid-template-areas:"problem" "must" "support" "peers" "prior" "next" !important;
+    grid-template-areas:"problem" "must" "onsite" "support" "peers" "prior" "next" !important;
   }
   .store-review-head { align-items:flex-start; flex-wrap:wrap; }
   .store-meeting-title { flex-direction:column; }
@@ -2288,6 +2495,13 @@ td { border-color:#dfe4ea; }
   .store-review-kpi b { font-size:18px; white-space:nowrap; }
   .store-review-kpi small { font-size:10px; }
   .action-board-toolbar { align-items:flex-start; flex-direction:column; }
+  .tracked-toolbar { align-items:flex-start; flex-direction:column; }
+  .tracked-date-range { width:100%; }
+  .tracked-date-range input { flex:1 1 auto; min-width:0; }
+  .tracked-item:has(.tracked-status) { grid-template-columns:30px minmax(0,1fr); }
+  .tracked-item .tracked-status { grid-column:2; }
+  .tracked-history-item { grid-template-columns:minmax(0,1fr) 64px; }
+  .tracked-history-item span { grid-column:1/3; }
   .action-date-range { width:100%; }
   .action-date-range input { flex:1 1 auto; min-width:0; }
   .action-item { grid-template-columns:minmax(0,1fr) 76px; }
