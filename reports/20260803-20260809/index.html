@@ -1165,8 +1165,27 @@ td { border-color:#dfe4ea; }
         return panel('我的店本周问题', list, 'problem');
       }
       function buildActionPanel() {
+        var board = document.createElement('div');
+        board.className = 'action-board';
+        var toolbar = document.createElement('div');
+        toolbar.className = 'action-board-toolbar';
+        toolbar.innerHTML = '<div class="action-period-tabs"><button type="button" class="active" data-action-period="current">本周</button><button type="button" data-action-period="all">全部时间</button><button type="button" data-action-period="custom">自定义</button></div><div class="action-date-range"><input type="date" min="2026-07-20" aria-label="行动开始日期"><span>至</span><input type="date" min="2026-07-20" aria-label="行动结束日期"></div>';
         var list = document.createElement('div');
         list.className = 'action-list';
+        var history = document.createElement('div');
+        history.className = 'action-history';
+        history.hidden = true;
+        var addButton = document.createElement('button');
+        addButton.type = 'button';
+        addButton.className = 'action-add';
+        addButton.textContent = '+ 新增行动';
+        var countSync = document.createElement('input');
+        countSync.type = 'hidden';
+        countSync.className = 'action-count-sync';
+        countSync.value = '5';
+        countSync.dataset.editArea = area;
+        countSync.dataset.editStore = storeName + '-must_action_count';
+        countSync.dataset.editField = 'must_action_count';
         var issueNames = Array.from(support.querySelectorAll('.support-metric.is-bad b')).map(function (label) { return label.textContent.trim(); });
         var suggestedActions = [];
         function addAction(metrics, text) {
@@ -1178,32 +1197,136 @@ td { border-color:#dfe4ea; }
         addAction(['续卡占比', '续费率'], '建立到期客户清单，逐人跟进续卡');
         addAction(['总引流占比', '扫楼占比'], '明确扫楼与扶梯口每日引流金额目标');
         suggestedActions.push('周末提交动作结果、数据变化与复盘证据');
-        for (var index = 0; index < 5; index += 1) {
+        function setActionState(item, value) {
+          var status = value || '未开始';
+          item.dataset.actionStatus = status;
+          item.classList.toggle('is-complete', status === '已完成');
+          item.classList.toggle('is-progress', status === '进行中');
+        }
+        function registerCell(cell) {
+          if (window.registerWeeklyCloudCell) window.registerWeeklyCloudCell(cell);
+        }
+        function createAction(index) {
           var item = document.createElement('div');
           item.className = 'action-item';
-          var box = document.createElement('input');
-          box.className = 'action-check';
-          box.type = 'checkbox';
-          box.setAttribute('aria-label', '标记行动完成');
-          box.dataset.editArea = area;
-          box.dataset.editStore = storeName + '-must_done_' + (index + 1);
-          box.dataset.editField = 'must_done_' + (index + 1);
-          var action = editor(index === 0 ? 'must_complete' : 'must_complete_' + (index + 1), '点击填写行动、负责人和截止时间');
+          item.dataset.actionIndex = String(index);
+          var action = editor(index === 1 ? 'must_complete' : 'must_complete_' + index, '点击填写具体行动');
           action.classList.add('action-editor');
-          action.textContent = suggestedActions[index] || '填写本周关键行动、负责人和截止时间';
-          var meta = editor('must_meta_' + (index + 1), '负责人 · 截止时间');
+          action.textContent = suggestedActions[index - 1] || '点击填写具体行动';
+          var meta = editor('must_meta_' + index, '负责人 · 截止时间');
           meta.classList.add('action-meta');
           meta.textContent = '负责人：待填写 · 截止：08/09';
-          var status = document.createElement('em');
-          status.textContent = '进行中';
-          box.addEventListener('change', function () {
-            item.classList.toggle('is-complete', box.checked);
-            status.textContent = box.checked ? '已完成' : '进行中';
+          var status = document.createElement('select');
+          status.className = 'action-status';
+          status.setAttribute('aria-label', '行动状态');
+          status.dataset.editArea = area;
+          status.dataset.editStore = storeName + '-must_status_' + index;
+          status.dataset.editField = 'must_status_' + index;
+          ['未开始', '进行中', '已完成'].forEach(function (name) {
+            var option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            status.appendChild(option);
           });
-          item.append(box, action, meta, status);
+          status.value = '未开始';
+          status.addEventListener('change', function () { setActionState(item, status.value); });
+          setActionState(item, status.value);
+          item.append(action, meta, status);
           list.appendChild(item);
+          [action, meta, status].forEach(registerCell);
         }
-        return panel('本周必须完成（行动看板）', list, 'must');
+        function ensureRows(count) {
+          var target = Math.max(1, Number(count) || 5);
+          while (list.children.length < target) createAction(list.children.length + 1);
+        }
+        countSync._ensureRows = ensureRows;
+        ensureRows(5);
+        addButton.addEventListener('click', function () {
+          ensureRows(list.children.length + 1);
+          countSync.value = String(list.children.length);
+          countSync.dispatchEvent(new Event('change', { bubbles: true }));
+          var latest = list.lastElementChild && list.lastElementChild.querySelector('.action-editor');
+          if (latest) latest.focus();
+        });
+        var historyRows = [];
+        var periodMode = 'current';
+        var dateInputs = toolbar.querySelectorAll('.action-date-range input');
+        function reportDates(reportId) {
+          var match = String(reportId || '').match(/^(\d{4})(\d{2})(\d{2})-(\d{4})(\d{2})(\d{2})$/);
+          return match ? [match[1] + '-' + match[2] + '-' + match[3], match[4] + '-' + match[5] + '-' + match[6]] : ['', ''];
+        }
+        function formatPeriod(reportId) {
+          var dates = reportDates(reportId);
+          return dates[0] && dates[1] ? dates[0].slice(5).replace('-', '/') + ' - ' + dates[1].slice(5).replace('-', '/') : reportId;
+        }
+        function renderHistory() {
+          if (periodMode === 'current') return;
+          var grouped = {};
+          historyRows.filter(function (row) {
+            if (row.area !== area || String(row.store || '').indexOf(storeName + '-') !== 0) return false;
+            if (periodMode !== 'custom') return true;
+            var dates = reportDates(row.report_id);
+            var start = dateInputs[0].value;
+            var end = dateInputs[1].value;
+            return (!start || dates[1] >= start) && (!end || dates[0] <= end);
+          }).forEach(function (row) {
+            var actionMatch = row.field === 'must_complete' ? ['must_complete', '1'] : String(row.field || '').match(/^must_complete_(\d+)$/);
+            var metaMatch = String(row.field || '').match(/^must_meta_(\d+)$/);
+            var statusMatch = String(row.field || '').match(/^must_status_(\d+)$/);
+            var doneMatch = String(row.field || '').match(/^must_done_(\d+)$/);
+            var match = actionMatch || metaMatch || statusMatch || doneMatch;
+            if (!match) return;
+            var key = row.report_id + '|' + match[1];
+            grouped[key] = grouped[key] || { reportId: row.report_id, index: Number(match[1]), action: '', meta: '', status: '未开始' };
+            if (actionMatch) grouped[key].action = row.value;
+            if (metaMatch) grouped[key].meta = row.value;
+            if (statusMatch) grouped[key].status = row.value || '未开始';
+            if (doneMatch) grouped[key].status = String(row.value) === '1' ? '已完成' : '进行中';
+          });
+          var actions = Object.keys(grouped).map(function (key) { return grouped[key]; }).filter(function (item) { return String(item.action || '').trim(); }).sort(function (a, b) {
+            return a.reportId === b.reportId ? a.index - b.index : b.reportId.localeCompare(a.reportId);
+          });
+          history.innerHTML = '';
+          if (!actions.length) {
+            history.innerHTML = '<p class="action-history-empty">该时间范围暂无行动记录</p>';
+            return;
+          }
+          var currentPeriod = '';
+          actions.forEach(function (record) {
+            if (record.reportId !== currentPeriod) {
+              currentPeriod = record.reportId;
+              var heading = document.createElement('h5');
+              heading.textContent = formatPeriod(record.reportId);
+              history.appendChild(heading);
+            }
+            var row = document.createElement('div');
+            row.className = 'action-history-item';
+            row.dataset.status = record.status;
+            row.innerHTML = '<b></b><span></span><em></em>';
+            row.querySelector('b').textContent = record.action;
+            row.querySelector('span').textContent = record.meta || '未填写负责人和截止时间';
+            row.querySelector('em').textContent = record.status;
+            history.appendChild(row);
+          });
+        }
+        toolbar.querySelectorAll('[data-action-period]').forEach(function (button) {
+          button.addEventListener('click', function () {
+            periodMode = button.dataset.actionPeriod;
+            toolbar.querySelectorAll('[data-action-period]').forEach(function (item) { item.classList.toggle('active', item === button); });
+            toolbar.classList.toggle('is-custom', periodMode === 'custom');
+            list.hidden = periodMode !== 'current';
+            addButton.hidden = periodMode !== 'current';
+            history.hidden = periodMode === 'current';
+            renderHistory();
+          });
+        });
+        dateInputs.forEach(function (input) { input.addEventListener('change', renderHistory); });
+        window.addEventListener('weekly-action-history', function (event) {
+          historyRows = event.detail || [];
+          renderHistory();
+        });
+        board.append(toolbar, list, history, addButton, countSync);
+        return panel('本周必须完成（行动看板）', board, 'must');
       }
       var prior = editor('prior_review', '点击填写上周承诺事项的完成情况和未完成原因');
       var next = answer;
@@ -1883,7 +2006,8 @@ td { border-color:#dfe4ea; }
   var supabaseUrl = 'https://smbelcuwcsuuxcspypae.supabase.co';
   var supabaseKey = 'sb_publishable_KIJsYEjr2gt2K8IMwtEKhg_RR8x6Dqb';
   var tableUrl = supabaseUrl + '/rest/v1/weekly_report_edits';
-  var cells = Array.from(document.querySelectorAll('.closure-table td[contenteditable="true"], .closure-table .question-editor, .store-review-card .review-editor, .store-review-card .question-editor, .store-review-card .action-check, .conclusion-editor, .decision-editor'));
+  var cellSelector = '.closure-table td[contenteditable="true"], .closure-table .question-editor, .store-review-card .review-editor, .store-review-card .question-editor, .store-review-card .action-check, .store-review-card .action-status, .store-review-card .action-count-sync, .conclusion-editor, .decision-editor';
+  var cells = [];
   var cellsByKey = {};
   var cloudRows = {};
   var pending = {};
@@ -1891,7 +2015,7 @@ td { border-color:#dfe4ea; }
   var localSaved = {};
   try { localSaved = JSON.parse(window.localStorage.getItem(storageKey) || '{}'); } catch (error) { localSaved = {}; }
   function keyFor(cell) { return [cell.dataset.editArea, cell.dataset.editStore, cell.dataset.editField].join('|'); }
-  function valueFor(cell) { return cell.matches('[type="checkbox"]') ? (cell.checked ? '1' : '0') : cell.matches('textarea') ? cell.value : cell.innerText.trim(); }
+  function valueFor(cell) { return cell.matches('[type="checkbox"]') ? (cell.checked ? '1' : '0') : cell.matches('textarea, select, input') ? cell.value : cell.innerText.trim(); }
   function setValue(cell, value) {
     if (cell.matches('[type="checkbox"]')) {
       cell.checked = String(value) === '1';
@@ -1901,8 +2025,18 @@ td { border-color:#dfe4ea; }
         var status = item.querySelector('em');
         if (status) status.textContent = cell.checked ? '已完成' : '进行中';
       }
-    } else if (cell.matches('textarea')) cell.value = value;
-    else cell.textContent = value;
+    } else if (cell.matches('textarea, select, input')) {
+      cell.value = value;
+      if (cell.matches('.action-status')) {
+        var actionItem = cell.closest('.action-item');
+        if (actionItem) {
+          actionItem.dataset.actionStatus = value || '未开始';
+          actionItem.classList.toggle('is-complete', value === '已完成');
+          actionItem.classList.toggle('is-progress', value === '进行中');
+        }
+      }
+      if (cell.matches('.action-count-sync') && cell._ensureRows) cell._ensureRows(value);
+    } else cell.textContent = value;
   }
   function headers(extra) {
     return Object.assign({
@@ -1967,10 +2101,24 @@ td { border-color:#dfe4ea; }
       return response.json();
     });
   }
+  function queryActionHistory() {
+    var query = '?select=report_id,area,store,field,value,updated_at&field=like.must_*&order=report_id.desc&limit=5000';
+    return fetch(tableUrl + query, { headers: headers() }).then(function (response) {
+      if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
+      return response.json();
+    });
+  }
+  function refreshActionHistory() {
+    return queryActionHistory().then(function (rows) {
+      window.dispatchEvent(new CustomEvent('weekly-action-history', { detail: rows || [] }));
+    }).catch(function (error) { console.error('历史行动读取失败', error); });
+  }
   function refreshCloud(initial) {
     return queryCloud().then(function (rows) {
       var seen = {};
-      (rows || []).forEach(function (row) {
+      (rows || []).sort(function (a, b) {
+        return (b.field === 'must_action_count' ? 1 : 0) - (a.field === 'must_action_count' ? 1 : 0);
+      }).forEach(function (row) {
         var key = [row.area, row.store, row.field].join('|');
         seen[key] = true;
         var cell = cellsByKey[key];
@@ -1996,10 +2144,12 @@ td { border-color:#dfe4ea; }
       updateAllStatuses('云端连接失败 · 当前仅本机暂存', 'error');
     });
   }
-  cells.forEach(function (cell) {
+  function registerCell(cell) {
     var key = keyFor(cell);
+    if (!cell.dataset.editArea || !cell.dataset.editStore || !cell.dataset.editField || cellsByKey[key]) return;
+    cells.push(cell);
     cellsByKey[key] = cell;
-    cell.addEventListener(cell.matches('[type="checkbox"]') ? 'change' : 'input', function () { scheduleSave(cell, false); });
+    cell.addEventListener(cell.matches('[type="checkbox"], select, input') ? 'change' : 'input', function () { scheduleSave(cell, false); });
     cell.addEventListener('blur', function () {
       if (timers[key]) {
         window.clearTimeout(timers[key]);
@@ -2007,10 +2157,14 @@ td { border-color:#dfe4ea; }
         scheduleSave(cell, true);
       }
     });
-  });
+  }
+  Array.from(document.querySelectorAll(cellSelector)).forEach(registerCell);
+  window.registerWeeklyCloudCell = registerCell;
   updateAllStatuses('正在连接共享云端...', 'saving');
   refreshCloud(true);
+  refreshActionHistory();
   window.setInterval(function () { if (!document.hidden) refreshCloud(false); }, 3000);
+  window.setInterval(function () { if (!document.hidden) refreshActionHistory(); }, 15000);
   window.addEventListener('online', function () { refreshCloud(false); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) refreshCloud(false); });
 })();
@@ -2077,13 +2231,36 @@ td { border-color:#dfe4ea; }
 .issue-item span { margin-top:4px; color:#5f6b7a; font-size:11px; }
 .issue-notes { min-height:54px !important; max-height:64px; margin-top:2px; border:1px dashed #e6b88f !important; font-size:11px !important; line-height:1.45 !important; overflow:auto; }
 .issue-notes[hidden] { display:none !important; }
-.action-item { display:grid; grid-template-columns:22px minmax(0,1fr) 150px 52px; align-items:center; gap:9px; min-height:47px; padding:7px 9px; border:1px solid #dce3ea; border-radius:6px; background:#fff; }
-.action-check { width:17px; height:17px; margin:0; accent-color:#15803d; }
+.action-board { min-width:0; }
+.action-board-toolbar { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+.action-period-tabs { display:flex; gap:5px; padding:3px; border:1px solid #dce3ea; border-radius:6px; background:#f8fafc; }
+.action-period-tabs button, .action-add { border:1px solid transparent; border-radius:4px; background:transparent; color:#475569; font-size:10px; font-weight:800; cursor:pointer; }
+.action-period-tabs button { min-height:27px; padding:3px 10px; }
+.action-period-tabs button.active { border-color:#0f4765; background:#0f4765; color:#fff; }
+.action-date-range { display:none; align-items:center; gap:5px; color:#64748b; font-size:9px; }
+.action-board-toolbar.is-custom .action-date-range { display:flex; }
+.action-date-range input { width:116px; height:29px; padding:2px 5px; border:1px solid #d6dee7; border-radius:4px; background:#fff; color:#334155; font-size:9px; }
+.action-list { max-height:360px; overflow-y:auto; padding-right:3px; }
+.action-item { display:grid; grid-template-columns:minmax(0,1fr) 150px 76px; align-items:center; gap:9px; min-height:47px; padding:7px 9px; border:1px solid #dce3ea; border-radius:6px; background:#fff; }
 .action-editor { min-height:27px !important; padding:4px 5px !important; font-size:11px; font-weight:700; color:#374151; }
 .action-meta { min-height:25px; padding:4px 6px; border-left:1px solid #e5e7eb; color:#64748b; font-size:9px; white-space:nowrap; }
-.action-item em { padding:3px 4px; border:1px solid #a7d7b9; border-radius:4px; background:#eefaf2; color:#15803d; font-size:9px; font-style:normal; text-align:center; }
+.action-status { width:76px; height:29px; padding:3px 5px; border:1px solid #cbd5e1; border-radius:4px; background:#f8fafc; color:#475569; font-size:9px; font-weight:800; text-align:center; cursor:pointer; }
+.action-item.is-progress .action-status { border-color:#f0b879; background:#fff7ed; color:#c2410c; }
+.action-item.is-complete .action-status { border-color:#a7d7b9; background:#eefaf2; color:#15803d; }
 .action-item.is-complete { background:#f0fdf4; }
 .action-item.is-complete .action-editor { color:#15803d; text-decoration:line-through; }
+.action-add { margin-top:9px; padding:6px 10px; border-color:#cbd5e1; background:#fff; color:#0f4765; }
+.action-add:hover { border-color:#0f4765; background:#f0f8fb; }
+.action-history { max-height:360px; overflow-y:auto; }
+.action-history h5 { margin:10px 0 6px; color:#9a3412; font-size:11px; }
+.action-history h5:first-child { margin-top:0; }
+.action-history-item { display:grid; grid-template-columns:minmax(0,1fr) 150px 60px; align-items:center; gap:8px; min-height:42px; margin-bottom:7px; padding:7px 9px; border:1px solid #dce3ea; border-radius:6px; background:#fff; }
+.action-history-item b { color:#374151; font-size:10px; }
+.action-history-item span { color:#64748b; font-size:9px; }
+.action-history-item em { padding:3px 4px; border:1px solid #cbd5e1; border-radius:4px; color:#475569; font-size:9px; font-style:normal; text-align:center; }
+.action-history-item[data-status="进行中"] em { border-color:#f0b879; background:#fff7ed; color:#c2410c; }
+.action-history-item[data-status="已完成"] em { border-color:#a7d7b9; background:#eefaf2; color:#15803d; }
+.action-history-empty { margin:20px 0; color:#94a3b8; font-size:10px; text-align:center; }
 .store-core-table, .store-peer-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:11px; }
 .store-core-table th, .store-core-table td, .store-peer-table th, .store-peer-table td { padding:8px 6px; border:1px solid #dfe4ea; text-align:center; }
 .store-core-table th, .store-peer-table th { background:#f8fafc; color:#475569; font-weight:900; }
@@ -2110,8 +2287,13 @@ td { border-color:#dfe4ea; }
   .store-review-kpi { padding:11px 10px; }
   .store-review-kpi b { font-size:18px; white-space:nowrap; }
   .store-review-kpi small { font-size:10px; }
-  .action-item { grid-template-columns:22px minmax(0,1fr) 52px; }
-  .action-meta { grid-column:2/4; border-left:0; border-top:1px solid #e5e7eb; }
+  .action-board-toolbar { align-items:flex-start; flex-direction:column; }
+  .action-date-range { width:100%; }
+  .action-date-range input { flex:1 1 auto; min-width:0; }
+  .action-item { grid-template-columns:minmax(0,1fr) 76px; }
+  .action-meta { grid-column:1/3; grid-row:2; border-left:0; border-top:1px solid #e5e7eb; }
+  .action-history-item { grid-template-columns:minmax(0,1fr) 60px; }
+  .action-history-item span { grid-column:1/3; }
   .brand-indicator-legend.is-detailed { grid-template-columns:1fr; }
 }
 </style><script>
