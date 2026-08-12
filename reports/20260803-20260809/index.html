@@ -1228,6 +1228,49 @@ td { border-color:#dfe4ea; }
         section.append(heading, body);
         return section;
       }
+      function buildMeetingQuestions() {
+        var priority = ['完成率', '新签中大卡率', '大卡率', '续卡占比', '总引流占比', '扫楼占比', '新签办卡率', '新签小卡率'];
+        var labels = {
+          '完成率': '完成率', '新签中大卡率': '新签中大卡率', '大卡率': '整体大卡率',
+          '续卡占比': '续卡占比', '总引流占比': '总引流占比', '扫楼占比': '扫楼占比',
+          '新签办卡率': '新签办卡率', '新签小卡率': '新签小卡占比'
+        };
+        var standards = {
+          '完成率': '100%', '新签办卡率': '40%', '新签小卡率': '40%',
+          '总引流占比': '25%', '扫楼占比': '15%'
+        };
+        var storeRankRow = rankingTable && Array.from(rankingTable.querySelectorAll('tbody tr')).find(function (rankRow) {
+          return rankRow.children[0] && rankRow.children[0].textContent.trim() === storeName;
+        });
+        standards['新签中大卡率'] = (Number(storeRankRow && storeRankRow.getAttribute('data-mid-large-line')) || 55) + '%';
+        standards['续卡占比'] = (Number(storeRankRow && storeRankRow.getAttribute('data-renew-line')) || 20) + '%';
+        standards['大卡率'] = (/开封|洛阳泉舜|洛阳中州|襄阳|武汉|许昌/.test(storeName) ? 60 : 70) + '%';
+        var badNames = Array.from(support.querySelectorAll('.support-metric.is-bad')).map(function (metric) {
+          return metric.querySelector('b') && metric.querySelector('b').textContent.trim();
+        });
+        var selected = priority.filter(function (name) { return badNames.indexOf(name) >= 0; }).slice(0, 3);
+        if (!selected.length) selected = ['完成率'];
+        var list = document.createElement('ol');
+        list.className = 'generated-store-questions';
+        selected.forEach(function (name) {
+          var values = metricParts(name);
+          var current = values.current;
+          var previous = values.previous;
+          var standard = standards[name] || '';
+          var question;
+          if (name === '完成率') {
+            question = labels[name] + '本周为' + current + '，距离目标' + standard + '仍有差距。缺口集中在哪些日期、时段或客群？本周用什么动作补齐？';
+          } else if (name === '新签小卡率') {
+            question = labels[name] + '本周为' + current + '，高于标准上限' + standard + '。中大卡需求挖掘卡在哪里？本周如何调整成交结构？';
+          } else {
+            question = labels[name] + '本周为' + current + '，上周为' + previous + '，目标线为' + standard + '。未达标的具体原因是什么？本周由谁在什么时间前完成什么改善动作？';
+          }
+          var item = document.createElement('li');
+          item.textContent = question;
+          list.appendChild(item);
+        });
+        return list;
+      }
       function buildTrackedBoard(config) {
         var board = document.createElement('div');
         board.className = 'tracked-board ' + config.prefix + '-board';
@@ -1680,7 +1723,7 @@ td { border-color:#dfe4ea; }
       panels.className = 'store-review-panels';
       var problemContent = document.createElement('div');
       problemContent.className = 'review-problem-content';
-      problemContent.append(next);
+      problemContent.append(buildMeetingQuestions(), next);
       questionEditor.classList.add('preserved-cloud-field');
       questionEditor.hidden = true;
       panels.append(panel('上周承诺完成（回顾）', prior, 'prior'), panel('本周问题', problemContent, 'problem'), panel('本周计划', must, 'must'), questionEditor);
@@ -2625,6 +2668,8 @@ td { border-color:#dfe4ea; }
 .review-panel.problem .question-editor, .review-panel.must .review-editor { min-height:0; }
 .review-problem-content { display:grid; gap:10px; }
 .review-problem-content .review-editor, .review-problem-content .question-editor { min-height:82px; }
+.generated-store-questions { display:grid; gap:8px; margin:0; padding:0 0 0 22px; color:#374151; font-size:11px; font-weight:700; line-height:1.55; }
+.generated-store-questions li { padding-left:3px; }
 .review-panel.prior { min-height:300px; }
 .preserved-cloud-field { display:none !important; }
 .issue-list, .action-list { display:grid; gap:10px; }
