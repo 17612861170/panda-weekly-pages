@@ -997,29 +997,36 @@ td { border-color:#dfe4ea; }
       var previousRanking = peerRows.filter(function (item) { return Number.isFinite(item.previousRevenue); }).sort(function (a, b) { return b.previousRevenue - a.previousRevenue; });
       var currentRank = currentRanking.findIndex(function (item) { return item.name === storeName; }) + 1;
       var previousRank = previousRanking.findIndex(function (item) { return item.name === storeName; }) + 1;
+      var rankChange = currentRank && previousRank ? previousRank - currentRank : null;
       function buildMetricTable() {
-        var visibleMetrics = ['新签营收', '新签办卡率', '新签小卡率', '新签中卡率', '新签大卡率', '新签中大卡率', '续费率', '续卡小卡率', '续卡中卡率', '续卡大卡率', '续卡占比', '续卡金额', '总引流占比', '总引流金额', '扫楼占比', '扫楼金额', '扶梯口金额', '大卡率'];
+        var visibleMetrics = ['总营收', '完成率', '新签营收', '新签办卡率', '新签小卡率', '新签中卡率', '新签大卡率', '新签中大卡率', '续费率', '续卡小卡率', '续卡中卡率', '续卡大卡率', '续卡占比', '续卡金额', '总引流占比', '总引流金额', '扫楼占比', '扫楼金额', '扶梯口金额', '大卡率'];
         var table = document.createElement('table');
         table.className = 'store-core-table';
-        table.innerHTML = '<thead><tr><th>指标</th><th>上周</th><th>本周</th><th>变化</th></tr></thead><tbody></tbody>';
+        table.innerHTML = '<thead><tr><th>指标</th><th>上周</th><th>本周</th><th>变化</th><th>指标</th><th>上周</th><th>本周</th><th>变化</th></tr></thead><tbody></tbody>';
         var tbody = table.querySelector('tbody');
-        visibleMetrics.forEach(function (name) {
+        var metrics = visibleMetrics.map(function (name) {
           var source = Array.from(support.querySelectorAll('.support-metric')).find(function (metric) {
             var label = metric.querySelector('b');
             return label && label.textContent.trim() === name;
           });
-          if (!source) return;
+          if (!source) return null;
           var values = metricParts(name);
+          return { name: name, previous: values.previous, current: values.current, change: source.querySelector('em') ? source.querySelector('em').textContent.trim() : '-', bad: source.classList.contains('is-bad') };
+        }).filter(Boolean);
+        var half = Math.ceil(metrics.length / 2);
+        for (var index = 0; index < half; index += 1) {
           var row = document.createElement('tr');
-          if (source.classList.contains('is-bad')) row.className = 'is-bad';
-          var change = source.querySelector('em') ? source.querySelector('em').textContent.trim() : '-';
-          row.innerHTML = '<td class="metric-label"></td><td></td><td></td><td></td>';
-          row.children[0].textContent = name;
-          row.children[1].textContent = values.previous;
-          row.children[2].textContent = values.current;
-          row.children[3].textContent = change;
+          [metrics[index], metrics[index + half]].forEach(function (metric) {
+            [metric && metric.name, metric && metric.previous, metric && metric.current, metric && metric.change].forEach(function (text, cellIndex) {
+              var cell = document.createElement('td');
+              cell.textContent = text || '';
+              if (cellIndex === 0) cell.className = 'metric-label';
+              if (metric && metric.bad) cell.classList.add('is-bad');
+              row.appendChild(cell);
+            });
+          });
           tbody.appendChild(row);
-        });
+        }
         return table;
       }
       function buildPeerPanel() {
@@ -1029,7 +1036,7 @@ td { border-color:#dfe4ea; }
         heading.textContent = '同区域门店对比';
         var table = document.createElement('table');
         table.className = 'store-peer-table';
-        table.innerHTML = '<thead><tr><th>排名</th><th>门店</th><th>本周营收</th><th>完成率</th></tr></thead><tbody></tbody>';
+        table.innerHTML = '<thead><tr><th>排名</th><th>门店</th><th>本周营收</th><th>完成率</th><th>变化</th></tr></thead><tbody></tbody>';
         var shown = currentRanking.slice(0, 5);
         var own = currentRanking.find(function (item) { return item.name === storeName; });
         if (own && !shown.some(function (item) { return item.name === storeName; })) shown.push(own);
@@ -1037,11 +1044,14 @@ td { border-color:#dfe4ea; }
           var rank = currentRanking.indexOf(item) + 1;
           var row = document.createElement('tr');
           if (item.name === storeName) row.className = 'is-current';
-          row.innerHTML = '<td></td><td></td><td></td><td></td>';
+          var oldRank = previousRanking.findIndex(function (oldItem) { return oldItem.name === item.name; }) + 1;
+          var change = oldRank ? oldRank - rank : null;
+          row.innerHTML = '<td></td><td></td><td></td><td></td><td></td>';
           row.children[0].textContent = rank;
           row.children[1].textContent = item.name;
           row.children[2].textContent = Number.isFinite(item.revenue) ? '¥' + item.revenue.toLocaleString('zh-CN', {maximumFractionDigits:2}) : '-';
           row.children[3].textContent = Number.isFinite(item.completion) ? item.completion.toFixed(2) + '%' : '-';
+          row.children[4].textContent = change === null || change === 0 ? '-' : (change > 0 ? '↑' + change : '↓' + Math.abs(change));
           table.tBodies[0].appendChild(row);
         });
         section.append(heading, table);
@@ -1065,21 +1075,60 @@ td { border-color:#dfe4ea; }
         section.append(heading, body);
         return section;
       }
-      var must = editor('must_complete', '点击填写本周必须完成事项、负责人和截止时间');
+      function buildProblemPanel(questionEditor) {
+        var list = document.createElement('div');
+        list.className = 'issue-list';
+        Array.from(support.querySelectorAll('.support-metric.is-bad')).slice(0, 3).forEach(function (metric, index) {
+          var name = metric.querySelector('b').textContent.trim();
+          var values = metricParts(name);
+          var item = document.createElement('div');
+          item.className = 'issue-item';
+          item.innerHTML = '<i>' + (index + 1) + '</i><div><b></b><span></span></div>';
+          item.querySelector('b').textContent = name + '需改善';
+          item.querySelector('span').textContent = '本周 ' + values.current + '，上周 ' + values.previous + '。';
+          list.appendChild(item);
+        });
+        questionEditor.classList.add('issue-notes');
+        list.appendChild(questionEditor);
+        return panel('我的店本周问题', list, 'problem');
+      }
+      function buildActionPanel() {
+        var list = document.createElement('div');
+        list.className = 'action-list';
+        for (var index = 0; index < 5; index += 1) {
+          var item = document.createElement('div');
+          item.className = 'action-item';
+          var box = document.createElement('span');
+          box.className = 'action-check';
+          var action = editor(index === 0 ? 'must_complete' : 'must_complete_' + (index + 1), '点击填写行动、负责人和截止时间');
+          action.classList.add('action-editor');
+          var status = document.createElement('em');
+          status.textContent = '进行中';
+          item.append(box, action, status);
+          list.appendChild(item);
+        }
+        return panel('本周必须完成（行动看板）', list, 'must');
+      }
       var prior = editor('prior_review', '点击填写上周承诺事项的完成情况和未完成原因');
       var next = answer;
       next.className = 'review-editor';
       next.dataset.placeholder = '点击填写下周检查点、验收标准和检查时间';
       var questionEditor = question ? question.cloneNode(true) : editor('question', '点击填写本周问题');
+      var pageTitle = document.createElement('header');
+      pageTitle.className = 'store-meeting-title';
+      pageTitle.innerHTML = '<div><h3>熊猫密室 · 品牌周报（店长会议版）</h3><p>周期：2026/08/03 - 2026/08/09（第32周）　|　用途：店长周会复盘与下周目标规划</p></div><span>店长重点看这页</span>';
       var head = document.createElement('div');
       head.className = 'store-review-head';
       var headSummary = document.createElement('div');
       headSummary.className = 'store-review-summary';
-      headSummary.textContent = '本周营收 ' + metricParts('总营收').current + '，完成率 ' + metricParts('完成率').current + (currentRank ? '，区域营收排名第' + currentRank : '') + '；新签办卡率 ' + metricParts('新签办卡率').current + '，续卡金额 ' + metricParts('续卡金额').current + '。';
+      var firstIssue = Array.from(support.querySelectorAll('.support-metric.is-bad b')).map(function (item) { return item.textContent.trim(); })[0];
+      headSummary.textContent = storeName + '本周营收' + metricParts('总营收').current + '，完成率' + metricParts('完成率').current + (currentRank ? '，本周排名第' + currentRank : '') + (rankChange ? '，较上周' + (rankChange > 0 ? '↑' : '↓') + Math.abs(rankChange) : '') + '；当前核心问题是' + (firstIssue || '关键指标改善') + '。';
       head.append(state, store, headSummary);
       var kpis = document.createElement('div');
       kpis.className = 'store-review-kpis';
-      kpis.append(kpi('总营收'), kpi('完成率'), kpiValues('区域排名', currentRank ? String(currentRank) : '-', previousRank ? String(previousRank) : '-'), kpi('新客数'), kpi('老客数'), kpi('续卡金额'));
+      var newCustomers = metricParts('新客数');
+      var oldCustomers = metricParts('老客数');
+      kpis.append(kpi('总营收'), kpi('完成率'), kpiValues('排名', currentRank ? String(currentRank) : '-', previousRank ? String(previousRank) : '-'), kpiValues('排名变化', rankChange === null || rankChange === 0 ? '-' : (rankChange > 0 ? '↑' : '↓') + Math.abs(rankChange), previousRank ? '第' + previousRank + '名' : '-'), kpiValues('新客 / 老客', newCustomers.current + ' / ' + oldCustomers.current, newCustomers.previous + ' / ' + oldCustomers.previous), kpi('续卡金额'));
       var supportWrap = document.createElement('section');
       supportWrap.className = 'store-review-support';
       var supportTitle = document.createElement('h4');
@@ -1088,14 +1137,17 @@ td { border-color:#dfe4ea; }
       supportWrap.append(supportTitle, buildMetricTable(), support);
       var panels = document.createElement('div');
       panels.className = 'store-review-panels';
-      panels.append(panel('我的店本周问题', questionEditor, 'problem'), panel('本周必须完成（行动看板）', must, 'must'), buildPeerPanel(), panel('上周承诺完成情况（回顾）', prior, 'prior'), panel('下周检查点（预告）', next, 'next'));
+      panels.append(buildProblemPanel(questionEditor), buildActionPanel(), buildPeerPanel(), panel('上周承诺完成情况（回顾）', prior, 'prior'), panel('下周检查点（预告）', next, 'next'));
       var body = document.createElement('div');
       body.className = 'store-review-body';
       body.append(supportWrap, panels);
       var card = document.createElement('article');
       card.className = 'store-review-card';
       card.dataset.storeName = storeName;
-      card.append(head, kpis, body);
+      var reminder = document.createElement('div');
+      reminder.className = 'store-review-reminder';
+      reminder.textContent = '重点提醒：核心问题要聚焦解决，行动要可量化、可追踪、可复盘。';
+      card.append(pageTitle, head, kpis, body, reminder);
       scroll.replaceWith(card);
     });
     document.querySelectorAll('.closure-store-list').forEach(function (list) {
@@ -1852,31 +1904,51 @@ td { border-color:#dfe4ea; }
   grid-template-areas:"problem must" "support peers" "prior next" !important;
   gap:12px !important;
 }
-.store-review-card { border-color:#d7dee7; box-shadow:0 2px 10px rgba(15,23,42,.08); }
-.store-review-head { min-height:72px; padding:12px 16px; background:#c94a05; border-bottom:0; color:#fff; }
+.store-review-card { border-color:#d7dee7; box-shadow:0 2px 10px rgba(15,23,42,.08); padding:16px; }
+.store-meeting-title { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:2px 4px 14px; }
+.store-meeting-title h3 { margin:0 0 5px; color:#17202a; font-size:22px; letter-spacing:0; }
+.store-meeting-title p { margin:0; color:#667085; font-size:11px; }
+.store-meeting-title > span { color:#475569; font-size:11px; white-space:nowrap; }
+.store-review-head { min-height:78px; padding:12px 16px; background:#d24b00; border:0; border-radius:7px; color:#fff; }
 .store-review-head .object-cell { flex:0 0 210px; display:block; color:#fff; }
 .store-review-head .object-cell b { color:#fff; font-size:18px; }
 .store-review-head .object-cell span { color:#ffe8d5; }
 .store-review-head .closure-rating { border:1px solid rgba(255,255,255,.65); }
 .store-review-summary { flex:1 1 auto; padding-left:18px; border-left:1px solid rgba(255,255,255,.55); font-size:14px; font-weight:800; line-height:1.65; }
-.store-review-kpis { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px; padding:12px; background:#f8fafc; border-bottom:1px solid #dfe4ea; }
-.store-review-kpi { min-width:0; padding:10px 12px; border:1px solid #d9e1e9; background:#fff; text-align:center; }
+.store-review-kpis { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px; padding:14px 0; background:#fff; border-bottom:0; }
+.store-review-kpi { min-width:0; min-height:98px; padding:11px 12px; border:1px solid #d9e1e9; border-radius:6px; background:#fff; text-align:left; box-shadow:0 1px 4px rgba(15,23,42,.04); }
 .store-review-kpi span { display:block; color:#64748b; font-size:11px; font-weight:800; }
-.store-review-kpi b { display:block; margin:5px 0; color:#1f2937; font-size:17px; line-height:1.2; overflow-wrap:anywhere; }
-.store-review-kpi small { display:block; color:#64748b; font-size:10px; }
-.store-review-support { grid-area:support; max-height:none; padding:12px; }
+.store-review-kpi b { display:block; margin:9px 0 8px; color:#111827; font-size:20px; line-height:1.15; overflow-wrap:anywhere; }
+.store-review-kpi small { display:block; padding-top:6px; border-top:1px solid #edf0f3; color:#64748b; font-size:10px; }
+.store-review-body { padding:0 !important; }
+.store-review-support { grid-area:support; max-height:none; padding:12px; border:1px solid #dfe4ea; border-radius:6px; }
 .store-review-support h4 { color:#1f2937; font-size:14px; }
 .store-review-panels { display:contents !important; }
-.review-panel.peers { grid-area:peers; min-height:0; }
+.review-panel { border-radius:6px; padding:12px; }
+.review-panel.peers { grid-area:peers; min-height:0; border-color:#dfe4ea; }
 .review-panel.problem, .review-panel.must { min-height:220px; }
-.review-panel.problem .question-editor, .review-panel.must .review-editor { min-height:165px; }
+.review-panel.problem .question-editor, .review-panel.must .review-editor { min-height:0; }
 .review-panel.prior, .review-panel.next { min-height:150px; }
-.store-core-table, .store-peer-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:11px; }
-.store-core-table th, .store-core-table td, .store-peer-table th, .store-peer-table td { padding:7px 6px; border:1px solid #dfe4ea; text-align:center; }
+.issue-list, .action-list { display:grid; gap:8px; }
+.issue-item { display:flex; align-items:center; gap:10px; min-height:48px; padding:8px 10px; border:1px solid #f3d2b6; border-radius:6px; background:#fffaf5; }
+.issue-item i { display:flex; align-items:center; justify-content:center; flex:0 0 30px; height:30px; border-radius:50%; background:#e85d04; color:#fff; font-style:normal; font-weight:900; }
+.issue-item div { min-width:0; }
+.issue-item b, .issue-item span { display:block; }
+.issue-item b { color:#9a3412; font-size:12px; }
+.issue-item span { margin-top:3px; color:#5f6b7a; font-size:10px; }
+.issue-notes { min-height:56px !important; max-height:72px; margin-top:2px; border:1px dashed #e6b88f !important; font-size:10px !important; }
+.action-item { display:grid; grid-template-columns:20px minmax(0,1fr) 46px; align-items:center; gap:8px; min-height:43px; padding:6px 8px; border:1px solid #dce3ea; border-radius:6px; background:#fff; }
+.action-check { width:16px; height:16px; border:1px solid #94a3b8; border-radius:3px; }
+.action-editor { min-height:25px !important; padding:4px 5px !important; font-size:10px; }
+.action-item em { padding:3px 4px; border:1px solid #a7d7b9; border-radius:4px; background:#eefaf2; color:#15803d; font-size:9px; font-style:normal; text-align:center; }
+.store-core-table, .store-peer-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:9px; }
+.store-core-table th, .store-core-table td, .store-peer-table th, .store-peer-table td { padding:6px 4px; border:1px solid #dfe4ea; text-align:center; }
 .store-core-table th, .store-peer-table th { background:#f8fafc; color:#475569; font-weight:900; }
 .store-core-table td:first-child, .store-peer-table td:nth-child(2) { text-align:left; font-weight:800; }
-.store-core-table tr.is-bad td { background:#fff0f2; color:#c81e3a; font-weight:800; }
+.store-core-table td:nth-child(5) { text-align:left; font-weight:800; }
+.store-core-table td.is-bad { background:#fff0f2; color:#c81e3a; font-weight:800; }
 .store-peer-table tr.is-current td { background:#fff7ed; color:#9a3412; font-weight:900; }
+.store-review-reminder { margin-top:12px; padding:10px; border:1px solid #f2d6b3; border-radius:6px; background:#fffbf5; color:#7c3f0a; font-size:11px; font-weight:800; text-align:center; }
 .brand-indicator-legend.is-detailed {
   grid-template-columns:repeat(2,minmax(0,1fr));
   column-gap:12px;
@@ -1888,6 +1960,8 @@ td { border-color:#dfe4ea; }
     grid-template-areas:"problem" "must" "support" "peers" "prior" "next" !important;
   }
   .store-review-head { align-items:flex-start; flex-wrap:wrap; }
+  .store-meeting-title { flex-direction:column; }
+  .store-meeting-title h3 { font-size:18px; }
   .store-review-head .object-cell { flex:1 1 180px; }
   .store-review-summary { flex-basis:100%; padding:10px 0 0; border-left:0; border-top:1px solid rgba(255,255,255,.45); }
   .store-review-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
