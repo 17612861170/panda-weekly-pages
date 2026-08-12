@@ -1031,28 +1031,21 @@ td { border-color:#dfe4ea; }
         var section = document.createElement('section');
         section.className = 'review-panel peers';
         var heading = document.createElement('h4');
-        heading.textContent = '同区域门店对比';
-        var table = document.createElement('table');
-        table.className = 'store-peer-table';
-        table.innerHTML = '<thead><tr><th>排名</th><th>门店</th><th>本周营收</th><th>完成率</th><th>变化</th></tr></thead><tbody></tbody>';
-        var shown = currentRanking.slice(0, 5);
-        var own = currentRanking.find(function (item) { return item.name === storeName; });
-        if (own && !shown.some(function (item) { return item.name === storeName; })) shown.push(own);
-        shown.forEach(function (item) {
-          var rank = currentRanking.indexOf(item) + 1;
-          var row = document.createElement('tr');
-          if (item.name === storeName) row.className = 'is-current';
-          var oldRank = previousRanking.findIndex(function (oldItem) { return oldItem.name === item.name; }) + 1;
-          var change = oldRank ? oldRank - rank : null;
-          row.innerHTML = '<td></td><td></td><td></td><td></td><td></td>';
-          row.children[0].textContent = rank;
-          row.children[1].textContent = item.name;
-          row.children[2].textContent = Number.isFinite(item.revenue) ? '¥' + item.revenue.toLocaleString('zh-CN', {maximumFractionDigits:2}) : '-';
-          row.children[3].textContent = Number.isFinite(item.completion) ? item.completion.toFixed(2) + '%' : '-';
-          row.children[4].textContent = change === null || change === 0 ? '-' : (change > 0 ? '↑' + change : '↓' + Math.abs(change));
-          table.tBodies[0].appendChild(row);
-        });
-        section.append(heading, table);
+        heading.textContent = area + '门店完成率排名';
+        var sourceShell = rankingTable && rankingTable.closest('.ranking-shell');
+        if (sourceShell) {
+          var fullRanking = sourceShell.cloneNode(true);
+          fullRanking.classList.add('store-peer-ranking');
+          fullRanking.dataset.rankingShell = 'review-' + area + '-' + storeName;
+          fullRanking.dataset.storeFocus = storeName;
+          Array.from(fullRanking.querySelectorAll('tbody tr')).forEach(function (row) {
+            var nameCell = row.children[0];
+            if (nameCell && nameCell.textContent.trim() === storeName) row.classList.add('peer-current-store');
+          });
+          section.append(heading, fullRanking);
+        } else {
+          section.append(heading);
+        }
         return section;
       }
       function editor(field, placeholder) {
@@ -1568,6 +1561,12 @@ td { border-color:#dfe4ea; }
   }
   function updateRegionCompletionCards(shell, period, available) {
     if (shell.dataset.rankingType === 'employee') return;
+    if (shell.classList.contains('store-peer-ranking')) {
+      shell.classList.remove('completion-card-mode');
+      var clonedCards = shell.querySelector('[data-region-completion-pk]');
+      if (clonedCards) clonedCards.remove();
+      return;
+    }
     var table = shell.querySelector('table[data-ranking-table="region"]');
     if (!table) return;
     var scroll = table.closest('.table-scroll');
@@ -1956,7 +1955,7 @@ td { border-color:#dfe4ea; }
 </script><style>
 .store-review-body {
   grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-  grid-template-areas:"problem must" "support peers" "prior next" !important;
+  grid-template-areas:"problem must" "support support" "peers peers" "prior next" !important;
   gap:12px !important;
 }
 .store-review-card { border-color:#d7dee7; box-shadow:0 3px 14px rgba(15,23,42,.08); padding:20px; }
@@ -1984,7 +1983,14 @@ td { border-color:#dfe4ea; }
 .store-review-panels { display:contents !important; }
 .review-panel { border-radius:6px; padding:14px; }
 .review-panel h4, .store-review-support h4 { margin-bottom:10px; font-size:15px; }
-.review-panel.peers { grid-area:peers; min-height:0; border-color:#dfe4ea; }
+.review-panel.peers { grid-area:peers; min-width:0; min-height:0; padding:14px; border-color:#dfe4ea; overflow:hidden; }
+.review-panel.peers > h4 { padding-left:10px; border-left:4px solid #ea580c; font-size:17px; }
+.store-peer-ranking { width:100%; min-width:0; margin:0; }
+.store-peer-ranking .ranking-toolbar { margin:0 0 10px; }
+.store-peer-ranking .table-scroll { display:block !important; width:100%; max-width:100%; margin:0; overflow-x:auto; }
+.store-peer-ranking [data-region-completion-pk] { display:none !important; }
+.store-peer-ranking tr.peer-current-store td { background:#fff7ed !important; color:#9a3412; font-weight:900; box-shadow:inset 0 2px 0 #ea580c,inset 0 -2px 0 #ea580c; }
+.store-peer-ranking tr.peer-current-store td:first-child { box-shadow:inset 3px 0 0 #ea580c,inset 0 2px 0 #ea580c,inset 0 -2px 0 #ea580c,1px 0 0 #d8dee9; }
 .review-panel.problem, .review-panel.must { min-height:280px; }
 .review-panel.problem .question-editor, .review-panel.must .review-editor { min-height:0; }
 .review-panel.prior, .review-panel.next { min-height:150px; }
