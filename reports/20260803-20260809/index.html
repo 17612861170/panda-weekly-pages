@@ -1018,14 +1018,23 @@ td { border-color:#dfe4ea; }
         var store = normalizeStoreName(cells[1].textContent.trim());
         if (data[store]) return;
         data[store] = {
+          '新客数': cells[2].textContent.trim() || '-',
+          '老客数': cells[3].textContent.trim() || '-',
           '总营收': firstMoney(cells[4]),
+          '新签营收': firstMoney(cells[5]),
           '完成率': firstPercent(cells[6]),
           '新签办卡率': firstPercent(cells[7]),
+          '新签小卡率': firstPercent(cells[8]),
+          '新签中卡率': firstPercent(cells[9]),
+          '新签大卡率': firstPercent(cells[10]),
           '新签中大卡率': midLargeRate(cells[9], cells[10]),
           '大卡率': firstPercent(cells[15]),
+          '续费率': firstPercent(cells[11]),
           '续卡金额': firstMoney(cells[12]),
           '续卡占比': pairPercent(cells[12]),
+          '总引流金额': firstMoney(cells[13]),
           '总引流占比': pairPercent(cells[13]),
+          '扫楼金额': firstMoney(cells[14]),
           '扫楼占比': pairPercent(cells[14])
         };
       });
@@ -1104,16 +1113,17 @@ td { border-color:#dfe4ea; }
       var previousRank = previousRanking.findIndex(function (item) { return item.name === storeName; }) + 1;
       var rankChange = currentRank && previousRank ? previousRank - currentRank : null;
       function buildMetricTable() {
-        var visibleMetrics = ['总营收', '完成率', '新签办卡率', '新签中大卡率', '整体大卡率', '续卡金额', '续卡占比', '总引流占比', '扫楼占比'];
+        var visibleMetrics = ['新客数', '老客数', '总营收', '新签营收', '完成率', '新签办卡率', '新签小卡率', '新签中卡率', '新签大卡率', '新签中大卡率', '整体大卡率', '续卡金额', '续卡占比', '续费率', '总引流金额', '总引流占比', '扫楼金额', '扫楼占比', '扶梯口金额'];
         var table = document.createElement('table');
         table.className = 'metric-table area-metric-table four-week-table store-core-table';
         table.innerHTML = '<thead><tr><th>归类</th><th>指标</th><th>7/13-7/19</th><th>7/20-7/26</th><th>上周<br><small>7/27-8/2</small></th><th class="current-week-head">本周<br><small>8/3-8/9</small></th><th>较上周变化</th><th>本周判断</th></tr></thead><tbody></tbody>';
         var tbody = table.querySelector('tbody');
         var categoryByMetric = {
-          '总营收': ['营收板块', 'cat-revenue'], '完成率': ['营收板块', 'cat-revenue'],
-          '新签办卡率': ['办卡转化', 'cat-card'], '新签中大卡率': ['办卡转化', 'cat-card'], '整体大卡率': ['办卡转化', 'cat-card'],
-          '续卡金额': ['续卡板块', 'cat-renew'], '续卡占比': ['续卡板块', 'cat-renew'],
-          '总引流占比': ['引流板块', 'cat-flow'], '扫楼占比': ['引流板块', 'cat-flow']
+          '新客数': ['客流板块', 'cat-traffic'], '老客数': ['客流板块', 'cat-traffic'],
+          '总营收': ['营收板块', 'cat-revenue'], '新签营收': ['营收板块', 'cat-revenue'], '完成率': ['营收板块', 'cat-revenue'],
+          '新签办卡率': ['办卡转化', 'cat-card'], '新签小卡率': ['办卡转化', 'cat-card'], '新签中卡率': ['办卡转化', 'cat-card'], '新签大卡率': ['办卡转化', 'cat-card'], '新签中大卡率': ['办卡转化', 'cat-card'], '整体大卡率': ['办卡转化', 'cat-card'],
+          '续卡金额': ['续卡板块', 'cat-renew'], '续卡占比': ['续卡板块', 'cat-renew'], '续费率': ['续卡板块', 'cat-renew'],
+          '总引流金额': ['引流板块', 'cat-flow'], '总引流占比': ['引流板块', 'cat-flow'], '扫楼金额': ['引流板块', 'cat-flow'], '扫楼占比': ['引流板块', 'cat-flow'], '扶梯口金额': ['引流板块', 'cat-flow']
         };
         var categoryCounts = visibleMetrics.reduce(function (counts, name) {
           var category = categoryByMetric[name][0];
@@ -1188,7 +1198,7 @@ td { border-color:#dfe4ea; }
         var section = document.createElement('section');
         section.className = 'review-panel peers';
         var heading = document.createElement('h4');
-        heading.textContent = area + '同区域关键指标对比';
+        heading.textContent = area + '同区域门店关键指标对比';
         var sourceShell = rankingTable && rankingTable.closest('.ranking-shell');
         if (sourceShell) {
           var fullRanking = sourceShell.cloneNode(true);
@@ -1807,61 +1817,7 @@ td { border-color:#dfe4ea; }
       if (actionHeading) actionHeading.textContent = '本周重点';
     });
     document.querySelectorAll('.decision-board').forEach(function (board) {
-      board.classList.add('area-manager-board');
-      var areaTitle = board.querySelector('.decision-board-title');
-      if (areaTitle) areaTitle.textContent = areaTitle.textContent.replace('经营决策看板', '区域经理闭环看板');
-      var top = board.querySelector('.decision-top');
-      if (top) top.remove();
-      Array.from(board.querySelectorAll('.decision-table-wrap')).forEach(function (wrap) {
-        var heading = wrap.querySelector('h4');
-        var table = wrap.querySelector('table');
-        if (!heading || !table) return;
-        var blockTitle = heading.textContent.trim();
-        if (blockTitle === '核心问题TOP5') {
-          wrap.classList.add('manager-core-problems');
-          var headerRow = table.querySelector('thead tr');
-          var numberHeader = document.createElement('th');
-          numberHeader.textContent = '#';
-          headerRow.insertBefore(numberHeader, headerRow.firstElementChild);
-          var impactHeader = document.createElement('th');
-          impactHeader.textContent = '预计影响金额';
-          headerRow.insertBefore(impactHeader, headerRow.lastElementChild);
-          headerRow.children[2].textContent = '涉及门店数';
-          headerRow.lastElementChild.textContent = '重点门店（示例）';
-          Array.from(table.querySelectorAll('tbody tr')).forEach(function (row, index) {
-            var numberCell = document.createElement('td');
-            numberCell.textContent = String(index + 1);
-            row.insertBefore(numberCell, row.firstElementChild);
-            var impactCell = document.createElement('td');
-            var impactEditor = document.createElement('div');
-            impactEditor.className = 'decision-editor';
-            impactEditor.contentEditable = 'true';
-            impactEditor.dataset.editArea = board.closest('.page').querySelector('.conclusion').dataset.conclusionArea;
-            impactEditor.dataset.editStore = impactEditor.dataset.editArea + '-核心问题' + (index + 1) + '-预计影响金额';
-            impactEditor.dataset.editField = 'answer';
-            impactEditor.textContent = '点击填写';
-            impactCell.appendChild(impactEditor);
-            row.insertBefore(impactCell, row.lastElementChild);
-          });
-        } else if (blockTitle === '重点门店整改追踪') {
-          wrap.classList.add('manager-rectification');
-          var trackHeader = table.querySelector('thead tr');
-          var trackNumberHeader = document.createElement('th');
-          trackNumberHeader.textContent = '#';
-          trackHeader.insertBefore(trackNumberHeader, trackHeader.firstElementChild);
-          trackHeader.children[2].textContent = '关键问题';
-          trackHeader.children[3].textContent = '本周动作（城市经理层面）';
-          Array.from(table.querySelectorAll('tbody tr')).forEach(function (row, index) {
-            var numberCell = document.createElement('td');
-            numberCell.textContent = String(index + 1);
-            row.insertBefore(numberCell, row.firstElementChild);
-          });
-        } else if (blockTitle === '城市经理本周动作') {
-          wrap.classList.add('manager-action-list');
-          var actionHeaders = table.querySelectorAll('thead th');
-          if (actionHeaders[2]) actionHeaders[2].textContent = '目标 / 衡量标准';
-        }
-      });
+      board.remove();
     });
   }
   function normalizeEmployeeRankingTables() {
