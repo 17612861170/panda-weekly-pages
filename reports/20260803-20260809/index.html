@@ -1099,6 +1099,17 @@ td { border-color:#dfe4ea; }
       function buildActionPanel() {
         var list = document.createElement('div');
         list.className = 'action-list';
+        var issueNames = Array.from(support.querySelectorAll('.support-metric.is-bad b')).map(function (label) { return label.textContent.trim(); });
+        var suggestedActions = [];
+        function addAction(metrics, text) {
+          if (metrics.some(function (name) { return issueNames.indexOf(name) >= 0; })) suggestedActions.push(text);
+        }
+        addAction(['完成率'], '拆解每日营收缺口，闭店前复盘完成率');
+        addAction(['新签办卡率'], '按时段复盘新客接待与办卡转化');
+        addAction(['新签中大卡率', '新签小卡率'], '专项训练中大卡需求挖掘与成交话术');
+        addAction(['续卡占比', '续费率'], '建立到期客户清单，逐人跟进续卡');
+        addAction(['总引流占比', '扫楼占比'], '明确扫楼与扶梯口每日引流金额目标');
+        suggestedActions.push('周末提交动作结果、数据变化与复盘证据');
         for (var index = 0; index < 5; index += 1) {
           var item = document.createElement('div');
           item.className = 'action-item';
@@ -1106,6 +1117,7 @@ td { border-color:#dfe4ea; }
           box.className = 'action-check';
           var action = editor(index === 0 ? 'must_complete' : 'must_complete_' + (index + 1), '点击填写行动、负责人和截止时间');
           action.classList.add('action-editor');
+          action.textContent = suggestedActions[index] || '填写本周关键行动、负责人和截止时间';
           var status = document.createElement('em');
           status.textContent = '进行中';
           item.append(box, action, status);
@@ -1126,13 +1138,24 @@ td { border-color:#dfe4ea; }
       var headSummary = document.createElement('div');
       headSummary.className = 'store-review-summary';
       var firstIssue = Array.from(support.querySelectorAll('.support-metric.is-bad b')).map(function (item) { return item.textContent.trim(); })[0];
-      headSummary.textContent = storeName + '本周营收' + metricParts('总营收').current + '，完成率' + metricParts('完成率').current + (currentRank ? '，本周排名第' + currentRank : '') + (rankChange ? '，较上周' + (rankChange > 0 ? '↑' : '↓') + Math.abs(rankChange) : '') + '；当前核心问题是' + (firstIssue || '关键指标改善') + '。';
-      head.append(state, store, headSummary);
+      headSummary.textContent = storeName + '本周营收 ' + metricParts('总营收').current + '，完成率 ' + metricParts('完成率').current + (currentRank ? '，本周排名第 ' + currentRank : '') + (rankChange ? '，较上周' + (rankChange > 0 ? '上升 ' : '下降 ') + Math.abs(rankChange) + ' 名' : '') + '；当前核心问题是 ' + (firstIssue || '关键指标改善') + '。';
+      var identity = document.createElement('div');
+      identity.className = 'store-review-identity';
+      var identityIcon = document.createElement('i');
+      identityIcon.textContent = '店';
+      var identityCopy = document.createElement('div');
+      identityCopy.innerHTML = '<small>本店</small><b></b><span></span>';
+      identityCopy.querySelector('b').textContent = storeName;
+      identityCopy.querySelector('span').textContent = area + ' · 城市重点店';
+      var statusBadge = state.querySelector('.closure-rating');
+      if (statusBadge) identityCopy.appendChild(statusBadge);
+      identity.append(identityIcon, identityCopy);
+      head.append(identity, headSummary);
       var kpis = document.createElement('div');
       kpis.className = 'store-review-kpis';
       var newCustomers = metricParts('新客数');
       var oldCustomers = metricParts('老客数');
-      kpis.append(kpi('总营收'), kpi('完成率'), kpiValues('排名', currentRank ? String(currentRank) : '-', previousRank ? String(previousRank) : '-'), kpiValues('排名变化', rankChange === null || rankChange === 0 ? '-' : (rankChange > 0 ? '↑' : '↓') + Math.abs(rankChange), previousRank ? '第' + previousRank + '名' : '-'), kpiValues('新客 / 老客', newCustomers.current + ' / ' + oldCustomers.current, newCustomers.previous + ' / ' + oldCustomers.previous), kpi('续卡金额'));
+      kpis.append(kpi('总营收'), kpi('完成率'), kpiValues('排名', currentRank ? String(currentRank) : '-', previousRank ? String(previousRank) : '-'), kpiValues('排名变化', rankChange === null || rankChange === 0 ? '-' : (rankChange > 0 ? '↑' : '↓') + Math.abs(rankChange), previousRank ? '第' + previousRank + '名' : '-'), kpiValues('新客数', newCustomers.current, newCustomers.previous + ' · 老客 ' + oldCustomers.current), kpi('续卡金额'));
       var supportWrap = document.createElement('section');
       supportWrap.className = 'store-review-support';
       var supportTitle = document.createElement('h4');
@@ -1173,6 +1196,10 @@ td { border-color:#dfe4ea; }
         option.textContent = card.dataset.storeName;
         select.appendChild(option);
       });
+      if (cards[0]) {
+        select.value = cards[0].dataset.storeName;
+        cards.forEach(function (card, index) { card.hidden = index !== 0; });
+      }
       select.addEventListener('change', function () {
         cards.forEach(function (card) {
           card.hidden = Boolean(select.value) && card.dataset.storeName !== select.value;
@@ -1914,10 +1941,13 @@ td { border-color:#dfe4ea; }
 .store-meeting-title p { margin:0; color:#667085; font-size:11px; }
 .store-meeting-title > span { color:#475569; font-size:11px; white-space:nowrap; }
 .store-review-head { min-height:86px; padding:15px 18px; background:#c94700; border:0; border-radius:7px; color:#fff; }
-.store-review-head .object-cell { flex:0 0 210px; display:block; color:#fff; }
-.store-review-head .object-cell b { color:#fff; font-size:18px; }
-.store-review-head .object-cell span { color:#ffe8d5; }
-.store-review-head .closure-rating { border:1px solid rgba(255,255,255,.65); }
+.store-review-identity { display:flex; align-items:center; gap:12px; flex:0 0 270px; }
+.store-review-identity > i { display:flex; align-items:center; justify-content:center; flex:0 0 50px; height:50px; border-radius:50%; background:#fff; color:#c94700; font-size:19px; font-style:normal; font-weight:900; }
+.store-review-identity div { display:grid; grid-template-columns:auto 1fr; align-items:center; gap:2px 8px; min-width:0; }
+.store-review-identity small { color:#ffe8d5; font-size:10px; font-weight:900; }
+.store-review-identity b { grid-column:1/-1; color:#fff; font-size:20px; line-height:1.2; }
+.store-review-identity span { color:#ffe8d5; font-size:11px; }
+.store-review-identity .closure-rating { min-width:38px; padding:2px 4px; border:1px solid rgba(255,255,255,.65); font-size:9px; }
 .store-review-summary { flex:1 1 auto; padding-left:20px; border-left:1px solid rgba(255,255,255,.55); font-size:15px; font-weight:800; line-height:1.7; }
 .store-review-kpis { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; padding:16px 0; background:#fff; border-bottom:0; }
 .store-review-kpi { min-width:0; min-height:108px; padding:13px 14px; border:1px solid #d9e1e9; border-radius:6px; background:#fff; text-align:left; box-shadow:0 2px 7px rgba(15,23,42,.05); }
@@ -1941,10 +1971,10 @@ td { border-color:#dfe4ea; }
 .issue-item b, .issue-item span { display:block; }
 .issue-item b { color:#9a3412; font-size:13px; }
 .issue-item span { margin-top:4px; color:#5f6b7a; font-size:11px; }
-.issue-notes { min-height:64px !important; max-height:78px; margin-top:2px; border:1px dashed #e6b88f !important; font-size:11px !important; }
+.issue-notes { min-height:54px !important; max-height:64px; margin-top:2px; border:1px dashed #e6b88f !important; font-size:11px !important; line-height:1.45 !important; overflow:auto; }
 .action-item { display:grid; grid-template-columns:22px minmax(0,1fr) 52px; align-items:center; gap:9px; min-height:47px; padding:7px 9px; border:1px solid #dce3ea; border-radius:6px; background:#fff; }
 .action-check { width:16px; height:16px; border:1px solid #94a3b8; border-radius:3px; }
-.action-editor { min-height:27px !important; padding:4px 5px !important; font-size:11px; }
+.action-editor { min-height:27px !important; padding:4px 5px !important; font-size:11px; font-weight:700; color:#374151; }
 .action-item em { padding:3px 4px; border:1px solid #a7d7b9; border-radius:4px; background:#eefaf2; color:#15803d; font-size:9px; font-style:normal; text-align:center; }
 .store-core-table, .store-peer-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:11px; }
 .store-core-table th, .store-core-table td, .store-peer-table th, .store-peer-table td { padding:8px 6px; border:1px solid #dfe4ea; text-align:center; }
@@ -1966,7 +1996,7 @@ td { border-color:#dfe4ea; }
   .store-review-head { align-items:flex-start; flex-wrap:wrap; }
   .store-meeting-title { flex-direction:column; }
   .store-meeting-title h3 { font-size:18px; }
-  .store-review-head .object-cell { flex:1 1 180px; }
+  .store-review-identity { flex:1 1 240px; }
   .store-review-summary { flex-basis:100%; padding:10px 0 0; border-left:0; border-top:1px solid rgba(255,255,255,.45); }
   .store-review-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .brand-indicator-legend.is-detailed { grid-template-columns:1fr; }
