@@ -1077,6 +1077,7 @@ td { border-color:#dfe4ea; }
     });
   }
   function removeDecisionTrackingBlocks() {
+    document.querySelectorAll('.decision-board').forEach(function (board) { board.remove(); });
     document.querySelectorAll('.decision-table-wrap h4').forEach(function (heading) {
       var title = heading.textContent.trim();
       if (title === '重点门店整改追踪' || title === '城市经理本周动作' || title === '核心问题TOP5') {
