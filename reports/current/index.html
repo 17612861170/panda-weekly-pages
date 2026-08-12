@@ -954,6 +954,33 @@ td { border-color:#dfe4ea; }
       var answer = row.children[4].cloneNode(true);
       var area = store.querySelector('span') ? store.querySelector('span').textContent.trim() : '';
       var storeName = store.querySelector('b') ? store.querySelector('b').textContent.trim() : '';
+      var countLabels = ['新签小卡数', '新签中卡数', '新签大卡数', '续卡小卡数', '续卡中卡数', '续卡大卡数'];
+      support.querySelectorAll('.support-metric').forEach(function (metric) {
+        var label = metric.querySelector('b');
+        if (label && countLabels.indexOf(label.textContent.trim()) >= 0) metric.remove();
+      });
+      function metricParts(name) {
+        var metric = Array.from(support.querySelectorAll('.support-metric')).find(function (item) {
+          var label = item.querySelector('b');
+          return label && label.textContent.trim() === name;
+        });
+        var text = metric && metric.querySelector('span') ? metric.querySelector('span').textContent.trim() : '-';
+        var parts = text.split('→').map(function (part) { return part.trim(); });
+        return { previous: parts.length > 1 ? parts[0] : '-', current: parts[parts.length - 1] || '-' };
+      }
+      function kpi(name) {
+        var values = metricParts(name);
+        var item = document.createElement('div');
+        item.className = 'store-review-kpi';
+        var label = document.createElement('span');
+        label.textContent = name;
+        var value = document.createElement('b');
+        value.textContent = values.current;
+        var previous = document.createElement('small');
+        previous.textContent = '上周 ' + values.previous;
+        item.append(label, value, previous);
+        return item;
+      }
       function editor(field, placeholder) {
         var cell = document.createElement('div');
         cell.className = 'review-editor';
@@ -980,11 +1007,17 @@ td { border-color:#dfe4ea; }
       var questionEditor = question ? question.cloneNode(true) : editor('question', '点击填写本周问题');
       var head = document.createElement('div');
       head.className = 'store-review-head';
-      head.append(state, store);
+      var headSummary = document.createElement('div');
+      headSummary.className = 'store-review-summary';
+      headSummary.textContent = '本周营收 ' + metricParts('总营收').current + '，完成率 ' + metricParts('完成率').current + '；新签办卡率 ' + metricParts('新签办卡率').current + '，续卡金额 ' + metricParts('续卡金额').current + '。';
+      head.append(state, store, headSummary);
+      var kpis = document.createElement('div');
+      kpis.className = 'store-review-kpis';
+      ['总营收', '完成率', '新签办卡率', '续卡金额', '总引流金额', '扫楼占比'].forEach(function (name) { kpis.appendChild(kpi(name)); });
       var supportWrap = document.createElement('section');
       supportWrap.className = 'store-review-support';
       var supportTitle = document.createElement('h4');
-      supportTitle.textContent = '本周数据支撑';
+      supportTitle.textContent = '本店核心指标对比';
       supportWrap.append(supportTitle, support);
       var panels = document.createElement('div');
       panels.className = 'store-review-panels';
@@ -995,7 +1028,7 @@ td { border-color:#dfe4ea; }
       var card = document.createElement('article');
       card.className = 'store-review-card';
       card.dataset.storeName = storeName;
-      card.append(head, body);
+      card.append(head, kpis, body);
       scroll.replaceWith(card);
     });
     document.querySelectorAll('.closure-store-list').forEach(function (list) {
@@ -1748,11 +1781,30 @@ td { border-color:#dfe4ea; }
 })();
 </script><style>
 .store-review-body {
-  grid-template-columns:minmax(250px,.82fr) minmax(0,1fr) minmax(0,1fr) !important;
-  grid-template-areas:"support problem must" "support prior next" !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  grid-template-areas:"problem must" "support support" "prior next" !important;
+  gap:12px !important;
 }
-.store-review-support { grid-area:support; max-height:none; }
+.store-review-card { border-color:#d7dee7; box-shadow:0 2px 10px rgba(15,23,42,.08); }
+.store-review-head { min-height:72px; padding:12px 16px; background:#c94a05; border-bottom:0; color:#fff; }
+.store-review-head .object-cell { flex:0 0 210px; display:block; color:#fff; }
+.store-review-head .object-cell b { color:#fff; font-size:18px; }
+.store-review-head .object-cell span { color:#ffe8d5; }
+.store-review-head .closure-rating { border:1px solid rgba(255,255,255,.65); }
+.store-review-summary { flex:1 1 auto; padding-left:18px; border-left:1px solid rgba(255,255,255,.55); font-size:14px; font-weight:800; line-height:1.65; }
+.store-review-kpis { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px; padding:12px; background:#f8fafc; border-bottom:1px solid #dfe4ea; }
+.store-review-kpi { min-width:0; padding:10px 12px; border:1px solid #d9e1e9; background:#fff; text-align:center; }
+.store-review-kpi span { display:block; color:#64748b; font-size:11px; font-weight:800; }
+.store-review-kpi b { display:block; margin:5px 0; color:#1f2937; font-size:17px; line-height:1.2; overflow-wrap:anywhere; }
+.store-review-kpi small { display:block; color:#64748b; font-size:10px; }
+.store-review-support { grid-area:support; max-height:none; padding:12px; }
+.store-review-support h4 { color:#1f2937; font-size:14px; }
+.store-review-support .status-cell { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); max-width:none; border:1px solid #dfe4ea; }
+.store-review-support .support-metric { grid-template-columns:88px minmax(0,1fr) minmax(60px,auto); min-height:42px; border-right:1px solid #e3e8ed; padding:6px 8px; }
 .store-review-panels { display:contents !important; }
+.review-panel.problem, .review-panel.must { min-height:220px; }
+.review-panel.problem .question-editor, .review-panel.must .review-editor { min-height:165px; }
+.review-panel.prior, .review-panel.next { min-height:150px; }
 .brand-indicator-legend.is-detailed {
   grid-template-columns:repeat(2,minmax(0,1fr));
   column-gap:12px;
@@ -1763,6 +1815,11 @@ td { border-color:#dfe4ea; }
     grid-template-columns:1fr !important;
     grid-template-areas:"support" "problem" "must" "prior" "next" !important;
   }
+  .store-review-head { align-items:flex-start; flex-wrap:wrap; }
+  .store-review-head .object-cell { flex:1 1 180px; }
+  .store-review-summary { flex-basis:100%; padding:10px 0 0; border-left:0; border-top:1px solid rgba(255,255,255,.45); }
+  .store-review-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .store-review-support .status-cell { grid-template-columns:1fr; }
   .brand-indicator-legend.is-detailed { grid-template-columns:1fr; }
 }
 </style><script>
