@@ -942,6 +942,75 @@ td { border-color:#dfe4ea; }
   removeRankingHints();
   normalizeSweepShares();
   renderStoreReviewCards();
+  hydrateStoreHistory();
+  function hydrateStoreHistory() {
+    var sources = [
+      { week:'w1', url:'../20260713-20260719/' },
+      { week:'w2', url:'../20260720-20260726/' }
+    ];
+    function normalizeStoreName(name) {
+      return ({ '许昌万达':'许昌魏都万达', '滑县吾悦':'安阳滑县吾悦' })[name] || name;
+    }
+    function firstMoney(cell) {
+      var copy = cell ? cell.cloneNode(true) : null;
+      if (copy) copy.querySelectorAll('small').forEach(function (small) { small.remove(); });
+      var match = (copy ? copy.textContent : '').match(/¥[\d,]+(?:\.\d+)?/);
+      return match ? match[0] : '-';
+    }
+    function firstPercent(cell) {
+      var copy = cell ? cell.cloneNode(true) : null;
+      if (copy) copy.querySelectorAll('small').forEach(function (small) { small.remove(); });
+      var text = copy ? copy.textContent : '';
+      var match = text.match(/-?\d+(?:\.\d+)?%/);
+      return match ? match[0] : '-';
+    }
+    function pairPercent(cell) {
+      var small = cell && cell.querySelector('small');
+      var match = (small ? small.textContent : '').match(/-?\d+(?:\.\d+)?%/);
+      return match ? match[0] : '-';
+    }
+    function midLargeRate(midCell, largeCell) {
+      var mid = parseFloat(firstPercent(midCell));
+      var large = parseFloat(firstPercent(largeCell));
+      return Number.isFinite(mid) && Number.isFinite(large) ? (mid + large).toFixed(2) + '%' : '-';
+    }
+    function parseHistory(html) {
+      var documentCopy = new DOMParser().parseFromString(html, 'text/html');
+      var data = {};
+      documentCopy.querySelectorAll('.status-detail-table tbody tr').forEach(function (row) {
+        var cells = row.cells;
+        if (cells.length < 16) return;
+        var store = normalizeStoreName(cells[1].textContent.trim());
+        if (data[store]) return;
+        data[store] = {
+          '总营收': firstMoney(cells[4]),
+          '完成率': firstPercent(cells[6]),
+          '新签办卡率': firstPercent(cells[7]),
+          '新签中大卡率': midLargeRate(cells[9], cells[10]),
+          '续卡金额': firstMoney(cells[12]),
+          '续卡占比': pairPercent(cells[12]),
+          '总引流占比': pairPercent(cells[13]),
+          '扫楼占比': pairPercent(cells[14])
+        };
+      });
+      return data;
+    }
+    Promise.all(sources.map(function (source) {
+      return fetch(source.url).then(function (response) {
+        if (!response.ok) throw new Error('history ' + response.status);
+        return response.text();
+      }).then(function (html) { return { week:source.week, data:parseHistory(html) }; });
+    })).then(function (weeks) {
+      weeks.forEach(function (week) {
+        document.querySelectorAll('[data-history-week="' + week.week + '"]').forEach(function (cell) {
+          var storeData = week.data[cell.dataset.historyStore];
+          cell.textContent = storeData && storeData[cell.dataset.historyMetric] || '-';
+        });
+      });
+    }).catch(function () {
+      document.querySelectorAll('[data-history-week]').forEach(function (cell) { cell.textContent = '-'; });
+    });
+  }
   function renderStoreReviewCards() {
     document.querySelectorAll('.closure-store-scroll').forEach(function (scroll) {
       var table = scroll.querySelector('table');
@@ -1002,7 +1071,7 @@ td { border-color:#dfe4ea; }
         var visibleMetrics = ['总营收', '完成率', '新签办卡率', '新签中大卡率', '续卡金额', '续卡占比', '总引流占比', '扫楼占比'];
         var table = document.createElement('table');
         table.className = 'store-core-table';
-        table.innerHTML = '<thead><tr><th>指标</th><th>上周</th><th>本周</th><th>变化</th></tr></thead><tbody></tbody>';
+        table.innerHTML = '<thead><tr><th>指标</th><th>7/13-7/19</th><th>7/20-7/26</th><th>7/27-8/2</th><th>8/3-8/9</th></tr></thead><tbody></tbody>';
         var tbody = table.querySelector('tbody');
         var metrics = visibleMetrics.map(function (name) {
           var source = Array.from(support.querySelectorAll('.support-metric')).find(function (metric) {
@@ -1011,15 +1080,20 @@ td { border-color:#dfe4ea; }
           });
           if (!source) return null;
           var values = metricParts(name);
-          return { name: name, previous: values.previous, current: values.current, change: source.querySelector('em') ? source.querySelector('em').textContent.trim() : '-', bad: source.classList.contains('is-bad') };
+          return { name: name, previous: values.previous, current: values.current, bad: source.classList.contains('is-bad') };
         }).filter(Boolean);
         for (var index = 0; index < metrics.length; index += 1) {
           var row = document.createElement('tr');
           var metric = metrics[index];
-          [metric.name, metric.previous, metric.current, metric.change].forEach(function (text, cellIndex) {
+          [metric.name, '-', '-', metric.previous, metric.current].forEach(function (text, cellIndex) {
             var cell = document.createElement('td');
             cell.textContent = text || '';
             if (cellIndex === 0) cell.className = 'metric-label';
+            if (cellIndex === 1 || cellIndex === 2) {
+              cell.dataset.historyWeek = cellIndex === 1 ? 'w1' : 'w2';
+              cell.dataset.historyStore = storeName;
+              cell.dataset.historyMetric = metric.name;
+            }
             if (metric.bad) cell.classList.add('is-bad');
             row.appendChild(cell);
           });
