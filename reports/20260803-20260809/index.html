@@ -1250,8 +1250,7 @@ td { border-color:#dfe4ea; }
         });
         var selected = priority.filter(function (name) { return badNames.indexOf(name) >= 0; }).slice(0, 3);
         if (!selected.length) selected = ['完成率'];
-        var list = document.createElement('ol');
-        list.className = 'generated-store-questions';
+        var questions = [];
         selected.forEach(function (name) {
           var values = metricParts(name);
           var current = values.current;
@@ -1265,11 +1264,19 @@ td { border-color:#dfe4ea; }
           } else {
             question = labels[name] + '本周为' + current + '，上周为' + previous + '，目标线为' + standard + '。未达标的具体原因是什么？本周由谁在什么时间前完成什么改善动作？';
           }
-          var item = document.createElement('li');
-          item.textContent = question;
-          list.appendChild(item);
+          questions.push((questions.length + 1) + '. ' + question);
         });
-        return list;
+        var editor = document.createElement('div');
+        editor.className = 'generated-store-questions';
+        editor.contentEditable = 'true';
+        editor.spellcheck = false;
+        editor.dataset.editArea = area;
+        editor.dataset.editStore = storeName;
+        editor.dataset.editField = 'question';
+        editor.dataset.placeholder = '点击修改本周问题';
+        editor.setAttribute('aria-label', '编辑' + storeName + '本周问题');
+        editor.textContent = questions.join('\n');
+        return editor;
       }
       function buildTrackedBoard(config) {
         var board = document.createElement('div');
@@ -1709,7 +1716,6 @@ td { border-color:#dfe4ea; }
       var next = answer;
       next.className = 'review-editor';
       next.dataset.placeholder = '点击填写门店回答和下周计划';
-      var questionEditor = question ? question.cloneNode(true) : editor('question', '点击填写本周问题');
       var head = document.createElement('div');
       head.className = 'store-review-head';
       head.append(state, store);
@@ -1724,9 +1730,7 @@ td { border-color:#dfe4ea; }
       var problemContent = document.createElement('div');
       problemContent.className = 'review-problem-content';
       problemContent.append(buildMeetingQuestions(), next);
-      questionEditor.classList.add('preserved-cloud-field');
-      questionEditor.hidden = true;
-      panels.append(panel('上周承诺完成（回顾）', prior, 'prior'), panel('本周问题', problemContent, 'problem'), panel('本周计划', must, 'must'), questionEditor);
+      panels.append(panel('上周承诺完成（回顾）', prior, 'prior'), panel('本周问题', problemContent, 'problem'), panel('本周计划', must, 'must'));
       var body = document.createElement('div');
       body.className = 'store-review-body';
       body.append(supportWrap, panels);
@@ -2417,7 +2421,7 @@ td { border-color:#dfe4ea; }
   var supabaseUrl = 'https://smbelcuwcsuuxcspypae.supabase.co';
   var supabaseKey = 'sb_publishable_KIJsYEjr2gt2K8IMwtEKhg_RR8x6Dqb';
   var tableUrl = supabaseUrl + '/rest/v1/weekly_report_edits';
-  var cellSelector = '.closure-table td[contenteditable="true"], .closure-table .question-editor, .store-review-card .review-editor, .store-review-card .question-editor, .store-review-card .action-check, .store-review-card .action-status, .store-review-card .action-count-sync, .store-review-card .action-deleted, .store-review-card .tracked-status, .store-review-card .tracked-count-sync, .store-review-card .tracked-deleted, .conclusion-editor, .decision-editor';
+  var cellSelector = '.closure-table td[contenteditable="true"], .closure-table .question-editor, .store-review-card .review-editor, .store-review-card .question-editor, .store-review-card .generated-store-questions[contenteditable="true"], .store-review-card .action-check, .store-review-card .action-status, .store-review-card .action-count-sync, .store-review-card .action-deleted, .store-review-card .tracked-status, .store-review-card .tracked-count-sync, .store-review-card .tracked-deleted, .conclusion-editor, .decision-editor';
   var cells = [];
   var cellsByKey = {};
   var cloudRows = {};
@@ -2672,6 +2676,9 @@ td { border-color:#dfe4ea; }
 .review-problem-content .review-editor, .review-problem-content .question-editor { min-height:82px; }
 .generated-store-questions { display:grid; gap:8px; margin:0; padding:0 0 0 22px; color:#374151; font-size:11px; font-weight:700; line-height:1.55; }
 .generated-store-questions li { padding-left:3px; }
+.generated-store-questions[contenteditable="true"] { display:block; white-space:pre-wrap; cursor:text; }
+.generated-store-questions[contenteditable="true"]:focus { outline:0; background:#fff; box-shadow:inset 0 0 0 3px #2f6f95; }
+.generated-store-questions[contenteditable="true"]:empty::before { content:attr(data-placeholder); color:#8a98a8; }
 .review-panel.prior { min-height:300px; }
 .preserved-cloud-field { display:none !important; }
 .issue-list, .action-list { display:grid; gap:10px; }
