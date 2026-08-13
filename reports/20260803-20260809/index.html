@@ -2049,6 +2049,71 @@ td { border-color:#dfe4ea; }
 })();
 </script><script>
 (function () {
+  function pageByTitle(title) {
+    var heading = Array.from(document.querySelectorAll('.page .section-title')).find(function (item) {
+      return item.textContent.trim() === title;
+    });
+    return heading && heading.closest('.page');
+  }
+  function shellAfter(heading) {
+    var node = heading && heading.nextElementSibling;
+    while (node && !node.matches('.ranking-shell')) node = node.nextElementSibling;
+    return node;
+  }
+  function setBrief(page, values) {
+    var brief = page && page.querySelector('.area-brief.employee-brief');
+    if (!brief) return;
+    Array.from(brief.querySelectorAll('b')).forEach(function (item, index) {
+      if (values[index] !== undefined) item.textContent = values[index];
+    });
+  }
+  function setRankChange(row, currentRank) {
+    if (!row || !row.children[2]) return;
+    var previousRank = Number(row.children[1].textContent.trim());
+    var change = Number.isFinite(previousRank) ? previousRank - currentRank : NaN;
+    row.children[2].innerHTML = Number.isFinite(change)
+      ? '<span class="' + (change >= 0 ? 'cg' : 'cr') + '">' + (change >= 0 ? '+' : '') + change + '</span>'
+      : '-';
+  }
+  var managerPage = pageByTitle('店长业绩排名');
+  var managerTable = managerPage && managerPage.querySelector('table[data-ranking-table="employee"]');
+  var managerRow = managerTable && Array.from(managerTable.tBodies[0].rows).find(function (row) {
+    return row.children[5] && row.children[5].textContent.trim() === '薛飘飘';
+  });
+  if (managerRow) {
+    var employeeRow = managerRow.cloneNode(true);
+    var areaEmployeeRow = managerRow.cloneNode(true);
+    managerRow.remove();
+    var alert = managerPage.querySelector('.alert');
+    if (alert) alert.textContent = '本页按本周角色口径展示：王艺从本周开始按店长处理，不进入店员排名。';
+    setBrief(managerPage, ['15', '¥66,392.25', '周坤琪', '¥11,207.05', '2']);
+
+    var employeePage = pageByTitle('店员全员排名：全品牌统一看优秀和短板');
+    var employeeTable = employeePage && employeePage.querySelector('table[data-ranking-table="employee"]');
+    if (employeeTable && !Array.from(employeeTable.tBodies[0].rows).some(function (row) { return row.children[5] && row.children[5].textContent.trim() === '薛飘飘'; })) {
+      setRankChange(employeeRow, 3);
+      employeeTable.tBodies[0].appendChild(employeeRow);
+    }
+    setBrief(employeePage, ['51', '¥364,553.56', '李紫琪', '¥18,454', '8']);
+
+    var areaHeading = Array.from(document.querySelectorAll('.section-title')).find(function (item) { return item.textContent.trim() === '3区店员排名'; });
+    var areaShell = shellAfter(areaHeading);
+    var areaTable = areaShell && areaShell.querySelector('table[data-ranking-table="employee"]');
+    if (areaTable && !Array.from(areaTable.tBodies[0].rows).some(function (row) { return row.children[5] && row.children[5].textContent.trim() === '薛飘飘'; })) {
+      setRankChange(areaEmployeeRow, 2);
+      areaTable.tBodies[0].appendChild(areaEmployeeRow);
+    }
+    var areaBrief = areaHeading && areaHeading.nextElementSibling;
+    if (areaBrief && areaBrief.matches('.area-brief.employee-brief')) {
+      Array.from(areaBrief.querySelectorAll('b')).forEach(function (item, index) {
+        var values = ['19', '¥130,493.61', '李紫琪', '¥18,454', '2'];
+        item.textContent = values[index];
+      });
+    }
+  }
+})();
+</script><script>
+(function () {
   var shells = Array.from(document.querySelectorAll('.ranking-shell'));
   function asNumber(value) {
     if (value === null || value === undefined || String(value).trim() === '') return Number.NEGATIVE_INFINITY;
