@@ -1729,7 +1729,7 @@ td { border-color:#dfe4ea; }
       panels.className = 'store-review-panels';
       var problemContent = document.createElement('div');
       problemContent.className = 'review-problem-content';
-      problemContent.append(buildMeetingQuestions(), next);
+      problemContent.append(next);
       panels.append(panel('上周承诺完成（回顾）', prior, 'prior'), panel('本周问题', problemContent, 'problem'), panel('本周计划', must, 'must'));
       var body = document.createElement('div');
       body.className = 'store-review-body';
