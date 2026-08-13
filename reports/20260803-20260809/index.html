@@ -2111,6 +2111,39 @@ td { border-color:#dfe4ea; }
       });
     }
   }
+  var managerNames = ['齐继风', '蔺海芬', '郭文字'];
+  var employeePageForManagers = pageByTitle('店员全员排名：全品牌统一看优秀和短板');
+  var employeeTableForManagers = employeePageForManagers && employeePageForManagers.querySelector('table[data-ranking-table="employee"]');
+  if (managerTable && employeeTableForManagers) {
+    managerNames.forEach(function (name) {
+      var sourceRow = Array.from(employeeTableForManagers.tBodies[0].rows).find(function (row) {
+        return row.children[5] && row.children[5].textContent.trim() === name;
+      });
+      if (!sourceRow) return;
+      var managerCopy = sourceRow.cloneNode(true);
+      if (name === '郭文字') managerCopy.children[5].innerHTML = '<b>郭文宇</b>';
+      managerTable.tBodies[0].appendChild(managerCopy);
+      sourceRow.remove();
+    });
+    var areaRoleCorrections = [
+      { title: '1区店员排名', names: ['齐继风', '蔺海芬'] },
+      { title: '3区店员排名', names: ['郭文字', '郭文宇'] }
+    ];
+    areaRoleCorrections.forEach(function (config) {
+      var page = pageByTitle(config.title);
+      var table = page && page.querySelector('table[data-ranking-table="employee"]');
+      if (!table) return;
+      Array.from(table.tBodies[0].rows).forEach(function (row) {
+        if (row.children[5] && config.names.indexOf(row.children[5].textContent.trim()) >= 0) row.remove();
+      });
+    });
+    setBrief(managerPage, ['18', '¥73,511.25', '周坤琪', '¥11,207.05', '2']);
+    setBrief(employeePageForManagers, ['48', '¥357,434.56', '李紫琪', '¥18,454', '8']);
+    setBrief(pageByTitle('1区店员排名'), ['12', '¥105,854.05', '谢航宇', '¥14,700.10', '2']);
+    setBrief(pageByTitle('3区店员排名'), ['18', '¥129,593.61', '李紫琪', '¥18,454', '2']);
+    var managerAlert = managerPage.querySelector('.alert');
+    if (managerAlert) managerAlert.textContent = '本页按本周角色口径展示店长人员；店长不进入店员排名。';
+  }
 })();
 </script><script>
 (function () {
