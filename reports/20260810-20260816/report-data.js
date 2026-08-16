@@ -39,14 +39,18 @@
     fetch('./current-week-data.json', { cache: 'no-store' }).then(function (response) {
       if (!response.ok) throw new Error('本周数据读取失败');
       return response.json();
+    }),
+    fetch('./employee-current-week.json', { cache: 'no-store' }).then(function (response) {
+      if (!response.ok) throw new Error('本周员工排名数据读取失败');
+      return response.json();
     })
   ]).then(function (result) {
-    window.setTimeout(function () { applyCurrentWeek(result[1]); }, 80);
+    window.setTimeout(function () { applyCurrentWeek(result[1], result[2]); }, 80);
   }).catch(function (error) {
     console.error(error);
   });
 
-  function applyCurrentWeek(source) {
+  function applyCurrentWeek(source, peopleSource) {
     var stores = source.stores || [];
     var storeMap = {};
     stores.forEach(function (store) { storeMap[store.name] = enrich(store); });
@@ -70,7 +74,7 @@
     updateClosureCards(storeMap);
     updateConclusions(brand, regions);
     updateHeaderScore();
-    markPeopleDataUnavailable();
+    updatePeopleRankings(peopleSource);
     document.documentElement.dataset.reportDataReady = 'true';
   }
 
@@ -435,17 +439,116 @@
     if (node) node.textContent = score.red + '/' + score.yellow + '/' + score.green;
   }
 
-  function markPeopleDataUnavailable() {
-    document.querySelectorAll('.page.employee-page').forEach(function (page) {
-      page.querySelectorAll('table tbody').forEach(function (tbody) { tbody.innerHTML = ''; });
+  function updatePeopleRankings(source) {
+    var employees = (source && source.employees || []).slice().sort(function (a, b) { return b.amount - a.amount; });
+    var pageForTitle = function (title) {
+      var heading = Array.from(document.querySelectorAll('.page .section-title')).find(function (item) {
+        return item.textContent.trim() === title;
+      });
+      return heading && heading.closest('.page');
+    };
+    var fullPage = pageForTitle('店员全员排名：全品牌统一看优秀和短板');
+    var fullTable = fullPage && fullPage.querySelector('table[data-ranking-table="employee"]');
+    var historicalAliases = { '李苗壮': '李茁壮', '张运博': '张运倩', '蒋雪梅': '蒋雪柯', '孙灼柱': '孙刘柱', '徐桃森': '徐彬森' };
+    var history = {};
+    if (fullTable) {
+      Array.from(fullTable.tBodies[0].rows).forEach(function (row) {
+        var name = row.children[5] && row.children[5].textContent.trim();
+        if (!name) return;
+        name = historicalAliases[name] || name;
+        history[name] = {
+          rank: number(row.children[0] && row.children[0].textContent),
+          region: row.children[3] && row.children[3].textContent.trim(),
+          amount: number(row.getAttribute('data-amount-current'))
+        };
+      });
+    }
+    var previousAreaRanks = {};
+    ['1区', '2区', '3区'].forEach(function (area) {
+      Object.keys(history).filter(function (name) { return history[name].region === area; })
+        .sort(function (a, b) { return Number(history[b].amount || 0) - Number(history[a].amount || 0); })
+        .forEach(function (name, index) { previousAreaRanks[area + '|' + name] = index + 1; });
+    });
+
+    function addNote(page, text, warning) {
+      if (!page) return;
       var old = page.querySelector('.current-week-source-note');
-      if (old) return;
+      if (old) old.remove();
       var note = document.createElement('div');
       note.className = 'current-week-source-note';
-      note.textContent = '8月10日-8月16日人员排名截图尚未提供，本页不沿用上周数据。';
-      note.style.cssText = 'margin:20px 0;padding:18px;border:1px solid #f3c98b;background:#fff8eb;color:#8a4b08;font-weight:800;';
+      note.textContent = text;
+      note.style.cssText = 'margin:14px 0;padding:12px 16px;border:1px solid ' + (warning ? '#f3c98b' : '#b8dfd2') + ';background:' + (warning ? '#fff8eb' : '#eef9f5') + ';color:' + (warning ? '#8a4b08' : '#145c49') + ';font-weight:800;';
       var guide = page.querySelector('.page-guide');
       if (guide) guide.insertAdjacentElement('afterend', note);
+    }
+
+    function rate(value, total) {
+      return total ? value / total * 100 : 0;
+    }
+
+    function rankCell(rank) {
+      if (rank === 1) return '<span class="rank-medal gold">金</span>';
+      if (rank === 2) return '<span class="rank-medal silver">银</span>';
+      if (rank === 3) return '<span class="rank-medal bronze">铜</span>';
+      return String(rank);
+    }
+
+    function render(page, rows, area) {
+      if (!page) return;
+      var table = page.querySelector('table[data-ranking-table="employee"]');
+      if (!table) return;
+      var headers = ['本周', '上周', '排名变化', '区域', '门店', '店员', '本周总金额', '本周完成率', '上周总金额', '金额增减', '续卡金额', '办卡/新签/续卡', '新签办卡率', '新签小卡率', '新签中卡率', '新签大卡率'];
+      Array.from(table.querySelectorAll('thead th')).forEach(function (header, index) {
+        if (headers[index]) header.textContent = headers[index];
+      });
+      var body = table.tBodies[0];
+      body.innerHTML = '';
+      rows.forEach(function (employee, index) {
+        var currentRank = index + 1;
+        var old = history[employee.name];
+        var previousRank = area ? previousAreaRanks[area + '|' + employee.name] : old && old.rank;
+        var previousAmount = old && old.amount;
+        var change = previousRank == null ? null : previousRank - currentRank;
+        var amountChange = previousAmount == null ? null : employee.amount - previousAmount;
+        var newTotal = employee.newSmall + employee.newMid + employee.newLarge;
+        var renewTotal = employee.renewSmall + employee.renewMid + employee.renewLarge;
+        var row = document.createElement('tr');
+        row.setAttribute('data-amount-current', employee.amount);
+        if (previousAmount != null) row.setAttribute('data-amount-previous', previousAmount);
+        row.innerHTML = '<td data-rank-cell>' + rankCell(currentRank) + '</td>' +
+          '<td>' + (previousRank == null ? '-' : previousRank) + '</td>' +
+          '<td>' + (change == null ? '-' : '<span class="' + (change >= 0 ? 'cg' : 'cr') + '">' + (change >= 0 ? '+' : '') + change + '</span>') + '</td>' +
+          '<td>' + employee.region + '</td><td>' + employee.store + '</td><td><b>' + employee.name + '</b></td>' +
+          '<td><span class="now">' + money(employee.amount) + '</span></td>' +
+          '<td><span class="' + (employee.completion >= 100 ? 'cg' : 'cr') + '">' + percent(employee.completion) + '</span></td>' +
+          '<td>' + (previousAmount == null ? '-' : money(previousAmount)) + '</td>' +
+          '<td>' + (amountChange == null ? '-' : '<span class="' + (amountChange >= 0 ? 'cg' : 'cr') + '">' + (amountChange >= 0 ? '+' : '-') + money(Math.abs(amountChange)) + '</span>') + '</td>' +
+          '<td>' + money(employee.renewAmount) + '</td>' +
+          '<td>' + employee.cardCount + '/' + newTotal + '/' + renewTotal + '</td>' +
+          '<td>' + percent(employee.newSignRate) + '</td>' +
+          '<td>' + percent(rate(employee.newSmall, newTotal)) + '</td>' +
+          '<td>' + percent(rate(employee.newMid, newTotal)) + '</td>' +
+          '<td>' + percent(rate(employee.newLarge, newTotal)) + '</td>';
+        body.appendChild(row);
+      });
+      var brief = page.querySelector('.area-brief.employee-brief');
+      if (brief) {
+        var top = rows[0];
+        var values = [rows.length, money(rows.reduce(function (sum, row) { return sum + row.amount; }, 0)), top ? top.name : '-', top ? money(top.amount) : '-', rows.filter(function (row) { return row.completion >= 100; }).length];
+        Array.from(brief.querySelectorAll('b')).forEach(function (node, index) { node.textContent = values[index]; });
+      }
+      addNote(page, '8月10日-8月16日员工排名已按用户截图原值更新；测试门店、非正式门店及已确认店长未计入。', false);
+    }
+
+    var managerPage = pageForTitle('店长业绩排名');
+    if (managerPage) {
+      managerPage.querySelectorAll('table tbody').forEach(function (body) { body.innerHTML = ''; });
+      addNote(managerPage, '8月10日-8月16日店长独立排名截图尚未提供，本页不沿用上周数据。', true);
+    }
+    render(fullPage, employees, '');
+    ['1区', '2区', '3区'].forEach(function (area) {
+      var areaPage = pageForTitle(area + '店员排名');
+      render(areaPage, employees.filter(function (employee) { return employee.region === area; }), area);
     });
   }
 })();

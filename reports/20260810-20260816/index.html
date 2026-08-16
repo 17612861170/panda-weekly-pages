@@ -2160,22 +2160,22 @@ td { border-color:#dfe4ea; }
     var end = endInput ? endInput.value : '';
     if (!start || !end) return { period: 'unavailable', note: '请选择完整的起止日期；没有完整日期时不展示数据' };
     if (start > end) return { period: 'unavailable', note: '起止日期顺序无效，请重新选择' };
-    var currentStart = '2026-08-03';
-    var currentEnd = '2026-08-09';
-    var previousStart = '2026-07-27';
-    var previousEnd = '2026-08-02';
+    var currentStart = '2026-08-10';
+    var currentEnd = '2026-08-16';
+    var previousStart = '2026-08-03';
+    var previousEnd = '2026-08-09';
     var monthStart = '2026-08-01';
-    var monthEnd = '2026-08-10';
-    if (start === monthStart && end === monthEnd) return { period: 'month', note: '自定义范围匹配月至今快照（8/1-8/10）' };
-    if (start === currentStart && end === currentEnd) return { period: 'current', note: '自定义范围匹配本周周汇总（8/3-8/9）' };
-    if (start === previousStart && end === previousEnd) return { period: 'previous', note: '自定义范围匹配上周周汇总（7/27-8/2）' };
+    var monthEnd = '2026-08-16';
+    if (start === monthStart && end === monthEnd) return { period: 'month', note: '自定义范围匹配月至今快照（8/1-8/16）' };
+    if (start === currentStart && end === currentEnd) return { period: 'current', note: '自定义范围匹配本周周汇总（8/10-8/16）' };
+    if (start === previousStart && end === previousEnd) return { period: 'previous', note: '自定义范围匹配上周周汇总（8/3-8/9）' };
     return { period: 'unavailable', note: '该日期范围没有逐日原始数据，不能用周汇总冒充' };
   }
   function periodForSelection(period, toolbar) {
     if (period === 'custom') return periodForCustom(toolbar);
-    if (period === 'month') return { period: 'month', note: '显示真实月至今快照（8/1-8/10）' };
-    if (period === 'previous') return { period: 'previous', note: '显示上周周汇总（7/27-8/2）' };
-    return { period: 'current', note: '显示本周周汇总（8/3-8/9）' };
+    if (period === 'month') return { period: 'month', note: '显示真实月至今快照（8/1-8/16）' };
+    if (period === 'previous') return { period: 'previous', note: '显示上周周汇总（8/3-8/9）' };
+    return { period: 'current', note: '显示本周周汇总（8/10-8/16）' };
   }
   var metricHeaderNames = {
     revenue: '营收',
