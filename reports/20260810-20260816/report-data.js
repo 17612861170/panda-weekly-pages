@@ -83,15 +83,15 @@
     result.completion = ratio(store.revenue, store.target);
     result.newSmallRate = ratio(store.newSmall, store.newCardCount);
     result.newMidRate = ratio(store.newMid, store.newCardCount);
-    result.newLargeRate = ratio(store.newLarge, store.newCardCount);
+    result.newLargeRate = store.newLargeRateOverride == null ? ratio(store.newLarge, store.newCardCount) : Number(store.newLargeRateOverride);
     result.newMidLargeRate = ratio(store.newMid + store.newLarge, store.newCardCount);
     result.renewSmallRate = ratio(store.renewSmall, store.renewCount);
     result.renewMidRate = ratio(store.renewMid, store.renewCount);
-    result.renewLargeRate = ratio(store.renewLarge, store.renewCount);
-    result.renewShare = ratio(store.renewAmount, store.revenue);
-    result.trafficShare = ratio(store.trafficAmount, store.newCardAmount);
+    result.renewLargeRate = store.renewLargeRateOverride == null ? ratio(store.renewLarge, store.renewCount) : Number(store.renewLargeRateOverride);
+    result.renewShare = store.renewShareOverride == null ? ratio(store.renewAmount, store.revenue) : Number(store.renewShareOverride);
+    result.trafficShare = store.trafficShareOverride == null ? ratio(store.trafficAmount, store.newCardAmount) : Number(store.trafficShareOverride);
     result.sweepShare = ratio(store.sweepAmount, store.newCardAmount);
-    result.overallLargeRate = ratio(store.newMid + store.newLarge + store.renewMid + store.renewLarge, store.cardCount);
+    result.overallLargeRate = store.overallLargeRateOverride == null ? ratio(store.newMid + store.newLarge + store.renewMid + store.renewLarge, store.cardCount) : Number(store.overallLargeRateOverride);
     return result;
   }
 
