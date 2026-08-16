@@ -510,8 +510,11 @@
         var previousAmount = old && old.amount;
         var change = previousRank == null ? null : previousRank - currentRank;
         var amountChange = previousAmount == null ? null : employee.amount - previousAmount;
-        var newTotal = employee.newSmall + employee.newMid + employee.newLarge;
-        var renewTotal = employee.renewSmall + employee.renewMid + employee.renewLarge;
+        var newTotal = employee.newCardCount == null ? Number(employee.newSmall || 0) + Number(employee.newMid || 0) + Number(employee.newLarge || 0) : employee.newCardCount;
+        var renewTotal = employee.renewCount == null ? Number(employee.renewSmall || 0) + Number(employee.renewMid || 0) + Number(employee.renewLarge || 0) : employee.renewCount;
+        var newSmallRate = Object.prototype.hasOwnProperty.call(employee, 'newSmallRate') ? employee.newSmallRate : rate(employee.newSmall, newTotal);
+        var newMidRate = Object.prototype.hasOwnProperty.call(employee, 'newMidRate') ? employee.newMidRate : rate(employee.newMid, newTotal);
+        var newLargeRate = Object.prototype.hasOwnProperty.call(employee, 'newLargeRate') ? employee.newLargeRate : rate(employee.newLarge, newTotal);
         var row = document.createElement('tr');
         row.setAttribute('data-amount-current', employee.amount);
         if (previousAmount != null) row.setAttribute('data-amount-previous', previousAmount);
@@ -526,9 +529,9 @@
           '<td>' + money(employee.renewAmount) + '</td>' +
           '<td>' + employee.cardCount + '/' + newTotal + '/' + renewTotal + '</td>' +
           '<td>' + percent(employee.newSignRate) + '</td>' +
-          '<td>' + percent(rate(employee.newSmall, newTotal)) + '</td>' +
-          '<td>' + percent(rate(employee.newMid, newTotal)) + '</td>' +
-          '<td>' + percent(rate(employee.newLarge, newTotal)) + '</td>';
+          '<td>' + percent(newSmallRate) + '</td>' +
+          '<td>' + percent(newMidRate) + '</td>' +
+          '<td>' + percent(newLargeRate) + '</td>';
         body.appendChild(row);
       });
       var brief = page.querySelector('.area-brief.employee-brief');
