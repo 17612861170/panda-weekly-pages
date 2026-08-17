@@ -546,8 +546,10 @@
 
     var managerPage = pageForTitle('店长业绩排名');
     if (managerPage) {
-      managerPage.querySelectorAll('table tbody').forEach(function (body) { body.innerHTML = ''; });
-      addNote(managerPage, '8月10日-8月16日店长独立排名截图尚未提供，本页不沿用上周数据。', true);
+      var oldManagerNote = managerPage.querySelector('.current-week-source-note');
+      if (oldManagerNote) oldManagerNote.remove();
+      var managerAlert = managerPage.querySelector('.alert');
+      if (managerAlert) managerAlert.textContent = '本页按本周角色口径展示店长人员；店长不进入店员排名。';
     }
     render(fullPage, employees, '');
     ['1区', '2区', '3区'].forEach(function (area) {
