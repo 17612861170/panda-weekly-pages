@@ -36,11 +36,11 @@
 
   Promise.all([
     ready(),
-    fetch('./current-week-data.json?v=20260817-new-customers-v2', { cache: 'no-store' }).then(function (response) {
+    fetch('./current-week-data.json?v=20260817-source-rules-v1', { cache: 'no-store' }).then(function (response) {
       if (!response.ok) throw new Error('本周数据读取失败');
       return response.json();
     }),
-    fetch('./employee-current-week.json', { cache: 'no-store' }).then(function (response) {
+    fetch('./employee-current-week.json?v=20260817-source-rules-v1', { cache: 'no-store' }).then(function (response) {
       if (!response.ok) throw new Error('本周员工排名数据读取失败');
       return response.json();
     })
@@ -546,7 +546,7 @@
     if (managerPage) {
       var managerAlert = managerPage.querySelector('.alert');
       if (managerAlert) managerAlert.textContent = '店长排名只使用8月10日-8月16日店长截图数据，不沿用旧周数据。';
-      render(managerPage, managers, '', '店长', managers.length ? '8月10日-8月16日店长排名已按本周截图原值更新。' : '8月10日-8月16日店长独立排名截图尚未录入，本页不沿用上周或旧数据。', !managers.length);
+      render(managerPage, managers, '', '店长', managers.length ? '8月10日-8月16日店长排名已按本周截图原值更新。' : '本周截图未提供：店长独立排名未用飞书、旧页面或上周数据补充。', !managers.length);
     }
     render(fullPage, employees, '', '店员');
     ['1区', '2区', '3区'].forEach(function (area) {
