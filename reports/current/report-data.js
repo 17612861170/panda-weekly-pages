@@ -36,7 +36,7 @@
 
   Promise.all([
     ready(),
-    fetch('./current-week-data.json', { cache: 'no-store' }).then(function (response) {
+    fetch('./current-week-data.json?v=20260817-new-customers-v2', { cache: 'no-store' }).then(function (response) {
       if (!response.ok) throw new Error('本周数据读取失败');
       return response.json();
     }),
