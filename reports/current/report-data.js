@@ -512,11 +512,62 @@
   }
 
   function updatePeopleRankings(source) {
-    var confirmedManagers = { '齐继风': true, '蔺海芬': true, '郭文宇': true, '郭文字': true };
+    function normalizeName(name) {
+      return name === '郭文字' ? '郭文宇' : name;
+    }
+    var managerRoster = [
+      { previousRank: 1, region: '3区', store: '武汉荟聚', name: '周坤琪', previousAmount: 11207.05 },
+      { previousRank: 2, region: '2区', store: '洛阳泉舜', name: '王若涵', previousAmount: 8711 },
+      { previousRank: 3, region: '2区', store: '焦作万达', name: '张强', previousAmount: 5764 },
+      { previousRank: 4, region: '1区', store: '南阳万达', name: '王佳婷', previousAmount: 5485 },
+      { previousRank: 5, region: '1区', store: '南阳吾悦', name: '齐继风', previousAmount: 5207 },
+      { previousRank: 6, region: '1区', store: '襄阳高新万达', name: '王爽', previousAmount: 4581 },
+      { previousRank: 7, region: '3区', store: '安阳滑县吾悦', name: '汤明放', previousAmount: 4264 },
+      { previousRank: 8, region: '2区', store: '周口万达', name: '杨宁可', previousAmount: 3554 },
+      { previousRank: 9, region: '2区', store: '新乡万达', name: '贵诗涵', previousAmount: 3477 },
+      { previousRank: 10, region: '3区', store: '郑州中原万达', name: '王嘉琦', previousAmount: 3213.90 },
+      { previousRank: 11, region: '3区', store: '武汉武昌万象城', name: '王艺', previousAmount: 3148 },
+      { previousRank: 12, region: '2区', store: '郑州信万', name: '司聪慧', previousAmount: 3000 },
+      { previousRank: 13, region: '2区', store: '洛阳中州万达', name: '霍亭芮', previousAmount: 2738 },
+      { previousRank: 14, region: '3区', store: '郑州二七万象城', name: '郑金原', previousAmount: 2550 },
+      { previousRank: 15, region: '3区', store: '开封万达', name: '卢嘉诺', previousAmount: 2473.20 },
+      { previousRank: 16, region: '1区', store: '信阳万达', name: '胡功海', previousAmount: 2226.10 },
+      { previousRank: 17, region: '1区', store: '南阳吾悦', name: '蔺海芬', previousAmount: 1012 },
+      { previousRank: 18, region: '3区', store: '郑州美盛天街', name: '郭文宇', previousAmount: 900 }
+    ];
+    var confirmedManagers = managerRoster.reduce(function (map, person) {
+      map[person.name] = true;
+      return map;
+    }, { '齐继风': true, '蔺海芬': true, '郭文宇': true, '郭文字': true });
     var allPeople = (source && source.employees || []).map(function (person) {
-      return Object.assign({}, person, { name: person.name === '郭文字' ? '郭文宇' : person.name });
+      return Object.assign({}, person, { name: normalizeName(person.name) });
     }).sort(function (a, b) { return b.amount - a.amount; });
-    var managers = allPeople.filter(function (person) { return person.role === 'manager' || confirmedManagers[person.name]; });
+    var currentByName = {};
+    allPeople.forEach(function (person) {
+      if (!currentByName[person.name]) currentByName[person.name] = person;
+    });
+    var seenManagers = {};
+    var managers = managerRoster.map(function (person) {
+      var current = currentByName[person.name];
+      seenManagers[person.name] = true;
+      return Object.assign({}, current || {}, person, {
+        region: current && current.region || person.region,
+        store: current && current.store || person.store,
+        missingCurrent: !current
+      });
+    });
+    allPeople.forEach(function (person) {
+      if ((person.role === 'manager' || confirmedManagers[person.name]) && !seenManagers[person.name]) {
+        seenManagers[person.name] = true;
+        managers.push(Object.assign({}, person, { previousAmount: null, previousRank: null, missingCurrent: false }));
+      }
+    });
+    managers.sort(function (a, b) {
+      if (!a.missingCurrent && !b.missingCurrent) return Number(b.amount || 0) - Number(a.amount || 0);
+      if (!a.missingCurrent) return -1;
+      if (!b.missingCurrent) return 1;
+      return Number(a.previousRank || 999) - Number(b.previousRank || 999);
+    });
     var employees = allPeople.filter(function (person) { return person.role !== 'manager' && !confirmedManagers[person.name]; });
     var pageForTitle = function (title) {
       var heading = Array.from(document.querySelectorAll('.page .section-title')).find(function (item) {
@@ -532,7 +583,7 @@
       Array.from(fullTable.tBodies[0].rows).forEach(function (row) {
         var name = row.children[5] && row.children[5].textContent.trim();
         if (!name) return;
-        name = historicalAliases[name] || name;
+        name = normalizeName(historicalAliases[name] || name);
         history[name] = {
           rank: number(row.children[0] && row.children[0].textContent),
           region: row.children[3] && row.children[3].textContent.trim(),
@@ -581,40 +632,42 @@
       var body = table.tBodies[0];
       body.innerHTML = '';
       rows.forEach(function (employee, index) {
-        var currentRank = index + 1;
+        var hasCurrent = !employee.missingCurrent && Number.isFinite(Number(employee.amount));
+        var currentRank = hasCurrent ? index + 1 : null;
         var old = history[employee.name];
-        var previousRank = area ? previousAreaRanks[area + '|' + employee.name] : old && old.rank;
-        var previousAmount = old && old.amount;
-        var change = previousRank == null ? null : previousRank - currentRank;
-        var amountChange = previousAmount == null ? null : employee.amount - previousAmount;
+        var previousRank = employee.previousRank != null ? employee.previousRank : area ? previousAreaRanks[area + '|' + employee.name] : old && old.rank;
+        var previousAmount = employee.previousAmount != null ? employee.previousAmount : old && old.amount;
+        var change = !hasCurrent || previousRank == null ? null : previousRank - currentRank;
+        var amountChange = !hasCurrent || previousAmount == null ? null : employee.amount - previousAmount;
         var newTotal = employee.newCardCount == null ? Number(employee.newSmall || 0) + Number(employee.newMid || 0) + Number(employee.newLarge || 0) : employee.newCardCount;
         var renewTotal = employee.renewCount == null ? Number(employee.renewSmall || 0) + Number(employee.renewMid || 0) + Number(employee.renewLarge || 0) : employee.renewCount;
         var newSmallRate = Object.prototype.hasOwnProperty.call(employee, 'newSmallRate') ? employee.newSmallRate : rate(employee.newSmall, newTotal);
         var newMidRate = Object.prototype.hasOwnProperty.call(employee, 'newMidRate') ? employee.newMidRate : rate(employee.newMid, newTotal);
         var newLargeRate = Object.prototype.hasOwnProperty.call(employee, 'newLargeRate') ? employee.newLargeRate : rate(employee.newLarge, newTotal);
         var row = document.createElement('tr');
-        row.setAttribute('data-amount-current', employee.amount);
+        if (hasCurrent) row.setAttribute('data-amount-current', employee.amount);
         if (previousAmount != null) row.setAttribute('data-amount-previous', previousAmount);
-        row.innerHTML = '<td data-rank-cell>' + rankCell(currentRank) + '</td>' +
+        row.innerHTML = '<td data-rank-cell>' + (currentRank == null ? '-' : rankCell(currentRank)) + '</td>' +
           '<td>' + (previousRank == null ? '-' : previousRank) + '</td>' +
           '<td>' + (change == null ? '-' : '<span class="' + (change >= 0 ? 'cg' : 'cr') + '">' + (change >= 0 ? '+' : '') + change + '</span>') + '</td>' +
           '<td>' + employee.region + '</td><td>' + employee.store + '</td><td><b>' + employee.name + '</b></td>' +
-          '<td><span class="now">' + money(employee.amount) + '</span></td>' +
-          '<td><span class="' + (employee.completion >= 100 ? 'cg' : 'cr') + '">' + percent(employee.completion) + '</span></td>' +
+          '<td>' + (hasCurrent ? '<span class="now">' + money(employee.amount) + '</span>' : '<span class="muted">本周截图未提供</span>') + '</td>' +
+          '<td>' + (hasCurrent ? '<span class="' + (employee.completion >= 100 ? 'cg' : 'cr') + '">' + percent(employee.completion) + '</span>' : '-') + '</td>' +
           '<td>' + (previousAmount == null ? '-' : money(previousAmount)) + '</td>' +
           '<td>' + (amountChange == null ? '-' : '<span class="' + (amountChange >= 0 ? 'cg' : 'cr') + '">' + (amountChange >= 0 ? '+' : '-') + money(Math.abs(amountChange)) + '</span>') + '</td>' +
-          '<td>' + money(employee.renewAmount) + '</td>' +
-          '<td>' + employee.cardCount + '/' + newTotal + '/' + renewTotal + '</td>' +
-          '<td>' + percent(employee.newSignRate) + '</td>' +
-          '<td>' + percent(newSmallRate) + '</td>' +
-          '<td>' + percent(newMidRate) + '</td>' +
-          '<td>' + percent(newLargeRate) + '</td>';
+          '<td>' + (hasCurrent ? money(employee.renewAmount) : '-') + '</td>' +
+          '<td>' + (hasCurrent ? employee.cardCount + '/' + newTotal + '/' + renewTotal : '-') + '</td>' +
+          '<td>' + (hasCurrent ? percent(employee.newSignRate) : '-') + '</td>' +
+          '<td>' + (hasCurrent ? percent(newSmallRate) : '-') + '</td>' +
+          '<td>' + (hasCurrent ? percent(newMidRate) : '-') + '</td>' +
+          '<td>' + (hasCurrent ? percent(newLargeRate) : '-') + '</td>';
         body.appendChild(row);
       });
       var brief = page.querySelector('.area-brief.employee-brief');
       if (brief) {
-        var top = rows[0];
-        var values = [rows.length, money(rows.reduce(function (sum, row) { return sum + row.amount; }, 0)), top ? top.name : '-', top ? money(top.amount) : '-', rows.filter(function (row) { return row.completion >= 100; }).length];
+        var currentRows = rows.filter(function (row) { return !row.missingCurrent && Number.isFinite(Number(row.amount)); });
+        var top = currentRows[0];
+        var values = [rows.length, money(currentRows.reduce(function (sum, row) { return sum + Number(row.amount || 0); }, 0)), top ? top.name : '-', top ? money(top.amount) : '-', currentRows.filter(function (row) { return row.completion >= 100; }).length];
         Array.from(brief.querySelectorAll('b')).forEach(function (node, index) { node.textContent = values[index]; });
       }
       addNote(page, noteText || '8月10日-8月16日员工排名已按用户截图原值更新；测试门店、非正式门店及已确认店长未计入。', warning);
@@ -623,8 +676,8 @@
     var managerPage = pageForTitle('店长业绩排名');
     if (managerPage) {
       var managerAlert = managerPage.querySelector('.alert');
-      if (managerAlert) managerAlert.textContent = '店长排名只使用8月10日-8月16日店长截图数据，不沿用旧周数据。';
-      render(managerPage, managers, '', '店长', managers.length ? '8月10日-8月16日店长排名已按本周截图原值更新。' : '本周截图未提供：店长独立排名未用飞书、旧页面或上周数据补充。', !managers.length);
+      if (managerAlert) managerAlert.textContent = '店长名单沿用上周固定链接完整名单；本周有截图则更新，未提供截图不使用旧数据冒充。';
+      render(managerPage, managers, '', '店长', '店长名单已补全；本周截图未提供的人员标注为“本周截图未提供”。', false);
     }
     render(fullPage, employees, '', '店员');
     ['1区', '2区', '3区'].forEach(function (area) {
