@@ -2484,6 +2484,32 @@ td { border-color:#dfe4ea; }
   function updateAllStatuses(text, state) {
     ['1区', '2区', '3区'].forEach(function (area) { updateStatus(area, text, state); });
   }
+  function rowFilter(payload) {
+    return '?report_id=eq.' + encodeURIComponent(payload.report_id)
+      + '&area=eq.' + encodeURIComponent(payload.area)
+      + '&store=eq.' + encodeURIComponent(payload.store)
+      + '&field=eq.' + encodeURIComponent(payload.field);
+  }
+  function writeExistingCell(payload) {
+    return fetch(tableUrl + rowFilter(payload) + '&select=updated_at', {
+      method: 'PATCH',
+      headers: headers({ Prefer: 'return=representation' }),
+      body: JSON.stringify({ value: payload.value })
+    }).then(function (response) {
+      if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
+      return response.json();
+    });
+  }
+  function insertCell(payload) {
+    return fetch(tableUrl + '?on_conflict=report_id,area,store,field', {
+      method: 'POST',
+      headers: headers({ Prefer: 'resolution=merge-duplicates,return=representation' }),
+      body: JSON.stringify(payload)
+    }).then(function (response) {
+      if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
+      return response.json();
+    });
+  }
   function upsertCell(cell) {
     var key = keyFor(cell);
     var payload = {
@@ -2495,20 +2521,15 @@ td { border-color:#dfe4ea; }
     };
     pending[key] = true;
     updateStatus(payload.area, '正在保存到共享云端...', 'saving');
-    return fetch(tableUrl + '?on_conflict=report_id,area,store,field', {
-      method: 'POST',
-      headers: headers({ Prefer: 'resolution=merge-duplicates,return=representation' }),
-      body: JSON.stringify(payload)
-    }).then(function (response) {
-      if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
-      return response.json();
-    }).then(function (rows) {
+    var write = cloudRows[key] ? writeExistingCell(payload) : insertCell(payload);
+    return write.then(function (rows) {
       var row = rows && rows[0];
       cloudRows[key] = row && row.updated_at ? row.updated_at : new Date().toISOString();
       updateStatus(payload.area, '已云端保存 ' + clock() + ' · 所有人可见', 'saved');
     }).catch(function (error) {
       console.error('云端保存失败', error);
-      updateStatus(payload.area, '云端保存失败 · 已暂存在本机', 'error');
+      var message = String(error && error.message || '');
+      updateStatus(payload.area, /row-level security|42501/.test(message) ? '云端新增权限未开 · 本次内容未共享' : '云端保存失败 · 本次内容未共享', 'error');
     }).finally(function () { delete pending[key]; });
   }
   function scheduleSave(cell, immediate) {
@@ -2573,7 +2594,7 @@ td { border-color:#dfe4ea; }
       if (!Object.keys(pending).length) updateAllStatuses('共享云端已同步 ' + clock(), 'saved');
     }).catch(function (error) {
       console.error('云端同步失败', error);
-      updateAllStatuses('云端连接失败 · 当前仅本机暂存', 'error');
+      updateAllStatuses('云端连接失败 · 填写内容暂不能共享', 'error');
     });
   }
   function registerCell(cell) {
@@ -2590,8 +2611,15 @@ td { border-color:#dfe4ea; }
       }
     });
   }
-  Array.from(document.querySelectorAll(cellSelector)).forEach(registerCell);
+  function registerAllCells() {
+    Array.from(document.querySelectorAll(cellSelector)).forEach(registerCell);
+  }
+  registerAllCells();
   window.registerWeeklyCloudCell = registerCell;
+  window.refreshWeeklyCloud = function () {
+    registerAllCells();
+    return refreshCloud(false);
+  };
   updateAllStatuses('正在连接共享云端...', 'saving');
   refreshCloud(true);
   refreshActionHistory();
@@ -2599,6 +2627,7 @@ td { border-color:#dfe4ea; }
   window.setInterval(function () { if (!document.hidden) refreshActionHistory(); }, 15000);
   window.addEventListener('online', function () { refreshCloud(false); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) refreshCloud(false); });
+  window.addEventListener('weekly-report-data-ready', function () { window.refreshWeeklyCloud(); });
 })();
 </script><script>
 (function () {
@@ -2853,6 +2882,6 @@ td { border-color:#dfe4ea; }
 })();
 </script>
 <script src="../month-snapshot-20260801-20260816.js?v=20260817-screenshot-priority-v8"></script>
-<script src="./report-data.js?v=20260818-ranking-refresh-v23"></script>
+<script src="./report-data.js?v=20260818-cloud-sync-v24"></script>
 
 </body></html>

@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260818-ranking-refresh-v23';
+  var DATA_VERSION = '20260818-cloud-sync-v24';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -495,10 +495,20 @@
       var highlight = section.querySelector('[data-edit-field="conclusion_highlight"]');
       var action = section.querySelector('[data-edit-field="conclusion_action"]');
       var bad = ['完成率', '新签中大卡率', '续卡占比', '总引流占比', '扫楼占比', '整体大卡率'].filter(function (label) { return isBad(entity, label); });
-      if (problem) problem.textContent = bad.slice(0, 3).map(function (label) { return label + metricValue(entity, label); }).join('；') + '。';
-      if (highlight) highlight.textContent = '本周营收' + money(entity.revenue) + '；续卡金额' + money(entity.renewAmount) + '；总引流金额' + money(entity.trafficAmount) + '。';
-      if (action) action.textContent = '优先处理' + bad.slice(0, 2).join('和') + '，拆到门店、责任人和每日验收节点。';
+      setGeneratedConclusion(problem, bad.slice(0, 3).map(function (label) { return label + metricValue(entity, label); }).join('；') + '。');
+      setGeneratedConclusion(highlight, '本周营收' + money(entity.revenue) + '；续卡金额' + money(entity.renewAmount) + '；总引流金额' + money(entity.trafficAmount) + '。');
+      setGeneratedConclusion(action, '优先处理' + bad.slice(0, 2).join('和') + '，拆到门店、责任人和每日验收节点。');
     });
+    window.dispatchEvent(new CustomEvent('weekly-report-data-ready'));
+  }
+
+  function setGeneratedConclusion(node, text) {
+    if (!node) return;
+    var current = node.textContent.trim();
+    if (current && node.dataset.generatedConclusion !== 'true') return;
+    node.textContent = text;
+    node.dataset.generatedConclusion = 'true';
+    node.addEventListener('input', function () { node.dataset.generatedConclusion = 'false'; }, { once: true });
   }
 
   function updateHeaderScore() {
