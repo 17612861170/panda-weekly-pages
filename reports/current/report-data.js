@@ -96,11 +96,11 @@
   }
 
   function aggregate(rows, name, target) {
-    var fields = ['revenue', 'customers', 'consumption', 'recharge', 'members', 'casual', 'cardCount', 'cardAmount',
+    var fields = ['revenue', 'customers', 'newCustomers', 'oldCustomers', 'consumption', 'recharge', 'members', 'casual', 'cardCount', 'cardAmount',
       'newCardCount', 'newCardAmount', 'newSmall', 'newMid', 'newLarge', 'renewCount', 'renewAmount',
       'renewSmall', 'renewMid', 'renewLarge', 'partTimeVisits', 'trafficCount', 'trafficAmount', 'stairCount',
       'stairAmount', 'sweepCount', 'sweepAmount', 'otherTraffic', 'managerConfirmed', 'salary'];
-    var result = { name: name, target: target, stores: rows.length, newCustomers: null, oldCustomers: null, newSignRate: null, renewRate: null };
+    var result = { name: name, target: target, stores: rows.length, newSignRate: null, renewRate: null };
     fields.forEach(function (field) {
       result[field] = rows.reduce(function (sum, row) { return sum + Number(row[field] || 0); }, 0);
     });
@@ -201,8 +201,8 @@
     cells[0].querySelector('b').textContent = area.stores;
     cells[1].querySelector('b').textContent = money(area.revenue);
     cells[1].querySelector('em').textContent = percent(area.completion);
-    cells[2].querySelector('b').textContent = '—';
-    cells[2].querySelector('span').textContent = '新客数未提供';
+    cells[2].querySelector('b').textContent = integer(area.newCustomers);
+    cells[2].querySelector('span').textContent = '新客数';
     var ratings = { red: 0, yellow: 0, green: 0 };
     Object.keys(storeMap).forEach(function (name) {
       if (storeMap[name].region !== area.name) return;
@@ -301,7 +301,7 @@
       revenue: entity.revenue, completion: entity.completion, newRate: entity.newSignRate,
       renewAmount: entity.renewAmount, renewShare: entity.renewShare, renewRate: entity.renewRate,
       newSmallRate: entity.newSmallRate, newMidLargeRate: entity.newMidLargeRate,
-      traffic: entity.trafficAmount, trafficShare: entity.trafficShare, newCustomers: null
+      traffic: entity.trafficAmount, trafficShare: entity.trafficShare, newCustomers: entity.newCustomers
     };
     Object.keys(fields).forEach(function (key) {
       var currentAttr = camelToData(key) + '-current';
@@ -364,7 +364,6 @@
         var current = metricValue(store, label);
         if (current == null) return;
         var previous = priorSupport[store.name] && priorSupport[store.name][label] || '—';
-        if (label === '新客数' || label === '老客数') current = '—';
         valueNode.textContent = previous + ' → ' + current;
         deltaNode.textContent = delta(previous, current, label);
         metric.classList.toggle('is-bad', isBad(store, label));
