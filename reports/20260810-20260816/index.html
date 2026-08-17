@@ -2415,6 +2415,10 @@ td { border-color:#dfe4ea; }
   var cloudRows = {};
   var pending = {};
   var timers = {};
+  var syncDocPrefix = '__PANDA_WEEKLY_SYNC_DOC_V1__';
+  var syncDocAnchor = { report_id: reportId, area: '2区', store: '洛阳泉舜', field: 'question' };
+  var syncDocAnchorKey = [syncDocAnchor.area, syncDocAnchor.store, syncDocAnchor.field].join('|');
+  var syncDoc = { enabled: false, values: {}, updatedAt: '', saving: false };
   var localSaved = {};
   try { localSaved = JSON.parse(window.localStorage.getItem(storageKey) || '{}'); } catch (error) { localSaved = {}; }
   function keyFor(cell) { return [cell.dataset.editArea, cell.dataset.editStore, cell.dataset.editField].join('|'); }
@@ -2510,8 +2514,108 @@ td { border-color:#dfe4ea; }
       return response.json();
     });
   }
+  function parseSyncDoc(value) {
+    var text = String(value || '');
+    if (text.indexOf(syncDocPrefix) !== 0) return null;
+    try {
+      var parsed = JSON.parse(text.slice(syncDocPrefix.length));
+      if (!parsed || parsed.reportId !== reportId || !parsed.values) return null;
+      return parsed;
+    } catch (error) {
+      return null;
+    }
+  }
+  function encodeSyncDoc(values) {
+    return syncDocPrefix + JSON.stringify({
+      version: 1,
+      reportId: reportId,
+      updatedAt: new Date().toISOString(),
+      values: values || {}
+    });
+  }
+  function valuesFromPage() {
+    var values = {};
+    cells.forEach(function (cell) { values[keyFor(cell)] = valueFor(cell); });
+    return values;
+  }
+  function patchSyncDoc(values) {
+    syncDoc.saving = true;
+    return writeExistingCell(Object.assign({}, syncDocAnchor, {
+      value: encodeSyncDoc(values),
+      updated_at: new Date().toISOString()
+    })).then(function (rows) {
+      var row = rows && rows[0];
+      syncDoc.enabled = true;
+      syncDoc.values = Object.assign({}, values);
+      syncDoc.updatedAt = row && row.updated_at ? row.updated_at : new Date().toISOString();
+      cloudRows[syncDocAnchorKey] = syncDoc.updatedAt;
+      return rows;
+    }).finally(function () {
+      syncDoc.saving = false;
+    });
+  }
+  function querySyncDoc() {
+    var query = rowFilter(syncDocAnchor) + '&select=value,updated_at&limit=1';
+    return fetch(tableUrl + query, { headers: headers() }).then(function (response) {
+      if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
+      return response.json();
+    }).then(function (rows) {
+      var row = rows && rows[0];
+      var parsed = row && parseSyncDoc(row.value);
+      if (!parsed) return null;
+      return { values: parsed.values || {}, updatedAt: row.updated_at || parsed.updatedAt || '' };
+    });
+  }
+  function applySyncValues(values, updatedAt) {
+    Object.keys(values || {}).forEach(function (key) {
+      var cell = cellsByKey[key];
+      if (!cell || pending[key] || document.activeElement === cell) return;
+      setValue(cell, String(values[key] || ''));
+      saveLocal(key, String(values[key] || ''));
+      cloudRows[key] = updatedAt || syncDoc.updatedAt || '';
+    });
+  }
+  function ensureSyncDoc(rows) {
+    var anchorRow = (rows || []).find(function (row) {
+      return [row.area, row.store, row.field].join('|') === syncDocAnchorKey;
+    });
+    var parsed = anchorRow && parseSyncDoc(anchorRow.value);
+    if (parsed) {
+      syncDoc.enabled = true;
+      syncDoc.values = Object.assign({}, parsed.values || {});
+      syncDoc.updatedAt = anchorRow.updated_at || parsed.updatedAt || '';
+      cloudRows[syncDocAnchorKey] = syncDoc.updatedAt;
+      return Promise.resolve(syncDoc);
+    }
+    var values = valuesFromPage();
+    (rows || []).forEach(function (row) {
+      values[[row.area, row.store, row.field].join('|')] = String(row.value || '');
+    });
+    if (!anchorRow) return Promise.resolve(syncDoc);
+    return patchSyncDoc(values).catch(function (error) {
+      console.error('整页同步文档初始化失败', error);
+      return syncDoc;
+    });
+  }
+  function saveSyncDocValue(cell) {
+    var key = keyFor(cell);
+    var area = cell.dataset.editArea;
+    pending[key] = true;
+    updateStatus(area, '正在保存到共享云端...', 'saving');
+    return querySyncDoc().then(function (latest) {
+      var values = latest && latest.values ? Object.assign({}, latest.values) : Object.assign(valuesFromPage(), syncDoc.values || {});
+      values[key] = valueFor(cell);
+      return patchSyncDoc(values);
+    }).then(function () {
+      updateStatus(area, '已云端保存 ' + clock() + ' · 所有人可见', 'saved');
+    }).catch(function (error) {
+      console.error('整页云端保存失败', error);
+      updateStatus(area, '云端保存失败 · 本次内容未共享', 'error');
+    }).finally(function () { delete pending[key]; });
+  }
   function upsertCell(cell) {
     var key = keyFor(cell);
+    if (syncDoc.enabled || !cloudRows[key]) return saveSyncDocValue(cell);
     var payload = {
       report_id: reportId,
       area: cell.dataset.editArea,
@@ -2563,6 +2667,12 @@ td { border-color:#dfe4ea; }
   function refreshCloud(initial) {
     return queryCloud().then(function (rows) {
       var seen = {};
+      return ensureSyncDoc(rows).then(function () {
+        if (syncDoc.enabled) {
+          applySyncValues(syncDoc.values, syncDoc.updatedAt);
+          if (!Object.keys(pending).length && !syncDoc.saving) updateAllStatuses('共享云端已同步 ' + clock(), 'saved');
+          return;
+        }
       (rows || []).sort(function (a, b) {
         return (/_count$/.test(b.store) ? 1 : 0) - (/_count$/.test(a.store) ? 1 : 0);
       }).forEach(function (row) {
@@ -2593,6 +2703,7 @@ td { border-color:#dfe4ea; }
           && secondary.textContent.trim() === '点击填写问题描述或数据依据') item.hidden = true;
       });
       if (!Object.keys(pending).length) updateAllStatuses('共享云端已同步 ' + clock(), 'saved');
+      });
     }).catch(function (error) {
       console.error('云端同步失败', error);
       updateAllStatuses('云端连接失败 · 填写内容暂不能共享', 'error');
