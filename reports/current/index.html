@@ -2504,16 +2504,6 @@ td { border-color:#dfe4ea; }
       return response.json();
     });
   }
-  function insertCell(payload) {
-    return fetch(tableUrl + '?on_conflict=report_id,area,store,field', {
-      method: 'POST',
-      headers: headers({ Prefer: 'resolution=merge-duplicates,return=representation' }),
-      body: JSON.stringify(payload)
-    }).then(function (response) {
-      if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
-      return response.json();
-    });
-  }
   function parseSyncDoc(value) {
     var text = String(value || '');
     if (text.indexOf(syncDocPrefix) !== 0) return null;
@@ -2614,28 +2604,7 @@ td { border-color:#dfe4ea; }
     }).finally(function () { delete pending[key]; });
   }
   function upsertCell(cell) {
-    var key = keyFor(cell);
-    if (syncDoc.enabled || !cloudRows[key]) return saveSyncDocValue(cell);
-    var payload = {
-      report_id: reportId,
-      area: cell.dataset.editArea,
-      store: cell.dataset.editStore,
-      field: cell.dataset.editField,
-      value: valueFor(cell),
-      updated_at: new Date().toISOString()
-    };
-    pending[key] = true;
-    updateStatus(payload.area, '正在保存到共享云端...', 'saving');
-    var write = cloudRows[key] ? writeExistingCell(payload) : insertCell(payload);
-    return write.then(function (rows) {
-      var row = rows && rows[0];
-      cloudRows[key] = row && row.updated_at ? row.updated_at : new Date().toISOString();
-      updateStatus(payload.area, '已云端保存 ' + clock() + ' · 所有人可见', 'saved');
-    }).catch(function (error) {
-      console.error('云端保存失败', error);
-      var message = String(error && error.message || '');
-      updateStatus(payload.area, /row-level security|42501/.test(message) ? '云端新增权限未开 · 本次内容未共享' : '云端保存失败 · 本次内容未共享', 'error');
-    }).finally(function () { delete pending[key]; });
+    return saveSyncDocValue(cell);
   }
   function scheduleSave(cell, immediate) {
     var key = keyFor(cell);
