@@ -434,7 +434,12 @@
   }
 
   function updatePeopleRankings(source) {
-    var employees = (source && source.employees || []).slice().sort(function (a, b) { return b.amount - a.amount; });
+    var confirmedManagers = { '齐继风': true, '蔺海芬': true, '郭文宇': true, '郭文字': true };
+    var allPeople = (source && source.employees || []).map(function (person) {
+      return Object.assign({}, person, { name: person.name === '郭文字' ? '郭文宇' : person.name });
+    }).sort(function (a, b) { return b.amount - a.amount; });
+    var managers = allPeople.filter(function (person) { return person.role === 'manager' || confirmedManagers[person.name]; });
+    var employees = allPeople.filter(function (person) { return person.role !== 'manager' && !confirmedManagers[person.name]; });
     var pageForTitle = function (title) {
       var heading = Array.from(document.querySelectorAll('.page .section-title')).find(function (item) {
         return item.textContent.trim() === title;
@@ -487,11 +492,11 @@
       return String(rank);
     }
 
-    function render(page, rows, area) {
+    function render(page, rows, area, roleLabel, noteText, warning) {
       if (!page) return;
       var table = page.querySelector('table[data-ranking-table="employee"]');
       if (!table) return;
-      var headers = ['本周', '上周', '排名变化', '区域', '门店', '店员', '本周总金额', '本周完成率', '上周总金额', '金额增减', '续卡金额', '办卡/新签/续卡', '新签办卡率', '新签小卡率', '新签中卡率', '新签大卡率'];
+      var headers = ['本周', '上周', '排名变化', '区域', '门店', roleLabel || '店员', '本周总金额', '本周完成率', '上周总金额', '金额增减', '续卡金额', '办卡/新签/续卡', '新签办卡率', '新签小卡率', '新签中卡率', '新签大卡率'];
       Array.from(table.querySelectorAll('thead th')).forEach(function (header, index) {
         if (headers[index]) header.textContent = headers[index];
       });
@@ -534,20 +539,19 @@
         var values = [rows.length, money(rows.reduce(function (sum, row) { return sum + row.amount; }, 0)), top ? top.name : '-', top ? money(top.amount) : '-', rows.filter(function (row) { return row.completion >= 100; }).length];
         Array.from(brief.querySelectorAll('b')).forEach(function (node, index) { node.textContent = values[index]; });
       }
-      addNote(page, '8月10日-8月16日员工排名已按用户截图原值更新；测试门店、非正式门店及已确认店长未计入。', false);
+      addNote(page, noteText || '8月10日-8月16日员工排名已按用户截图原值更新；测试门店、非正式门店及已确认店长未计入。', warning);
     }
 
     var managerPage = pageForTitle('店长业绩排名');
     if (managerPage) {
-      var oldManagerNote = managerPage.querySelector('.current-week-source-note');
-      if (oldManagerNote) oldManagerNote.remove();
       var managerAlert = managerPage.querySelector('.alert');
-      if (managerAlert) managerAlert.textContent = '本页按本周角色口径展示店长人员；店长不进入店员排名。';
+      if (managerAlert) managerAlert.textContent = '店长排名只使用8月10日-8月16日店长截图数据，不沿用旧周数据。';
+      render(managerPage, managers, '', '店长', managers.length ? '8月10日-8月16日店长排名已按本周截图原值更新。' : '8月10日-8月16日店长独立排名截图尚未录入，本页不沿用上周或旧数据。', !managers.length);
     }
-    render(fullPage, employees, '');
+    render(fullPage, employees, '', '店员');
     ['1区', '2区', '3区'].forEach(function (area) {
       var areaPage = pageForTitle(area + '店员排名');
-      render(areaPage, employees.filter(function (employee) { return employee.region === area; }), area);
+      render(areaPage, employees.filter(function (employee) { return employee.region === area; }), area, '店员');
     });
   }
 })();

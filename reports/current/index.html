@@ -893,7 +893,7 @@ td { border-color:#dfe4ea; }
       <div class="page-guide">第5页 · 店长业绩排名</div>
       <h2 class="section-title">店长业绩排名</h2>
       <div class="area-brief employee-brief"><div><b>16</b><span>人数</span></div><div><b>¥81,975.26</b><span>本周合计</span></div><div><b>薛飘飘</b><span>本周第1</span></div><div><b>¥15,583.01</b><span>第1名金额</span></div><div><b>2</b><span>目标达成人数</span></div></div>
-      <div class="alert">本页按本周角色口径展示：薛飘飘、王艺从本周开始按店长处理，不进入店员排名。</div>
+      <div class="alert">店长排名只使用8月10日-8月16日店长截图数据，不沿用旧周数据。</div>
       <div class="ranking-shell" data-ranking-shell="employee" data-ranking-type="employee"><div class="ranking-toolbar" data-ranking-toolbar="employee">
   <div class="ranking-group" data-role="period" data-label="日期">
     <button type="button" class="ranking-pill active" data-period="current">本周</button>
@@ -2040,104 +2040,6 @@ td { border-color:#dfe4ea; }
 })();
 </script><script>
 (function () {
-  function pageByTitle(title) {
-    var heading = Array.from(document.querySelectorAll('.page .section-title')).find(function (item) {
-      return item.textContent.trim() === title;
-    });
-    return heading && heading.closest('.page');
-  }
-  function shellAfter(heading) {
-    var node = heading && heading.nextElementSibling;
-    while (node && !node.matches('.ranking-shell')) node = node.nextElementSibling;
-    return node;
-  }
-  function setBrief(page, values) {
-    var brief = page && page.querySelector('.area-brief.employee-brief');
-    if (!brief) return;
-    Array.from(brief.querySelectorAll('b')).forEach(function (item, index) {
-      if (values[index] !== undefined) item.textContent = values[index];
-    });
-  }
-  function setRankChange(row, currentRank) {
-    if (!row || !row.children[2]) return;
-    var previousRank = Number(row.children[1].textContent.trim());
-    var change = Number.isFinite(previousRank) ? previousRank - currentRank : NaN;
-    row.children[2].innerHTML = Number.isFinite(change)
-      ? '<span class="' + (change >= 0 ? 'cg' : 'cr') + '">' + (change >= 0 ? '+' : '') + change + '</span>'
-      : '-';
-  }
-  var managerPage = pageByTitle('店长业绩排名');
-  var managerTable = managerPage && managerPage.querySelector('table[data-ranking-table="employee"]');
-  var managerRow = managerTable && Array.from(managerTable.tBodies[0].rows).find(function (row) {
-    return row.children[5] && row.children[5].textContent.trim() === '薛飘飘';
-  });
-  if (managerRow) {
-    var employeeRow = managerRow.cloneNode(true);
-    var areaEmployeeRow = managerRow.cloneNode(true);
-    managerRow.remove();
-    var alert = managerPage.querySelector('.alert');
-    if (alert) alert.textContent = '本页按本周角色口径展示：王艺从本周开始按店长处理，不进入店员排名。';
-    setBrief(managerPage, ['15', '¥66,392.25', '周坤琪', '¥11,207.05', '2']);
-
-    var employeePage = pageByTitle('店员全员排名：全品牌统一看优秀和短板');
-    var employeeTable = employeePage && employeePage.querySelector('table[data-ranking-table="employee"]');
-    if (employeeTable && !Array.from(employeeTable.tBodies[0].rows).some(function (row) { return row.children[5] && row.children[5].textContent.trim() === '薛飘飘'; })) {
-      setRankChange(employeeRow, 3);
-      employeeTable.tBodies[0].appendChild(employeeRow);
-    }
-    setBrief(employeePage, ['51', '¥364,553.56', '李紫琪', '¥18,454', '8']);
-
-    var areaHeading = Array.from(document.querySelectorAll('.section-title')).find(function (item) { return item.textContent.trim() === '3区店员排名'; });
-    var areaShell = shellAfter(areaHeading);
-    var areaTable = areaShell && areaShell.querySelector('table[data-ranking-table="employee"]');
-    if (areaTable && !Array.from(areaTable.tBodies[0].rows).some(function (row) { return row.children[5] && row.children[5].textContent.trim() === '薛飘飘'; })) {
-      setRankChange(areaEmployeeRow, 2);
-      areaTable.tBodies[0].appendChild(areaEmployeeRow);
-    }
-    var areaBrief = areaHeading && areaHeading.nextElementSibling;
-    if (areaBrief && areaBrief.matches('.area-brief.employee-brief')) {
-      Array.from(areaBrief.querySelectorAll('b')).forEach(function (item, index) {
-        var values = ['19', '¥130,493.61', '李紫琪', '¥18,454', '2'];
-        item.textContent = values[index];
-      });
-    }
-  }
-  var managerNames = ['齐继风', '蔺海芬', '郭文字'];
-  var employeePageForManagers = pageByTitle('店员全员排名：全品牌统一看优秀和短板');
-  var employeeTableForManagers = employeePageForManagers && employeePageForManagers.querySelector('table[data-ranking-table="employee"]');
-  if (managerTable && employeeTableForManagers) {
-    managerNames.forEach(function (name) {
-      var sourceRow = Array.from(employeeTableForManagers.tBodies[0].rows).find(function (row) {
-        return row.children[5] && row.children[5].textContent.trim() === name;
-      });
-      if (!sourceRow) return;
-      var managerCopy = sourceRow.cloneNode(true);
-      if (name === '郭文字') managerCopy.children[5].innerHTML = '<b>郭文宇</b>';
-      managerTable.tBodies[0].appendChild(managerCopy);
-      sourceRow.remove();
-    });
-    var areaRoleCorrections = [
-      { title: '1区店员排名', names: ['齐继风', '蔺海芬'] },
-      { title: '3区店员排名', names: ['郭文字', '郭文宇'] }
-    ];
-    areaRoleCorrections.forEach(function (config) {
-      var page = pageByTitle(config.title);
-      var table = page && page.querySelector('table[data-ranking-table="employee"]');
-      if (!table) return;
-      Array.from(table.tBodies[0].rows).forEach(function (row) {
-        if (row.children[5] && config.names.indexOf(row.children[5].textContent.trim()) >= 0) row.remove();
-      });
-    });
-    setBrief(managerPage, ['18', '¥73,511.25', '周坤琪', '¥11,207.05', '2']);
-    setBrief(employeePageForManagers, ['48', '¥357,434.56', '李紫琪', '¥18,454', '8']);
-    setBrief(pageByTitle('1区店员排名'), ['12', '¥105,854.05', '谢航宇', '¥14,700.10', '2']);
-    setBrief(pageByTitle('3区店员排名'), ['18', '¥129,593.61', '李紫琪', '¥18,454', '2']);
-    var managerAlert = managerPage.querySelector('.alert');
-    if (managerAlert) managerAlert.textContent = '本页按本周角色口径展示店长人员；店长不进入店员排名。';
-  }
-})();
-</script><script>
-(function () {
   var shells = Array.from(document.querySelectorAll('.ranking-shell'));
   function asNumber(value) {
     if (value === null || value === undefined || String(value).trim() === '') return Number.NEGATIVE_INFINITY;
@@ -2954,5 +2856,5 @@ td { border-color:#dfe4ea; }
 })();
 </script>
 <script src="../month-snapshot-20260801-20260816.js?v=20260817-mtd-snapshot-v1"></script>
-<script src="./report-data.js?v=20260817-mtd-snapshot-v1"></script>
+<script src="./report-data.js?v=20260817-screenshot-source-v2"></script>
 </body></html>
