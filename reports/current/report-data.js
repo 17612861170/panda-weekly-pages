@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260818-wuhan-renewal-v20';
+  var DATA_VERSION = '20260818-ranking-refresh-v21';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
