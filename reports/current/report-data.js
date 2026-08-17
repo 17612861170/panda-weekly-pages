@@ -1,7 +1,16 @@
 (function () {
   'use strict';
 
+  var DATA_VERSION = '20260817-screenshot-priority-v8';
   var priorSupport = {};
+  var hiddenSupportLabels = {
+    '新签小卡数': true,
+    '新签中卡数': true,
+    '新签大卡数': true,
+    '续卡小卡数': true,
+    '续卡中卡数': true,
+    '续卡大卡数': true
+  };
   document.querySelectorAll('.closure-store-scroll tbody tr').forEach(function (row) {
     var nameCell = row.querySelector('.object-cell b');
     if (!nameCell) return;
@@ -11,7 +20,7 @@
       var value = metric.querySelector('span');
       if (!label || !value) return;
       var parts = value.textContent.split('→').map(function (part) { return part.trim(); });
-      metrics[label.textContent.trim()] = parts[parts.length - 1] || '-';
+      metrics[label.textContent.trim()] = parts.length > 1 ? parts[0] : (parts[0] || '-');
     });
     priorSupport[nameCell.textContent.trim()] = metrics;
   });
@@ -24,7 +33,7 @@
       var value = metric.querySelector('span');
       if (!label || !value) return;
       var parts = value.textContent.split('→').map(function (part) { return part.trim(); });
-      metrics[label.textContent.trim()] = parts[parts.length - 1] || '-';
+      metrics[label.textContent.trim()] = parts.length > 1 ? parts[0] : (parts[0] || '-');
     });
     priorSupport[storeName] = metrics;
   });
@@ -36,11 +45,11 @@
 
   Promise.all([
     ready(),
-    fetch('./current-week-data.json?v=20260817-screenshot-priority-v4', { cache: 'no-store' }).then(function (response) {
+    fetch('./current-week-data.json?v=' + DATA_VERSION, { cache: 'no-store' }).then(function (response) {
       if (!response.ok) throw new Error('本周数据读取失败');
       return response.json();
     }),
-    fetch('./employee-current-week.json?v=20260817-screenshot-priority-v4', { cache: 'no-store' }).then(function (response) {
+    fetch('./employee-current-week.json?v=' + DATA_VERSION, { cache: 'no-store' }).then(function (response) {
       if (!response.ok) throw new Error('本周员工排名数据读取失败');
       return response.json();
     })
@@ -56,11 +65,10 @@
     stores.forEach(function (store) { storeMap[store.name] = enrich(store); });
     var regions = {};
     ['1区', '2区', '3区'].forEach(function (area) {
-      regions[area] = aggregate(stores.filter(function (store) { return store.region === area; }), area, source.regionTargets[area]);
+      var areaRows = stores.filter(function (store) { return store.region === area; });
+      regions[area] = aggregate(areaRows, area, areaRows.reduce(function (sum, store) { return sum + Number(store.target || 0); }, 0));
     });
-    var brand = aggregate(stores, '品牌', Object.keys(source.regionTargets).reduce(function (sum, area) {
-      return sum + Number(source.regionTargets[area] || 0);
-    }, 0));
+    var brand = aggregate(stores, '品牌', stores.reduce(function (sum, store) { return sum + Number(store.target || 0); }, 0));
 
     updateDates();
     updateSummary(document.querySelector('.page:first-of-type'), brand, '品牌本周汇总');
@@ -232,12 +240,10 @@
         var label = labelCell.textContent.trim();
         var current = metricValue(entity, label);
         if (current == null) return;
-        weeks[0].innerHTML = weeks[1].innerHTML;
-        weeks[1].innerHTML = weeks[2].innerHTML;
-        weeks[2].innerHTML = weeks[3].innerHTML;
+        var previousText = weeks[2].textContent;
         weeks[3].textContent = current;
         weeks[3].classList.toggle('metric-bad', isBad(entity, label));
-        updateTrendCells(row, label, weeks[2].textContent, current, entity);
+        updateTrendCells(row, label, previousText, current, entity);
       });
     });
   }
@@ -357,6 +363,10 @@
         var deltaNode = metric.querySelector('em');
         if (!labelNode || !valueNode || !deltaNode) return;
         var label = labelNode.textContent.trim();
+        if (hiddenSupportLabels[label]) {
+          metric.remove();
+          return;
+        }
         var current = metricValue(store, label);
         if (current == null) return;
         var previous = priorSupport[store.name] && priorSupport[store.name][label] || '—';
@@ -372,7 +382,8 @@
       }
       var problem = card.querySelector('.review-panel.problem [contenteditable="true"], .review-panel.problem textarea');
       if (problem) {
-        problem.textContent = questionFor(store);
+        if ('value' in problem) problem.value = questionFor(store);
+        else problem.textContent = questionFor(store);
         problem.dataset.editField = 'question';
         problem.dataset.placeholder = '点击修改本周问题';
       }
