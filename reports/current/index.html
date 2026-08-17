@@ -2484,6 +2484,32 @@ td { border-color:#dfe4ea; }
   function updateAllStatuses(text, state) {
     ['1区', '2区', '3区'].forEach(function (area) { updateStatus(area, text, state); });
   }
+  function rowFilter(payload) {
+    return '?report_id=eq.' + encodeURIComponent(payload.report_id)
+      + '&area=eq.' + encodeURIComponent(payload.area)
+      + '&store=eq.' + encodeURIComponent(payload.store)
+      + '&field=eq.' + encodeURIComponent(payload.field);
+  }
+  function updateCell(payload) {
+    return fetch(tableUrl + rowFilter(payload) + '&select=updated_at', {
+      method: 'PATCH',
+      headers: headers({ Prefer: 'return=representation' }),
+      body: JSON.stringify({ value: payload.value })
+    }).then(function (response) {
+      if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
+      return response.json();
+    });
+  }
+  function insertCell(payload) {
+    return fetch(tableUrl + '?select=updated_at', {
+      method: 'POST',
+      headers: headers({ Prefer: 'return=representation' }),
+      body: JSON.stringify(payload)
+    }).then(function (response) {
+      if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
+      return response.json();
+    });
+  }
   function upsertCell(cell) {
     var key = keyFor(cell);
     var payload = {
@@ -2495,13 +2521,8 @@ td { border-color:#dfe4ea; }
     };
     pending[key] = true;
     updateStatus(payload.area, '正在保存到共享云端...', 'saving');
-    return fetch(tableUrl + '?on_conflict=report_id,area,store,field', {
-      method: 'POST',
-      headers: headers({ Prefer: 'resolution=merge-duplicates,return=representation' }),
-      body: JSON.stringify(payload)
-    }).then(function (response) {
-      if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
-      return response.json();
+    return updateCell(payload).then(function (rows) {
+      return rows && rows.length ? rows : insertCell(payload);
     }).then(function (rows) {
       var row = rows && rows[0];
       if (!row) throw new Error('Supabase 未返回保存结果');
