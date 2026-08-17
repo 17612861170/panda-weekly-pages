@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260818-wuhan-huiju-renew-v13';
+  var DATA_VERSION = '20260818-prior-support-v14';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -52,14 +52,28 @@
     fetch('./employee-current-week.json?v=' + DATA_VERSION, { cache: 'no-store' }).then(function (response) {
       if (!response.ok) throw new Error('本周员工排名数据读取失败');
       return response.json();
+    }),
+    fetch('./previous-week-support.json?v=' + DATA_VERSION, { cache: 'no-store' }).then(function (response) {
+      if (!response.ok) return {};
+      return response.json();
+    }).catch(function () {
+      return {};
     })
   ]).then(function (result) {
-    applyCurrentWeek(result[1], result[2]);
+    applyCurrentWeek(result[1], result[2], result[3]);
   }).catch(function (error) {
     console.error(error);
   });
 
-  function applyCurrentWeek(source, peopleSource) {
+  function mergePreviousSupport(source) {
+    if (!source || !source.stores) return;
+    Object.keys(source.stores).forEach(function (name) {
+      priorSupport[name] = Object.assign({}, priorSupport[name] || {}, source.stores[name] || {});
+    });
+  }
+
+  function applyCurrentWeek(source, peopleSource, previousSupportSource) {
+    mergePreviousSupport(previousSupportSource);
     var stores = source.stores || [];
     var storeMap = {};
     stores.forEach(function (store) { storeMap[store.name] = enrich(store); });
