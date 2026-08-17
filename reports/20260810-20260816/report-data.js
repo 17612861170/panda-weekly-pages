@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260818-support-baseline-v16';
+  var DATA_VERSION = '20260818-support-baseline-v18';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -66,10 +66,17 @@
   });
 
   function mergePreviousSupport(source) {
-    if (!source || !source.stores) return;
-    Object.keys(source.stores).forEach(function (name) {
-      priorSupport[name] = Object.assign({}, priorSupport[name] || {}, source.stores[name] || {});
-    });
+    if (!source) return;
+    if (source.aggregates) {
+      Object.keys(source.aggregates).forEach(function (name) {
+        priorSupport[name] = Object.assign({}, priorSupport[name] || {}, source.aggregates[name] || {});
+      });
+    }
+    if (source.stores) {
+      Object.keys(source.stores).forEach(function (name) {
+        priorSupport[name] = Object.assign({}, priorSupport[name] || {}, source.stores[name] || {});
+      });
+    }
   }
 
   function applyCurrentWeek(source, peopleSource, previousSupportSource) {
@@ -333,6 +340,26 @@
   }
 
   function updateRankingDatasets(row, entity) {
+    var previousMetricLabels = {
+      revenue: '总营收',
+      completion: '完成率',
+      newRate: '新签办卡率',
+      renewAmount: '续卡金额',
+      renewShare: '续卡占比',
+      renewRate: '续费率',
+      newSmallRate: '新签小卡率',
+      newMidLargeRate: '新签中大卡率',
+      traffic: '总引流金额',
+      trafficShare: '总引流占比',
+      newCustomers: '新客数',
+      target: '目标'
+    };
+    function previousSupportValue(key) {
+      var support = entity && entity.name ? priorSupport[entity.name] : null;
+      var label = previousMetricLabels[key];
+      if (!support || !label || support[label] == null || support[label] === '') return null;
+      return number(support[label]);
+    }
     var fields = {
       revenue: entity.revenue, completion: entity.completion, newRate: entity.newSignRate,
       renewAmount: entity.renewAmount, renewShare: entity.renewShare, renewRate: entity.renewRate,
@@ -342,13 +369,19 @@
     Object.keys(fields).forEach(function (key) {
       var currentAttr = key + '-current';
       var previousAttr = key + '-previous';
-      if (row.dataset.sourcePriorLocked !== 'true') {
+      var supportPrevious = previousSupportValue(key);
+      if (supportPrevious != null) {
+        row.setAttribute('data-' + previousAttr, supportPrevious);
+      } else if (row.dataset.sourcePriorLocked !== 'true') {
         var oldCurrent = row.getAttribute('data-' + currentAttr);
         if (oldCurrent != null && oldCurrent !== '') row.setAttribute('data-' + previousAttr, oldCurrent);
       }
       row.setAttribute('data-' + currentAttr, fields[key] == null ? '' : fields[key]);
     });
-    if (row.dataset.sourcePriorLocked !== 'true') {
+    var supportTarget = previousSupportValue('target');
+    if (supportTarget != null) {
+      row.setAttribute('data-target-previous', supportTarget);
+    } else if (row.dataset.sourcePriorLocked !== 'true') {
       row.setAttribute('data-target-previous', row.getAttribute('data-target-current') || row.getAttribute('data-target') || '');
     }
     row.setAttribute('data-target-current', entity.target || '');
