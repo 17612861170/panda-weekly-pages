@@ -308,19 +308,12 @@
     Object.keys(fields).forEach(function (key) {
       var currentAttr = camelToData(key) + '-current';
       var previousAttr = camelToData(key) + '-previous';
-      var monthAttr = camelToData(key) + '-month';
       var oldCurrent = row.getAttribute('data-' + currentAttr);
       row.setAttribute('data-' + previousAttr, oldCurrent == null ? '' : oldCurrent);
       row.setAttribute('data-' + currentAttr, fields[key] == null ? '' : fields[key]);
-      if (['revenue', 'renewAmount', 'traffic'].indexOf(key) >= 0) {
-        var oldMonth = Number(row.getAttribute('data-' + monthAttr) || 0);
-        row.setAttribute('data-' + monthAttr, oldMonth + Number(fields[key] || 0));
-      }
     });
     row.setAttribute('data-target-previous', row.getAttribute('data-target-current') || row.getAttribute('data-target') || '');
     row.setAttribute('data-target-current', entity.target || '');
-    var oldMonthTarget = Number(row.getAttribute('data-target-month') || 0);
-    row.setAttribute('data-target-month', oldMonthTarget + Number(entity.target || 0));
   }
 
   function camelToData(value) {
