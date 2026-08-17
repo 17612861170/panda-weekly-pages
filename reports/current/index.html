@@ -2417,7 +2417,10 @@ td { border-color:#dfe4ea; }
   var timers = {};
   var localSaved = {};
   try { localSaved = JSON.parse(window.localStorage.getItem(storageKey) || '{}'); } catch (error) { localSaved = {}; }
-  function keyFor(cell) { return [cell.dataset.editArea, cell.dataset.editStore, cell.dataset.editField].join('|'); }
+  function fieldForCloud(field) {
+    return ['question', 'answer', 'conclusion_problem', 'conclusion_highlight', 'conclusion_action'].indexOf(field) >= 0 ? field : 'answer';
+  }
+  function keyFor(cell) { return [cell.dataset.editArea, cell.dataset.editStore, fieldForCloud(cell.dataset.editField)].join('|'); }
   function valueFor(cell) { return cell.matches('[type="checkbox"]') ? (cell.checked ? '1' : '0') : cell.matches('textarea, select, input') ? cell.value : cell.innerText.trim(); }
   function setValue(cell, value) {
     if (cell.closest('.issue-board')) {
@@ -2536,7 +2539,7 @@ td { border-color:#dfe4ea; }
       report_id: reportId,
       area: cell.dataset.editArea,
       store: cell.dataset.editStore,
-      field: cell.dataset.editField,
+      field: fieldForCloud(cell.dataset.editField),
       value: valueFor(cell)
     };
     pending[key] = true;
