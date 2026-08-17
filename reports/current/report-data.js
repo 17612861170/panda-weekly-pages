@@ -105,6 +105,8 @@
       result[field] = rows.reduce(function (sum, row) { return sum + Number(row[field] || 0); }, 0);
     });
     result.completion = ratio(result.revenue, result.target);
+    result.newSignRate = ratio(result.newCardCount, result.newCustomers);
+    result.renewRate = ratio(result.renewCount, result.oldCustomers);
     result.newSmallRate = ratio(result.newSmall, result.newCardCount);
     result.newMidRate = ratio(result.newMid, result.newCardCount);
     result.newLargeRate = ratio(result.newLarge, result.newCardCount);
