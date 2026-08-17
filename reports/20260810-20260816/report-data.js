@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260818-ranking-refresh-v21';
+  var DATA_VERSION = '20260818-ranking-refresh-v23';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -343,6 +343,7 @@
     var previousMetricLabels = {
       revenue: '总营收',
       completion: '完成率',
+      newSignRevenue: '新签营收',
       newRate: '新签办卡率',
       renewAmount: '续卡金额',
       renewShare: '续卡占比',
@@ -361,7 +362,7 @@
       return number(support[label]);
     }
     var fields = {
-      revenue: entity.revenue, completion: entity.completion, newRate: entity.newSignRate,
+      revenue: entity.revenue, completion: entity.completion, newSignRevenue: entity.newCardAmount, newRate: entity.newSignRate,
       renewAmount: entity.renewAmount, renewShare: entity.renewShare, renewRate: entity.renewRate,
       newSmallRate: entity.newSmallRate, newMidLargeRate: entity.newMidLargeRate,
       traffic: entity.trafficAmount, trafficShare: entity.trafficShare, newCustomers: entity.newCustomers
