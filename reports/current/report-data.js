@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260818-support-baseline-v18';
+  var DATA_VERSION = '20260818-wuhan-renewal-v20';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -315,7 +315,7 @@
   }
 
   function updateRankings(storeMap, regions, brand) {
-    document.querySelectorAll('table.ranking-table').forEach(function (table) {
+    document.querySelectorAll('table[data-ranking-table="region"], table[data-ranking-table="store"]').forEach(function (table) {
       var isRegion = table.classList.contains('region-ranking-table');
       var rows = Array.from(table.querySelectorAll('tbody tr'));
       rows.forEach(function (row) {
