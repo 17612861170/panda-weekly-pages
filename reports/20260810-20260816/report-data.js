@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260817-screenshot-priority-v10';
+  var DATA_VERSION = '20260818-excel-traffic-small-v12';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -89,15 +89,15 @@
   function enrich(store) {
     var result = Object.assign({}, store);
     result.completion = ratio(store.revenue, store.target);
-    result.newSmallRate = ratio(store.newSmall, store.newCardCount);
-    result.newMidRate = ratio(store.newMid, store.newCardCount);
+    result.newSmallRate = store.newSmallRateOverride == null ? ratio(store.newSmall, store.newCardCount) : Number(store.newSmallRateOverride);
+    result.newMidRate = store.newMidRateOverride == null ? ratio(store.newMid, store.newCardCount) : Number(store.newMidRateOverride);
     result.newLargeRate = store.newLargeRateOverride == null ? ratio(store.newLarge, store.newCardCount) : Number(store.newLargeRateOverride);
-    result.newMidLargeRate = ratio(store.newMid + store.newLarge, store.newCardCount);
+    result.newMidLargeRate = store.newMidLargeRateOverride == null ? ratio(store.newMid + store.newLarge, store.newCardCount) : Number(store.newMidLargeRateOverride);
     result.renewSmallRate = ratio(store.renewSmall, store.renewCount);
     result.renewMidRate = ratio(store.renewMid, store.renewCount);
     result.renewLargeRate = store.renewLargeRateOverride == null ? ratio(store.renewLarge, store.renewCount) : Number(store.renewLargeRateOverride);
     result.renewShare = store.renewShareOverride == null ? ratio(store.renewAmount, store.revenue) : Number(store.renewShareOverride);
-    result.trafficShare = store.trafficShareOverride == null ? ratio(store.trafficAmount, store.newCardAmount) : Number(store.trafficShareOverride);
+    result.trafficShare = ratio(store.trafficAmount, store.newCardAmount);
     result.sweepShare = ratio(store.sweepAmount, store.newCardAmount);
     result.overallLargeRate = store.overallLargeRateOverride == null ? ratio(store.newMid + store.newLarge + store.renewMid + store.renewLarge, store.cardCount) : Number(store.overallLargeRateOverride);
     return result;
@@ -259,11 +259,25 @@
     if (previous != null && current != null) {
       change = /率|占比/.test(label) ? current - previous : (previous ? (current - previous) / Math.abs(previous) * 100 : 0);
     }
-    changeCell.innerHTML = '<span class="' + (change != null && change >= 0 ? 'cg' : 'cr') + '">' +
+    var favorable = change == null ? null : (label === '新签小卡率' ? change <= 0 : change >= 0);
+    changeCell.innerHTML = '<span class="' + (change == null ? '' : (favorable ? 'cg' : 'cr')) + '">' +
       (change == null ? '—' : (change >= 0 ? '+' : '') + change.toFixed(1) + '%') + '</span>';
     var bad = isBad(entity, label);
-    var judgment = bad ? '未过线' : (/率|占比/.test(label) ? '达标' : (change == null ? '—' : change >= 0 ? '较上周增长' : '较上周下降'));
-    judgmentCell.innerHTML = '<span class="' + (bad ? 'cr' : 'cg') + '">' + judgment + '</span>';
+    var judgment = '—';
+    var judgmentGood = false;
+    if (bad) {
+      judgment = '未过线';
+    } else if (label === '新签小卡率') {
+      judgment = change == null ? '达标' : (change <= 0 ? '较上周下降' : '较上周上升');
+      judgmentGood = change == null || change <= 0;
+    } else if (/率|占比/.test(label)) {
+      judgment = '达标';
+      judgmentGood = true;
+    } else if (change != null) {
+      judgment = change >= 0 ? '较上周增长' : '较上周下降';
+      judgmentGood = change >= 0;
+    }
+    judgmentCell.innerHTML = '<span class="' + (judgmentGood ? 'cg' : 'cr') + '">' + judgment + '</span>';
   }
 
   function isBad(entity, label) {
@@ -382,10 +396,15 @@
       }
       var problem = card.querySelector('.review-panel.problem [contenteditable="true"], .review-panel.problem textarea');
       if (problem) {
-        if ('value' in problem) problem.value = questionFor(store);
-        else problem.textContent = questionFor(store);
         problem.dataset.editField = 'question';
         problem.dataset.placeholder = '点击修改本周问题';
+        var currentText = ('value' in problem ? problem.value : problem.textContent || '').trim();
+        var placeholderLike = !currentText || currentText === '点击修改本周问题' ||
+          currentText === '点击填写门店回答和下周计划' || currentText === '点击填写门店回答及下周计划';
+        if (placeholderLike) {
+          if ('value' in problem) problem.value = questionFor(store);
+          else problem.textContent = questionFor(store);
+        }
       }
     });
   }

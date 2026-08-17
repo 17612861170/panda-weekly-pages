@@ -1135,10 +1135,12 @@ td { border-color:#dfe4ea; }
           if (!Number.isFinite(previous) || !Number.isFinite(current)) return { text: '-', up: false };
           var percentMetric = /率|占比/.test(metric.name);
           var change = percentMetric ? current - previous : (previous ? (current - previous) / Math.abs(previous) * 100 : 0);
-          return { text: (change >= 0 ? '+' : '') + change.toFixed(1) + '%', up: change >= 0 };
+          var goodTrend = metric.name === '新签小卡率' ? change <= 0 : change >= 0;
+          return { text: (change >= 0 ? '+' : '') + change.toFixed(1) + '%', up: goodTrend };
         }
         function judgment(metric, change) {
           if (metric.bad) return { text: '未过线', good: false };
+          if (metric.name === '新签小卡率') return { text: change.up ? '较上周下降' : '较上周上升', good: change.up };
           if (/完成率|办卡率|中大卡率|整体大卡率|占比/.test(metric.name)) return { text: '达标', good: true };
           return { text: change.up ? '较上周增长' : '较上周下降', good: change.up };
         }
