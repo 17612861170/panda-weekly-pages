@@ -99,21 +99,24 @@
 
   function setMonthAttr(row, key, value) {
     if (value == null || value !== value) return;
-    row.setAttribute('data-' + key + '-month', String(value));
+    var text = String(value);
+    var kebab = key.replace(/[A-Z]/g, function (letter) { return '-' + letter.toLowerCase(); });
+    row.setAttribute('data-' + key + '-month', text);
+    if (kebab !== key) row.setAttribute('data-' + kebab + '-month', text);
   }
 
   function applySnapshotToRow(row, snapshot) {
     setMonthAttr(row, 'revenue', snapshot.revenue);
     setMonthAttr(row, 'target', snapshot.target);
     setMonthAttr(row, 'completion', snapshot.completion);
-    setMonthAttr(row, 'renew-amount', snapshot.renewAmount);
-    setMonthAttr(row, 'renew-share', snapshot.renewShare);
-    setMonthAttr(row, 'renew-rate', snapshot.renewRate);
-    setMonthAttr(row, 'new-rate', snapshot.newRate);
-    setMonthAttr(row, 'new-small-rate', snapshot.newSmallRate);
-    setMonthAttr(row, 'new-mid-large-rate', snapshot.newMidLargeRate);
+    setMonthAttr(row, 'renewAmount', snapshot.renewAmount);
+    setMonthAttr(row, 'renewShare', snapshot.renewShare);
+    setMonthAttr(row, 'renewRate', snapshot.renewRate);
+    setMonthAttr(row, 'newRate', snapshot.newRate);
+    setMonthAttr(row, 'newSmallRate', snapshot.newSmallRate);
+    setMonthAttr(row, 'newMidLargeRate', snapshot.newMidLargeRate);
     setMonthAttr(row, 'traffic', snapshot.traffic);
-    setMonthAttr(row, 'traffic-share', snapshot.trafficShare);
+    setMonthAttr(row, 'trafficShare', snapshot.trafficShare);
   }
 
   function applyRankingSnapshots() {

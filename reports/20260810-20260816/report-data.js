@@ -36,16 +36,16 @@
 
   Promise.all([
     ready(),
-    fetch('./current-week-data.json?v=20260817-source-rules-v1', { cache: 'no-store' }).then(function (response) {
+    fetch('./current-week-data.json?v=20260817-screenshot-priority-v4', { cache: 'no-store' }).then(function (response) {
       if (!response.ok) throw new Error('本周数据读取失败');
       return response.json();
     }),
-    fetch('./employee-current-week.json?v=20260817-source-rules-v1', { cache: 'no-store' }).then(function (response) {
+    fetch('./employee-current-week.json?v=20260817-screenshot-priority-v4', { cache: 'no-store' }).then(function (response) {
       if (!response.ok) throw new Error('本周员工排名数据读取失败');
       return response.json();
     })
   ]).then(function (result) {
-    window.setTimeout(function () { applyCurrentWeek(result[1], result[2]); }, 80);
+    applyCurrentWeek(result[1], result[2]);
   }).catch(function (error) {
     console.error(error);
   });
@@ -306,18 +306,19 @@
       traffic: entity.trafficAmount, trafficShare: entity.trafficShare, newCustomers: entity.newCustomers
     };
     Object.keys(fields).forEach(function (key) {
-      var currentAttr = camelToData(key) + '-current';
-      var previousAttr = camelToData(key) + '-previous';
-      var oldCurrent = row.getAttribute('data-' + currentAttr);
-      row.setAttribute('data-' + previousAttr, oldCurrent == null ? '' : oldCurrent);
+      var currentAttr = key + '-current';
+      var previousAttr = key + '-previous';
+      if (row.dataset.sourcePriorLocked !== 'true') {
+        var oldCurrent = row.getAttribute('data-' + currentAttr);
+        if (oldCurrent != null && oldCurrent !== '') row.setAttribute('data-' + previousAttr, oldCurrent);
+      }
       row.setAttribute('data-' + currentAttr, fields[key] == null ? '' : fields[key]);
     });
-    row.setAttribute('data-target-previous', row.getAttribute('data-target-current') || row.getAttribute('data-target') || '');
+    if (row.dataset.sourcePriorLocked !== 'true') {
+      row.setAttribute('data-target-previous', row.getAttribute('data-target-current') || row.getAttribute('data-target') || '');
+    }
     row.setAttribute('data-target-current', entity.target || '');
-  }
-
-  function camelToData(value) {
-    return value.replace(/[A-Z]/g, function (letter) { return '-' + letter.toLowerCase(); });
+    row.dataset.sourcePriorLocked = 'true';
   }
 
   function updateRankingVisibleCells(table, row, entity) {
