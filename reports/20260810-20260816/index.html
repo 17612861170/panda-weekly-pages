@@ -2490,24 +2490,44 @@ td { border-color:#dfe4ea; }
       + '&store=eq.' + encodeURIComponent(payload.store)
       + '&field=eq.' + encodeURIComponent(payload.field);
   }
-  function updateCell(payload) {
-    return fetch(tableUrl + rowFilter(payload) + '&select=updated_at', {
-      method: 'PATCH',
-      headers: headers({ Prefer: 'return=representation' }),
-      body: JSON.stringify({ value: payload.value })
-    }).then(function (response) {
-      if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
+  function requestJson(url, options) {
+    return fetch(url, options).then(function (response) {
+      if (!response.ok) {
+        return response.text().then(function (text) {
+          var detail = text || ('HTTP ' + response.status);
+          throw new Error(response.status + ' ' + detail);
+        });
+      }
       return response.json();
     });
   }
+  function mergeCell(payload) {
+    return requestJson(tableUrl + '?on_conflict=report_id,area,store,field&select=updated_at', {
+      method: 'POST',
+      headers: headers({ Prefer: 'resolution=merge-duplicates,return=representation' }),
+      body: JSON.stringify(payload)
+    });
+  }
+  function updateCell(payload) {
+    return requestJson(tableUrl + rowFilter(payload) + '&select=updated_at', {
+      method: 'PATCH',
+      headers: headers({ Prefer: 'return=representation' }),
+      body: JSON.stringify({ value: payload.value })
+    });
+  }
   function insertCell(payload) {
-    return fetch(tableUrl + '?select=updated_at', {
+    return requestJson(tableUrl + '?select=updated_at', {
       method: 'POST',
       headers: headers({ Prefer: 'return=representation' }),
       body: JSON.stringify(payload)
-    }).then(function (response) {
-      if (!response.ok) return response.text().then(function (text) { throw new Error(text || ('HTTP ' + response.status)); });
-      return response.json();
+    });
+  }
+  function saveCell(payload) {
+    return mergeCell(payload).catch(function (mergeError) {
+      console.warn('云端合并保存失败，改用更新/新增兜底', mergeError);
+      return updateCell(payload).then(function (rows) {
+        return rows && rows.length ? rows : insertCell(payload);
+      });
     });
   }
   function upsertCell(cell) {
@@ -2521,9 +2541,7 @@ td { border-color:#dfe4ea; }
     };
     pending[key] = true;
     updateStatus(payload.area, '正在保存到共享云端...', 'saving');
-    return updateCell(payload).then(function (rows) {
-      return rows && rows.length ? rows : insertCell(payload);
-    }).then(function (rows) {
+    return saveCell(payload).then(function (rows) {
       var row = rows && rows[0];
       if (!row) throw new Error('Supabase 未返回保存结果');
       cloudRows[key] = row.updated_at || new Date().toISOString();
@@ -2531,7 +2549,8 @@ td { border-color:#dfe4ea; }
     }).catch(function (error) {
       console.error('云端保存失败', error);
       var message = String(error && error.message || '');
-      updateStatus(payload.area, /row-level security|42501/.test(message) ? '云端权限未开 · 本次内容未共享' : '云端保存失败 · 本次内容未共享', 'error');
+      var shortMessage = message.replace(/\s+/g, ' ').slice(0, 80);
+      updateStatus(payload.area, /row-level security|42501/.test(message) ? '云端权限未开 · 本次内容未共享' : '云端保存失败 · ' + shortMessage, 'error');
     }).finally(function () { delete pending[key]; });
   }
   function scheduleSave(cell, immediate) {
