@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260818-excel-traffic-small-v12';
+  var DATA_VERSION = '20260818-wuhan-huiju-renew-v13';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
