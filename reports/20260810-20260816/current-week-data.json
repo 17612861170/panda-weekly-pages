@@ -758,8 +758,8 @@
     {
       "name": "商丘万达",
       "region": "1区",
-      "newCustomers": 8,
-      "oldCustomers": 26,
+      "newCustomers": 45,
+      "oldCustomers": 140,
       "revenue": 15362.8,
       "target": 20946,
       "customers": 462,
@@ -805,8 +805,8 @@
     {
       "name": "信阳万达",
       "region": "1区",
-      "newCustomers": 2,
-      "oldCustomers": 9,
+      "newCustomers": 41,
+      "oldCustomers": 85,
       "revenue": 13207.35,
       "target": 18060,
       "customers": 230,
