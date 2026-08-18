@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260818-closure-support-v26';
+  var DATA_VERSION = '20260818-closure-support-v27';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -474,8 +474,10 @@
         rating.className = 'closure-rating ' + state;
         rating.textContent = state === 'red' ? '红灯' : state === 'yellow' ? '黄灯' : '绿灯';
       }
-      var problem = card.querySelector('.review-panel.problem [contenteditable="true"], .review-panel.problem textarea');
+      var problem = card.querySelector('.review-panel.problem .review-editor, .review-panel.problem .question-editor, .review-panel.problem [data-edit-field="question"], .review-panel.problem textarea');
       if (problem) {
+        if (!('value' in problem)) problem.contentEditable = 'true';
+        problem.setAttribute('spellcheck', 'false');
         problem.dataset.editField = 'question';
         problem.dataset.placeholder = '点击修改本周问题';
         var currentText = ('value' in problem ? problem.value : problem.textContent || '').trim();
