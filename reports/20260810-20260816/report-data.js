@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260818-store-filter-v25';
+  var DATA_VERSION = '20260818-closure-support-v26';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
