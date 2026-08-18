@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260818-cloud-sync-v24';
+  var DATA_VERSION = '20260818-store-filter-v25';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -104,7 +104,39 @@
     updateConclusions(brand, regions);
     updateHeaderScore();
     updatePeopleRankings(peopleSource);
+    bindStoreFilters();
     document.documentElement.dataset.reportDataReady = 'true';
+  }
+
+  function bindStoreFilters() {
+    document.querySelectorAll('.store-filter-bar').forEach(function (bar) {
+      var select = bar.querySelector('select');
+      var list = bar.nextElementSibling;
+      while (list && !list.classList.contains('closure-store-list')) list = list.nextElementSibling;
+      if (!select || !list) return;
+      var cards = Array.from(list.querySelectorAll('.store-review-card'));
+      if (!cards.length) return;
+      var known = Array.from(select.options).map(function (option) { return option.value; });
+      cards.forEach(function (card) {
+        if (card.dataset.storeName && known.indexOf(card.dataset.storeName) < 0) {
+          var option = document.createElement('option');
+          option.value = card.dataset.storeName;
+          option.textContent = card.dataset.storeName;
+          select.appendChild(option);
+        }
+      });
+      function apply() {
+        var value = select.value;
+        cards.forEach(function (card) {
+          card.hidden = Boolean(value) && card.dataset.storeName !== value;
+        });
+      }
+      if (select.dataset.storeFilterBound !== 'true') {
+        select.addEventListener('change', apply);
+        select.dataset.storeFilterBound = 'true';
+      }
+      apply();
+    });
   }
 
   function enrich(store) {
