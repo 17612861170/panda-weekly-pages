@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260819-previous-support-v29';
+  var DATA_VERSION = '20260821-store-filter-support-v31';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -79,6 +79,98 @@
     }
   }
 
+  function firstMetric(metrics, labels) {
+    if (!metrics) return null;
+    for (var i = 0; i < labels.length; i += 1) {
+      var value = number(metrics[labels[i]]);
+      if (value != null) return value;
+    }
+    return null;
+  }
+
+  function ensureDerivedMetricNode(card, support, label, anchorLabel) {
+    if (!card || !support) return null;
+    var existing = support.querySelector('.support-metric[data-derived-label="' + label + '"]');
+    if (existing) return existing;
+    var anchor = Array.from(support.querySelectorAll('.support-metric')).find(function (item) {
+      var text = item.querySelector('b');
+      return text && text.textContent.trim() === anchorLabel;
+    });
+    if (!anchor || !anchor.parentNode) return null;
+    var node = document.createElement('div');
+    node.className = 'support-metric';
+    node.dataset.derivedLabel = label;
+    node.innerHTML = '<b>' + label + '</b><span>— → —</span><em>—</em>';
+    anchor.parentNode.insertBefore(node, anchor.nextSibling);
+    return node;
+  }
+
+  function updateDerivedCountMetrics(storeMap) {
+    document.querySelectorAll('.store-review-card').forEach(function (card) {
+      var storeName = card.dataset.storeName;
+      var store = storeMap[storeName];
+      if (!store) return;
+      var support = card.querySelector('.store-review-support .status-cell') || card.querySelector('.store-review-support');
+      var metrics = priorSupport[storeName] || {};
+      var newCountNode = ensureDerivedMetricNode(card, support, '总新卡数量', '新签营收');
+      var newAvgNode = card.querySelector('.support-metric[data-derived-label="新卡均价"]');
+      var renewCountNode = ensureDerivedMetricNode(card, support, '总续卡数量', '续卡金额');
+      var renewAvgNode = card.querySelector('.support-metric[data-derived-label="续卡均价"]');
+      var previousNewCount = firstMetric(metrics, ['新客数']) != null && firstMetric(metrics, ['新签办卡率']) != null ? Math.round(firstMetric(metrics, ['新客数']) * firstMetric(metrics, ['新签办卡率']) / 100) : null;
+      var previousRenewCount = firstMetric(metrics, ['老客数']) != null && firstMetric(metrics, ['续费率', '续卡率']) != null ? Math.round(firstMetric(metrics, ['老客数']) * firstMetric(metrics, ['续费率', '续卡率']) / 100) : null;
+      updateCountNode(newCountNode, store.newCardCount, previousNewCount);
+      updateAverageNode(newAvgNode, store.newCardAmount, store.newCardCount, firstMetric(metrics, ['新签营收']), previousNewCount);
+      updateCountNode(renewCountNode, store.renewCount, previousRenewCount);
+      updateAverageNode(renewAvgNode, store.renewAmount, store.renewCount, firstMetric(metrics, ['续卡金额']), previousRenewCount);
+    });
+  }
+
+  function updateCountNode(node, currentCount, previousCount) {
+    if (!node) return;
+    var span = node.querySelector('span');
+    var em = node.querySelector('em');
+    var current = Number(currentCount);
+    var previous = Number(previousCount);
+    var currentText = Number.isFinite(current) ? integer(current) + '张' : '—';
+    var previousText = Number.isFinite(previous) ? integer(previous) + '张' : '—';
+    if (span) span.textContent = previousText + ' → ' + currentText;
+    if (!em) return;
+    if (!Number.isFinite(current) || !Number.isFinite(previous) || !previous) {
+      em.textContent = '—';
+      em.className = '';
+      return;
+    }
+    var change = (current - previous) / Math.abs(previous) * 100;
+    em.textContent = (change >= 0 ? '+' : '') + change.toFixed(1) + '%';
+    em.className = change >= 0 ? 'cg' : 'cr';
+    node.classList.toggle('is-bad', change < 0);
+  }
+
+  function updateAverageNode(node, currentAmount, currentCount, previousAmount, previousCount) {
+    if (!node) return;
+    var span = node.querySelector('span');
+    var em = node.querySelector('em');
+    var current = Number(currentAmount);
+    var currentBase = Number(currentCount);
+    var previous = Number(previousAmount);
+    var previousBase = Number(previousCount);
+    var currentValue = Number.isFinite(current) && Number.isFinite(currentBase) && currentBase ? current / currentBase : null;
+    var previousValue = Number.isFinite(previous) && Number.isFinite(previousBase) && previousBase ? previous / previousBase : null;
+    var currentText = currentValue == null ? '—' : money(currentValue);
+    var previousText = previousValue == null ? '—' : money(previousValue);
+    if (span) span.textContent = previousText + ' → ' + currentText;
+    if (!em) return;
+    if (currentValue == null || previousValue == null || !previousValue) {
+      em.textContent = '—';
+      em.className = '';
+      return;
+    }
+    var change = (currentValue - previousValue) / Math.abs(previousValue) * 100;
+    em.textContent = (change >= 0 ? '+' : '') + change.toFixed(1) + '%';
+    em.className = change >= 0 ? 'cg' : 'cr';
+    node.classList.toggle('is-bad', change < 0);
+  }
+
   function applyCurrentWeek(source, peopleSource, previousSupportSource) {
     mergePreviousSupport(previousSupportSource);
     var stores = source.stores || [];
@@ -104,6 +196,7 @@
     updateConclusions(brand, regions);
     updateHeaderScore();
     updatePeopleRankings(peopleSource);
+    updateDerivedCountMetrics(storeMap);
     bindStoreFilters();
     document.documentElement.dataset.reportDataReady = 'true';
   }
@@ -116,15 +209,38 @@
       if (!select || !list) return;
       var cards = Array.from(list.querySelectorAll('.store-review-card'));
       if (!cards.length) return;
-      var known = Array.from(select.options).map(function (option) { return option.value; });
-      cards.forEach(function (card) {
-        if (card.dataset.storeName && known.indexOf(card.dataset.storeName) < 0) {
-          var option = document.createElement('option');
-          option.value = card.dataset.storeName;
-          option.textContent = card.dataset.storeName;
-          select.appendChild(option);
-        }
+      var selected = select.value;
+      var ratingRank = { red: 0, yellow: 1, green: 2 };
+      function cardRating(card) {
+        var badge = card.querySelector('.closure-rating');
+        if (badge && badge.classList.contains('red')) return 'red';
+        if (badge && badge.classList.contains('yellow')) return 'yellow';
+        return 'green';
+      }
+      function rankOf(card) {
+        var rating = cardRating(card);
+        return ratingRank[rating] == null ? 2 : ratingRank[rating];
+      }
+      var orderedCards = cards.slice().sort(function (a, b) {
+        var rankDiff = rankOf(a) - rankOf(b);
+        if (rankDiff) return rankDiff;
+        return (a.dataset.storeName || '').localeCompare(b.dataset.storeName || '', 'zh-Hans-CN');
       });
+      select.innerHTML = '';
+      var all = document.createElement('option');
+      all.value = '';
+      all.textContent = '全部门店';
+      select.appendChild(all);
+      orderedCards.forEach(function (card) {
+        if (!card.dataset.storeName) return;
+        var rating = cardRating(card);
+        var option = document.createElement('option');
+        option.value = card.dataset.storeName;
+        option.textContent = (rating === 'red' ? '红灯' : rating === 'yellow' ? '黄灯' : '绿灯') + '｜' + card.dataset.storeName;
+        option.dataset.rating = rating;
+        select.appendChild(option);
+      });
+      if (selected) select.value = selected;
       function apply() {
         var value = select.value;
         cards.forEach(function (card) {
@@ -204,6 +320,22 @@
   }
 
   function metricValue(entity, label) {
+    if (label === '总新卡数量' || label === '新卡总卡量') {
+      var newCardCount = integer(entity.newCardCount);
+      return newCardCount === '—' ? '—' : newCardCount + '张';
+    }
+    if (label === '总续卡数量' || label === '续卡总卡量') {
+      var renewCount = integer(entity.renewCount);
+      return renewCount === '—' ? '—' : renewCount + '张';
+    }
+    if (label === '新卡均价') {
+      var newCardAvg = Number(entity.newCardCount) ? Number(entity.newCardAmount || 0) / Number(entity.newCardCount) : null;
+      return newCardAvg == null ? '—' : money(newCardAvg);
+    }
+    if (label === '续卡均价') {
+      var renewAvg = Number(entity.renewCount) ? Number(entity.renewAmount || 0) / Number(entity.renewCount) : null;
+      return renewAvg == null ? '—' : money(renewAvg);
+    }
     var map = {
       '总接待人数': ['customers', 'count'], '新客数': ['newCustomers', 'count'], '本周新客数': ['newCustomers', 'count'], '老客数': ['oldCustomers', 'count'],
       '总营收': ['revenue', 'money'], '本周营收': ['revenue', 'money'], '新签营收': ['newCardAmount', 'money'],
