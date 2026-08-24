@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260824-week-20260817-v1';
+  var DATA_VERSION = '20260824-people-rank-v2';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -725,6 +725,8 @@
     var allPeople = (source && source.employees || []).map(function (person) {
       return Object.assign({}, person, { name: normalizeName(person.name) });
     }).sort(function (a, b) { return b.amount - a.amount; });
+    var hasPeopleData = allPeople.length > 0;
+    var currentPeopleNote = hasPeopleData ? '8月17日-8月23日店长/店员个人排名已按本周截图更新。' : '8月17日-8月23日店长/店员个人排名截图未提供；本页不沿用上周个人数据。';
     var currentByName = {};
     allPeople.forEach(function (person) {
       if (!currentByName[person.name]) currentByName[person.name] = person;
@@ -853,14 +855,14 @@
         var values = [rows.length, money(currentRows.reduce(function (sum, row) { return sum + Number(row.amount || 0); }, 0)), top ? top.name : '-', top ? money(top.amount) : '-', currentRows.filter(function (row) { return row.completion >= 100; }).length];
         Array.from(brief.querySelectorAll('b')).forEach(function (node, index) { node.textContent = values[index]; });
       }
-      addNote(page, noteText || '8月17日-8月23日店长/店员个人排名截图未提供；本页不沿用上周个人数据。', warning);
+      addNote(page, noteText || currentPeopleNote, warning);
     }
 
     var managerPage = pageForTitle('店长业绩排名');
     if (managerPage) {
       var managerAlert = managerPage.querySelector('.alert');
-      if (managerAlert) managerAlert.textContent = '店长名单沿用上周固定链接完整名单；本周有截图则更新，未提供截图不使用旧数据冒充。';
-      render(managerPage, managers, '', '店长', '店长名单保留用于会议核对；本周个人排名截图未提供，金额不使用旧数据冒充。', false);
+      if (managerAlert) managerAlert.textContent = hasPeopleData ? '店长排名已按本周截图更新；店长身份按固定名单识别。' : '店长名单沿用上周固定链接完整名单；本周有截图则更新，未提供截图不使用旧数据冒充。';
+      render(managerPage, managers, '', '店长', hasPeopleData ? '8月17日-8月23日店长排名已按本周截图更新；未出现在截图中的店长保留名单但标注未提供。' : '店长名单保留用于会议核对；本周个人排名截图未提供，金额不使用旧数据冒充。', false);
     }
     render(fullPage, employees, '', '店员');
     ['1区', '2区', '3区'].forEach(function (area) {
