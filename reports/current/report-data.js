@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260824-store-patch-v5';
+  var DATA_VERSION = '20260824-wuhanhuiju-renew-v6';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
