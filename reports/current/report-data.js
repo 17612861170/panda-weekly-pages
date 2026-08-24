@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260824-people-rank-v2';
+  var DATA_VERSION = '20260824-people-rank-v3';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -846,6 +846,7 @@
           '<td>' + (hasCurrent ? percent(newSmallRate) : '-') + '</td>' +
           '<td>' + (hasCurrent ? percent(newMidRate) : '-') + '</td>' +
           '<td>' + (hasCurrent ? percent(newLargeRate) : '-') + '</td>';
+        row.dataset.currentHtml = row.innerHTML;
         body.appendChild(row);
       });
       var brief = page.querySelector('.area-brief.employee-brief');

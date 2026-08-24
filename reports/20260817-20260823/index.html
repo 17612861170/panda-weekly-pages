@@ -2315,9 +2315,18 @@ td { border-color:#dfe4ea; }
       if (amountHeader) amountHeader.textContent = (period === 'previous' ? '上周' : '本周') + '总金额';
       table.classList.toggle('ranking-no-data', !available);
       employeeRows.forEach(function (row) {
+        if (period === 'current' && row.dataset.currentHtml) {
+          row.innerHTML = row.dataset.currentHtml;
+          return;
+        }
         var cells = Array.from(row.children);
         if (!available) {
           [0, 1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].forEach(function (index) { if (cells[index]) cells[index].textContent = '-'; });
+          return;
+        }
+        if (period === 'previous') {
+          [0, 2, 7, 10, 11, 12, 13, 14, 15].forEach(function (index) { if (cells[index]) cells[index].textContent = '-'; });
+          if (cells[6]) cells[6].textContent = formatMoney(row.getAttribute('data-amount-previous'));
           return;
         }
         if (cells[6]) cells[6].textContent = formatMoney(row.getAttribute('data-amount-' + period));
@@ -2946,6 +2955,6 @@ td { border-color:#dfe4ea; }
 })();
 </script>
 <script src="../month-snapshot-20260801-20260823.js?v=20260824-month-screenshot-v1"></script>
-<script src="./report-data.js?v=20260824-people-rank-v2"></script>
+<script src="./report-data.js?v=20260824-people-rank-v3"></script>
 
 </body></html>
