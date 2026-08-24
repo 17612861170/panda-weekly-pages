@@ -864,7 +864,7 @@ td { border-color:#dfe4ea; }
   <div class="ranking-group" data-role="period" data-label="日期">
     <button type="button" class="ranking-pill active" data-period="current">本周</button>
     <button type="button" class="ranking-pill" data-period="previous">上周</button>
-    <button type="button" class="ranking-pill" data-period="month" title="本月数据暂未开放" disabled="">本月</button>
+    <button type="button" class="ranking-pill" data-period="month" title="显示真实月至今快照">本月</button>
     <button type="button" class="ranking-pill" data-period="custom" title="自定义时间暂未开放" disabled="">自定义</button>
     <span class="ranking-custom-range"><label>从 <input type="date" data-custom-start="" value="2026-08-17"></label><label>至 <input type="date" data-custom-end="" value="2026-08-23"></label></span>
   </div>
@@ -881,7 +881,7 @@ td { border-color:#dfe4ea; }
   <div class="ranking-group" data-role="period" data-label="日期">
     <button type="button" class="ranking-pill active" data-period="current">本周</button>
     <button type="button" class="ranking-pill" data-period="previous">上周</button>
-    <button type="button" class="ranking-pill" data-period="month" title="本月数据暂未开放" disabled="">本月</button>
+    <button type="button" class="ranking-pill" data-period="month" title="显示真实月至今快照">本月</button>
     <button type="button" class="ranking-pill" data-period="custom" title="自定义时间暂未开放" disabled="">自定义</button>
     <span class="ranking-custom-range"><label>从 <input type="date" data-custom-start="" value="2026-08-17"></label><label>至 <input type="date" data-custom-end="" value="2026-08-23"></label></span>
   </div>
@@ -893,7 +893,7 @@ td { border-color:#dfe4ea; }
   <div class="ranking-group" data-role="period" data-label="日期">
     <button type="button" class="ranking-pill active" data-period="current">本周</button>
     <button type="button" class="ranking-pill" data-period="previous">上周</button>
-    <button type="button" class="ranking-pill" data-period="month" title="本月数据暂未开放" disabled="">本月</button>
+    <button type="button" class="ranking-pill" data-period="month" title="显示真实月至今快照">本月</button>
     <button type="button" class="ranking-pill" data-period="custom" title="自定义时间暂未开放" disabled="">自定义</button>
     <span class="ranking-custom-range"><label>从 <input type="date" data-custom-start="" value="2026-08-17"></label><label>至 <input type="date" data-custom-end="" value="2026-08-23"></label></span>
   </div>
@@ -902,7 +902,7 @@ td { border-color:#dfe4ea; }
   <div class="ranking-group" data-role="period" data-label="日期">
     <button type="button" class="ranking-pill active" data-period="current">本周</button>
     <button type="button" class="ranking-pill" data-period="previous">上周</button>
-    <button type="button" class="ranking-pill" data-period="month" title="本月数据暂未开放" disabled="">本月</button>
+    <button type="button" class="ranking-pill" data-period="month" title="显示真实月至今快照">本月</button>
     <button type="button" class="ranking-pill" data-period="custom" title="自定义时间暂未开放" disabled="">自定义</button>
     <span class="ranking-custom-range"><label>从 <input type="date" data-custom-start="" value="2026-08-17"></label><label>至 <input type="date" data-custom-end="" value="2026-08-23"></label></span>
   </div>
@@ -911,7 +911,7 @@ td { border-color:#dfe4ea; }
   <div class="ranking-group" data-role="period" data-label="日期">
     <button type="button" class="ranking-pill active" data-period="current">本周</button>
     <button type="button" class="ranking-pill" data-period="previous">上周</button>
-    <button type="button" class="ranking-pill" data-period="month" title="本月数据暂未开放" disabled="">本月</button>
+    <button type="button" class="ranking-pill" data-period="month" title="显示真实月至今快照">本月</button>
     <button type="button" class="ranking-pill" data-period="custom" title="自定义时间暂未开放" disabled="">自定义</button>
     <span class="ranking-custom-range"><label>从 <input type="date" data-custom-start="" value="2026-08-17"></label><label>至 <input type="date" data-custom-end="" value="2026-08-23"></label></span>
   </div>
@@ -2093,15 +2093,15 @@ td { border-color:#dfe4ea; }
     var previousStart = '2026-08-10';
     var previousEnd = '2026-08-16';
     var monthStart = '2026-08-01';
-    var monthEnd = '2026-08-16';
-    if (start === monthStart && end === monthEnd) return { period: 'month', note: '自定义范围匹配月至今快照（8/1-8/16）' };
+    var monthEnd = '2026-08-23';
+    if (start === monthStart && end === monthEnd) return { period: 'month', note: '自定义范围匹配月至今快照（8/1-8/23）' };
     if (start === currentStart && end === currentEnd) return { period: 'current', note: '自定义范围匹配本周周汇总（8/17-8/23）' };
     if (start === previousStart && end === previousEnd) return { period: 'previous', note: '自定义范围匹配上周周汇总（8/10-8/16）' };
     return { period: 'unavailable', note: '该日期范围没有逐日原始数据，不能用周汇总冒充' };
   }
   function periodForSelection(period, toolbar) {
     if (period === 'custom') return periodForCustom(toolbar);
-    if (period === 'month') return { period: 'month', note: '显示真实月至今快照（8/1-8/16）' };
+    if (period === 'month') return { period: 'month', note: '显示真实月至今快照（8/1-8/23）' };
     if (period === 'previous') return { period: 'previous', note: '显示上周周汇总（8/10-8/16）' };
     return { period: 'current', note: '显示本周周汇总（8/17-8/23）' };
   }
@@ -2945,7 +2945,7 @@ td { border-color:#dfe4ea; }
   });
 })();
 </script>
-<script src="../month-snapshot-20260801-20260816.js?v=20260817-screenshot-priority-v8"></script>
+<script src="../month-snapshot-20260801-20260823.js?v=20260824-month-screenshot-v1"></script>
 <script src="./report-data.js?v=20260824-week-20260817-v1"></script>
 
 </body></html>
