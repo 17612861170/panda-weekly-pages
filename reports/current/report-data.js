@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260824-people-rank-v3';
+  var DATA_VERSION = '20260824-store-derived-v4';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -88,10 +88,20 @@
     return null;
   }
 
-  function ensureDerivedMetricNode(card, support, label, anchorLabel) {
+  function ensureDerivedMetricNode(card, support, label, anchorLabel, aliases) {
     if (!card || !support) return null;
-    var existing = support.querySelector('.support-metric[data-derived-label="' + label + '"]');
-    if (existing) return existing;
+    var labels = [label].concat(aliases || []);
+    var existing = Array.from(support.querySelectorAll('.support-metric')).find(function (item) {
+      var text = item.querySelector('b');
+      var currentLabel = text ? text.textContent.trim() : '';
+      return labels.indexOf(item.dataset.derivedLabel) >= 0 || labels.indexOf(currentLabel) >= 0;
+    });
+    if (existing) {
+      existing.dataset.derivedLabel = label;
+      var existingLabel = existing.querySelector('b');
+      if (existingLabel) existingLabel.textContent = label;
+      return existing;
+    }
     var anchor = Array.from(support.querySelectorAll('.support-metric')).find(function (item) {
       var text = item.querySelector('b');
       return text && text.textContent.trim() === anchorLabel;
@@ -112,10 +122,10 @@
       if (!store) return;
       var support = card.querySelector('.store-review-support .status-cell') || card.querySelector('.store-review-support');
       var metrics = priorSupport[storeName] || {};
-      var newCountNode = ensureDerivedMetricNode(card, support, '总新卡数量', '新签营收');
-      var newAvgNode = card.querySelector('.support-metric[data-derived-label="新卡均价"]');
-      var renewCountNode = ensureDerivedMetricNode(card, support, '总续卡数量', '续卡金额');
-      var renewAvgNode = card.querySelector('.support-metric[data-derived-label="续卡均价"]');
+      var newCountNode = ensureDerivedMetricNode(card, support, '新签总卡量', '新签营收', ['总新卡数量', '新卡总卡量']);
+      var newAvgNode = ensureDerivedMetricNode(card, support, '新签卡均价', '新签总卡量', ['新卡均价']);
+      var renewCountNode = ensureDerivedMetricNode(card, support, '续卡总卡量', '续卡金额', ['总续卡数量']);
+      var renewAvgNode = ensureDerivedMetricNode(card, support, '续卡均价', '续卡总卡量');
       var previousNewCount = firstMetric(metrics, ['新客数']) != null && firstMetric(metrics, ['新签办卡率']) != null ? Math.round(firstMetric(metrics, ['新客数']) * firstMetric(metrics, ['新签办卡率']) / 100) : null;
       var previousRenewCount = firstMetric(metrics, ['老客数']) != null && firstMetric(metrics, ['续费率', '续卡率']) != null ? Math.round(firstMetric(metrics, ['老客数']) * firstMetric(metrics, ['续费率', '续卡率']) / 100) : null;
       updateCountNode(newCountNode, store.newCardCount, previousNewCount);
@@ -320,7 +330,7 @@
   }
 
   function metricValue(entity, label) {
-    if (label === '总新卡数量' || label === '新卡总卡量') {
+    if (label === '新签总卡量' || label === '总新卡数量' || label === '新卡总卡量') {
       var newCardCount = integer(entity.newCardCount);
       return newCardCount === '—' ? '—' : newCardCount + '张';
     }
@@ -328,7 +338,7 @@
       var renewCount = integer(entity.renewCount);
       return renewCount === '—' ? '—' : renewCount + '张';
     }
-    if (label === '新卡均价') {
+    if (label === '新签卡均价' || label === '新卡均价') {
       var newCardAvg = Number(entity.newCardCount) ? Number(entity.newCardAmount || 0) / Number(entity.newCardCount) : null;
       return newCardAvg == null ? '—' : money(newCardAvg);
     }

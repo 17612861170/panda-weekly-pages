@@ -1094,8 +1094,8 @@ td { border-color:#dfe4ea; }
         });
       }
       appendDerivedMetrics('新签营收', [
-        supportMetricNode('新卡总卡量'),
-        supportMetricNode('新卡均价')
+        supportMetricNode('新签总卡量'),
+        supportMetricNode('新签卡均价')
       ]);
       appendDerivedMetrics('续卡金额', [
         supportMetricNode('续卡总卡量'),
@@ -1132,14 +1132,14 @@ td { border-color:#dfe4ea; }
       var previousRank = previousRanking.findIndex(function (item) { return item.name === storeName; }) + 1;
       var rankChange = currentRank && previousRank ? previousRank - currentRank : null;
       function buildMetricTable() {
-        var visibleMetrics = ['新客数', '老客数', '总营收', '新签营收', '新卡总卡量', '新卡均价', '完成率', '新签办卡率', '新签小卡率', '新签中卡率', '新签大卡率', '新签中大卡率', '整体大卡率', '续卡金额', '续卡总卡量', '续卡均价', '续卡占比', '续费率', '总引流金额', '总引流占比', '扫楼金额', '扫楼占比', '扶梯口金额'];
+        var visibleMetrics = ['新客数', '老客数', '总营收', '新签营收', '新签总卡量', '新签卡均价', '完成率', '新签办卡率', '新签小卡率', '新签中卡率', '新签大卡率', '新签中大卡率', '整体大卡率', '续卡金额', '续卡总卡量', '续卡均价', '续卡占比', '续费率', '总引流金额', '总引流占比', '扫楼金额', '扫楼占比', '扶梯口金额'];
         var table = document.createElement('table');
         table.className = 'metric-table area-metric-table four-week-table store-core-table';
         table.innerHTML = '<thead><tr><th>归类</th><th>指标</th><th>7/13-7/19</th><th>7/20-7/26</th><th>上周<br><small>7/27-8/2</small></th><th class="current-week-head">本周<br><small>8/3-8/9</small></th><th>较上周变化</th><th>本周判断</th></tr></thead><tbody></tbody>';
         var tbody = table.querySelector('tbody');
         var categoryByMetric = {
           '新客数': ['客流板块', 'cat-traffic'], '老客数': ['客流板块', 'cat-traffic'],
-          '总营收': ['营收板块', 'cat-revenue'], '新签营收': ['营收板块', 'cat-revenue'], '新卡总卡量': ['营收板块', 'cat-revenue'], '新卡均价': ['营收板块', 'cat-revenue'], '完成率': ['营收板块', 'cat-revenue'],
+          '总营收': ['营收板块', 'cat-revenue'], '新签营收': ['营收板块', 'cat-revenue'], '新签总卡量': ['营收板块', 'cat-revenue'], '新签卡均价': ['营收板块', 'cat-revenue'], '完成率': ['营收板块', 'cat-revenue'],
           '新签办卡率': ['办卡转化', 'cat-card'], '新签小卡率': ['办卡转化', 'cat-card'], '新签中卡率': ['办卡转化', 'cat-card'], '新签大卡率': ['办卡转化', 'cat-card'], '新签中大卡率': ['办卡转化', 'cat-card'], '整体大卡率': ['办卡转化', 'cat-card'],
           '续卡金额': ['续卡板块', 'cat-renew'], '续卡总卡量': ['续卡板块', 'cat-renew'], '续卡均价': ['续卡板块', 'cat-renew'], '续卡占比': ['续卡板块', 'cat-renew'], '续费率': ['续卡板块', 'cat-renew'],
           '总引流金额': ['引流板块', 'cat-flow'], '总引流占比': ['引流板块', 'cat-flow'], '扫楼金额': ['引流板块', 'cat-flow'], '扫楼占比': ['引流板块', 'cat-flow'], '扶梯口金额': ['引流板块', 'cat-flow']
@@ -2955,6 +2955,6 @@ td { border-color:#dfe4ea; }
 })();
 </script>
 <script src="../month-snapshot-20260801-20260823.js?v=20260824-month-screenshot-v2"></script>
-<script src="./report-data.js?v=20260824-people-rank-v3"></script>
+<script src="./report-data.js?v=20260824-store-derived-v4"></script>
 
 </body></html>
