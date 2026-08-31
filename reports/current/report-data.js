@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260830-excel-week-v1';
+  var DATA_VERSION = '20260830-excel-month-v1';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -126,8 +126,8 @@
       var newAvgNode = ensureDerivedMetricNode(card, support, '新签卡均价', '新签总卡量', ['新卡均价']);
       var renewCountNode = ensureDerivedMetricNode(card, support, '续卡总卡量', '续卡金额', ['总续卡数量']);
       var renewAvgNode = ensureDerivedMetricNode(card, support, '续卡均价', '续卡总卡量');
-      var previousNewCount = firstMetric(metrics, ['新客数']) != null && firstMetric(metrics, ['新签办卡率']) != null ? Math.round(firstMetric(metrics, ['新客数']) * firstMetric(metrics, ['新签办卡率']) / 100) : null;
-      var previousRenewCount = firstMetric(metrics, ['老客数']) != null && firstMetric(metrics, ['续费率', '续卡率']) != null ? Math.round(firstMetric(metrics, ['老客数']) * firstMetric(metrics, ['续费率', '续卡率']) / 100) : null;
+      var previousNewCount = firstMetric(metrics, ['新签总卡量', '总新卡数量', '新卡总卡量']);
+      var previousRenewCount = firstMetric(metrics, ['续卡总卡量', '总续卡数量']);
       updateCountNode(newCountNode, store.newCardCount, previousNewCount);
       updateAverageNode(newAvgNode, store.newCardAmount, store.newCardCount, firstMetric(metrics, ['新签营收']), previousNewCount);
       updateCountNode(renewCountNode, store.renewCount, previousRenewCount);
@@ -972,9 +972,9 @@
         var newMidRate = Object.prototype.hasOwnProperty.call(employee, 'newMidRate') ? employee.newMidRate : rate(employee.newMid, newTotal);
         var newLargeRate = Object.prototype.hasOwnProperty.call(employee, 'newLargeRate') ? employee.newLargeRate : rate(employee.newLarge, newTotal);
         var completionKnown = employee.completion != null && Number.isFinite(Number(employee.completion));
-        var cardCountText = employee.cardCount == null || !Number.isFinite(Number(employee.cardCount)) ? '—' : employee.cardCount;
-        var newTotalText = newTotal == null || !Number.isFinite(Number(newTotal)) ? '—' : newTotal;
-        var renewTotalText = renewTotal == null || !Number.isFinite(Number(renewTotal)) ? '—' : renewTotal;
+        var cardCountText = employee.cardCount == null || !Number.isFinite(Number(employee.cardCount)) ? '—' : integer(employee.cardCount);
+        var newSignText = employee.newCardAmount == null || !Number.isFinite(Number(employee.newCardAmount)) ? '—' : money(employee.newCardAmount);
+        var renewText = employee.renewAmount == null || !Number.isFinite(Number(employee.renewAmount)) ? '—' : money(employee.renewAmount);
         var row = document.createElement('tr');
         if (hasCurrent) row.setAttribute('data-amount-current', employee.amount);
         if (previousAmount != null) row.setAttribute('data-amount-previous', previousAmount);
@@ -987,7 +987,7 @@
           '<td>' + (previousAmount == null ? '-' : money(previousAmount)) + '</td>' +
           '<td>' + (amountChange == null ? '-' : '<span class="' + (amountChange >= 0 ? 'cg' : 'cr') + '">' + (amountChange >= 0 ? '+' : '-') + money(Math.abs(amountChange)) + '</span>') + '</td>' +
           '<td>' + (hasCurrent ? money(employee.renewAmount) : '-') + '</td>' +
-          '<td>' + (hasCurrent ? cardCountText + '/' + newTotalText + '/' + renewTotalText : '-') + '</td>' +
+          '<td>' + (hasCurrent ? cardCountText + '/' + newSignText + '/' + renewText : '-') + '</td>' +
           '<td>' + (hasCurrent ? percent(employee.newSignRate) : '-') + '</td>' +
           '<td>' + (hasCurrent ? percent(newSmallRate) : '-') + '</td>' +
           '<td>' + (hasCurrent ? percent(newMidRate) : '-') + '</td>' +

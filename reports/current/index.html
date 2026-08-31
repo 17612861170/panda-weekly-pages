@@ -2094,14 +2094,14 @@ td { border-color:#dfe4ea; }
     var previousEnd = '2026-08-23';
     var monthStart = '2026-08-01';
     var monthEnd = '2026-08-30';
-    if (start === monthStart && end === monthEnd) return { period: 'month', note: '自定义范围匹配月至今快照（8/1-8/23）' };
+    if (start === monthStart && end === monthEnd) return { period: 'month', note: '自定义范围匹配月至今快照（8/1-8/30）' };
     if (start === currentStart && end === currentEnd) return { period: 'current', note: '自定义范围匹配本周周汇总（8/24-8/30）' };
     if (start === previousStart && end === previousEnd) return { period: 'previous', note: '自定义范围匹配上周周汇总（8/17-8/23）' };
     return { period: 'unavailable', note: '该日期范围没有逐日原始数据，不能用周汇总冒充' };
   }
   function periodForSelection(period, toolbar) {
     if (period === 'custom') return periodForCustom(toolbar);
-    if (period === 'month') return { period: 'month', note: '显示真实月至今快照（8/1-8/23）' };
+    if (period === 'month') return { period: 'month', note: '显示真实月至今快照（8/1-8/30）' };
     if (period === 'previous') return { period: 'previous', note: '显示上周周汇总（8/17-8/23）' };
     return { period: 'current', note: '显示本周周汇总（8/24-8/30）' };
   }
@@ -2954,6 +2954,7 @@ td { border-color:#dfe4ea; }
   });
 })();
 </script>
-<script src="./report-data.js?v=20260830-excel-week-v1"></script>
+<script src="../month-snapshot-20260801-20260830.js?v=20260830-excel-month-v1"></script>
+<script src="./report-data.js?v=20260830-excel-month-v1"></script>
 
 </body></html>
