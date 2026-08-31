@@ -10,7 +10,8 @@
     "cardAverage": "新签卡均价=新签营收/新签总卡量；续卡均价=续卡金额/续卡总卡量；卡量缺失时留空。",
     "countsSource": "新签总卡量、续卡总卡量按用户补充截图/已录入字段为准；卡均价由对应金额/卡量计算。",
     "monthSource": "本月正式口径使用门店日报_20260801-0830(1).xlsx，并排除已闭店的新乡宝龙。",
-    "closedTestExclusion": "闭店、测试店不进入品牌/区域/门店周报合计；如果截图总数包含这些门店，需要单独剔除并说明差异来源。"
+    "closedTestExclusion": "闭店、测试店不进入品牌/区域/门店周报合计；如果截图总数包含这些门店，需要单独剔除并说明差异来源。",
+    "overallLargeRate": "本周整体大卡率/办卡率按用户提供截图逐店写入；办卡率=大卡率。"
   },
   "regionTargets": {
     "3区": 251151,
@@ -34,7 +35,7 @@
       "casual": null,
       "cardCount": 81,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 50.9,
       "newCardCount": 75,
       "newCardAmount": 39196.19,
       "newSignRateOverride": 49.02,
@@ -62,7 +63,9 @@
       "salary": null,
       "sourceRank": 1,
       "providedTrafficShare": 19.95,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 50.9,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "开封万达",
@@ -80,7 +83,7 @@
       "casual": null,
       "cardCount": 57,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 56.4,
       "newCardCount": 39,
       "newCardAmount": 14887.3,
       "newSignRateOverride": 46.99,
@@ -108,7 +111,9 @@
       "salary": null,
       "sourceRank": 2,
       "providedTrafficShare": 21.72,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 56.4,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "武汉荟聚",
@@ -126,7 +131,7 @@
       "casual": null,
       "cardCount": 54,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 55.1,
       "newCardCount": 42,
       "newCardAmount": 17718.2,
       "newSignRateOverride": 48.84,
@@ -155,7 +160,9 @@
       "sourceRank": 3,
       "providedTrafficShare": 25.15,
       "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次补充截图数值与该公式一致。",
-      "manualOverride": "按用户明确补充：武汉荟聚续卡本周9100。"
+      "manualOverride": "按用户明确补充：武汉荟聚续卡本周9100。",
+      "overallLargeRateOverride": 55.1,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "洛阳泉舜",
@@ -173,7 +180,7 @@
       "casual": null,
       "cardCount": 50,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 40.6,
       "newCardCount": 35,
       "newCardAmount": 14752.0,
       "newSignRateOverride": 32.41,
@@ -201,7 +208,9 @@
       "salary": null,
       "sourceRank": 4,
       "providedTrafficShare": 38.87,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 40.6,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "襄阳高新万达",
@@ -219,7 +228,7 @@
       "casual": null,
       "cardCount": 63,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 58.3,
       "newCardCount": 54,
       "newCardAmount": 19106.0,
       "newSignRateOverride": 54.55,
@@ -247,7 +256,9 @@
       "salary": null,
       "sourceRank": 5,
       "providedTrafficShare": 14.46,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 58.3,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "郑州二七万象城",
@@ -265,7 +276,7 @@
       "casual": null,
       "cardCount": 46,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 38.0,
       "newCardCount": 38,
       "newCardAmount": 16603.2,
       "newSignRateOverride": 33.63,
@@ -293,7 +304,9 @@
       "salary": null,
       "sourceRank": 6,
       "providedTrafficShare": 2.14,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 38.0,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "焦作万达",
@@ -311,7 +324,7 @@
       "casual": null,
       "cardCount": 52,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 53.6,
       "newCardCount": 44,
       "newCardAmount": 17823.0,
       "newSignRateOverride": 49.44,
@@ -339,7 +352,9 @@
       "salary": null,
       "sourceRank": 7,
       "providedTrafficShare": 38.94,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 53.6,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "郑州美盛天街",
@@ -357,7 +372,7 @@
       "casual": null,
       "cardCount": 38,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 62.3,
       "newCardCount": 29,
       "newCardAmount": 14175.0,
       "newSignRateOverride": 55.77,
@@ -385,7 +400,9 @@
       "salary": null,
       "sourceRank": 8,
       "providedTrafficShare": 22.79,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 62.3,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "许昌魏都万达",
@@ -403,7 +420,7 @@
       "casual": null,
       "cardCount": 42,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 56.0,
       "newCardCount": 23,
       "newCardAmount": 9940.0,
       "newSignRateOverride": 41.07,
@@ -431,7 +448,9 @@
       "salary": null,
       "sourceRank": 9,
       "providedTrafficShare": 0.61,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 56.0,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "南阳吾悦",
@@ -449,7 +468,7 @@
       "casual": null,
       "cardCount": 43,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 63.2,
       "newCardCount": 36,
       "newCardAmount": 15096.0,
       "newSignRateOverride": 59.02,
@@ -477,7 +496,9 @@
       "salary": null,
       "sourceRank": 10,
       "providedTrafficShare": 27.82,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 63.2,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "周口万达",
@@ -495,7 +516,7 @@
       "casual": null,
       "cardCount": 37,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 46.8,
       "newCardCount": 25,
       "newCardAmount": 9254.0,
       "newSignRateOverride": 37.31,
@@ -523,7 +544,9 @@
       "salary": null,
       "sourceRank": 11,
       "providedTrafficShare": 39.38,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 46.8,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "洛阳中州万达",
@@ -541,7 +564,7 @@
       "casual": null,
       "cardCount": 34,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 61.8,
       "newCardCount": 27,
       "newCardAmount": 11659.2,
       "newSignRateOverride": 56.25,
@@ -569,7 +592,9 @@
       "salary": null,
       "sourceRank": 12,
       "providedTrafficShare": 30.72,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 61.8,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "郑州惠济万达",
@@ -587,7 +612,7 @@
       "casual": null,
       "cardCount": 28,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 66.7,
       "newCardCount": 22,
       "newCardAmount": 9162.0,
       "newSignRateOverride": 61.11,
@@ -615,7 +640,9 @@
       "salary": null,
       "sourceRank": 13,
       "providedTrafficShare": 45.09,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 66.7,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "商丘万达",
@@ -633,7 +660,7 @@
       "casual": null,
       "cardCount": 27,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 46.5,
       "newCardCount": 16,
       "newCardAmount": 9982.0,
       "newSignRateOverride": 51.2,
@@ -662,7 +689,9 @@
       "sourceRank": 14,
       "providedTrafficShare": 74.46,
       "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次补充截图数值与该公式一致。",
-      "manualOverride": "按用户补充表格截图修正。"
+      "manualOverride": "按用户补充表格截图修正。",
+      "overallLargeRateOverride": 46.5,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "郑州中原万达",
@@ -680,7 +709,7 @@
       "casual": null,
       "cardCount": 20,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 40.8,
       "newCardCount": 13,
       "newCardAmount": 5779.0,
       "newSignRateOverride": 30.95,
@@ -708,7 +737,9 @@
       "salary": null,
       "sourceRank": 15,
       "providedTrafficShare": 37.47,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 40.8,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "南阳万达",
@@ -726,7 +757,7 @@
       "casual": null,
       "cardCount": 21,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 56.8,
       "newCardCount": 14,
       "newCardAmount": 5822.0,
       "newSignRateOverride": 46.67,
@@ -754,7 +785,9 @@
       "salary": null,
       "sourceRank": 16,
       "providedTrafficShare": 10.4,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 56.8,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "信阳万达",
@@ -772,7 +805,7 @@
       "casual": null,
       "cardCount": 18,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 52.9,
       "newCardCount": 12,
       "newCardAmount": 14667.0,
       "newSignRateOverride": 64.0,
@@ -801,7 +834,9 @@
       "sourceRank": 17,
       "providedTrafficShare": 66.34,
       "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次补充截图数值与该公式一致。",
-      "manualOverride": "按用户补充表格截图修正。"
+      "manualOverride": "按用户补充表格截图修正。",
+      "overallLargeRateOverride": 52.9,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "新乡万达",
@@ -819,7 +854,7 @@
       "casual": null,
       "cardCount": 12,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 37.5,
       "newCardCount": 10,
       "newCardAmount": 4793.0,
       "newSignRateOverride": 33.33,
@@ -847,7 +882,9 @@
       "salary": null,
       "sourceRank": 18,
       "providedTrafficShare": 44.59,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 37.5,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "郑州信万",
@@ -865,7 +902,7 @@
       "casual": null,
       "cardCount": 13,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 52.0,
       "newCardCount": 10,
       "newCardAmount": 5055.0,
       "newSignRateOverride": 45.45,
@@ -893,7 +930,9 @@
       "salary": null,
       "sourceRank": 19,
       "providedTrafficShare": 9.31,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 52.0,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "安阳万达",
@@ -911,7 +950,7 @@
       "casual": null,
       "cardCount": 8,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 22.2,
       "newCardCount": 6,
       "newCardAmount": 2888.0,
       "newSignRateOverride": 17.65,
@@ -939,7 +978,9 @@
       "salary": null,
       "sourceRank": 20,
       "providedTrafficShare": 6.84,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 22.2,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     },
     {
       "name": "安阳滑县吾悦",
@@ -957,7 +998,7 @@
       "casual": null,
       "cardCount": 11,
       "cardAmount": null,
-      "cardRate": null,
+      "cardRate": 26.2,
       "newCardCount": 9,
       "newCardAmount": 3393.0,
       "newSignRateOverride": 22.5,
@@ -985,7 +1026,9 @@
       "salary": null,
       "sourceRank": 21,
       "providedTrafficShare": 51.67,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。"
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "overallLargeRateOverride": 26.2,
+      "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。"
     }
   ]
 }

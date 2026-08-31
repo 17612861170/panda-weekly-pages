@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260830-excel-final-v2';
+  var DATA_VERSION = '20260830-large-rate-v3';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -305,9 +305,16 @@
     result.renewRate = ratio(result.renewCount, result.oldCustomers);
     if (result.renewRate == null) result.renewRate = weightedAverage(rows, 'renewRateOverride', 'revenue');
     result.newSmallRate = ratio(result.newSmall, result.newCardCount);
+    if (result.newSmallRate == null) result.newSmallRate = weightedAverage(rows, 'newSmallRateOverride', 'newCardCount');
     result.newMidRate = ratio(result.newMid, result.newCardCount);
+    if (result.newMidRate == null) result.newMidRate = weightedAverage(rows, 'newMidRateOverride', 'newCardCount');
     result.newLargeRate = ratio(result.newLarge, result.newCardCount);
-    result.newMidLargeRate = ratio(result.newMid + result.newLarge, result.newCardCount);
+    if (result.newLargeRate == null) result.newLargeRate = weightedAverage(rows, 'newLargeRateOverride', 'newCardCount');
+    var newMidLargeTotal = [result.newMid, result.newLarge].some(function (value) { return value != null && value !== ''; })
+      ? Number(result.newMid || 0) + Number(result.newLarge || 0)
+      : null;
+    result.newMidLargeRate = ratio(newMidLargeTotal, result.newCardCount);
+    if (result.newMidLargeRate == null) result.newMidLargeRate = weightedAverage(rows, 'newMidLargeRateOverride', 'newCardCount');
     result.renewShare = ratio(result.renewAmount, result.revenue);
     result.trafficShare = ratio(result.trafficAmount, result.newCardAmount);
     result.sweepShare = ratio(result.sweepAmount, result.newCardAmount);
@@ -316,6 +323,7 @@
       ? largeFields.reduce(function (sum, value) { return sum + Number(value || 0); }, 0)
       : null;
     result.overallLargeRate = ratio(largeTotal, result.cardCount);
+    if (result.overallLargeRate == null) result.overallLargeRate = weightedAverage(rows, 'overallLargeRateOverride', 'cardCount');
     return result;
   }
 
