@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260830-large-rate-v3';
+  var DATA_VERSION = '20260830-old-customers-v4';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
