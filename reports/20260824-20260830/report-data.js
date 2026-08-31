@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260830-renew-v10';
+  var DATA_VERSION = '20260830-people-v12';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -905,6 +905,14 @@
             "previousAmount": 77
       }
 ];
+    if (source && Array.isArray(source.managerRoster) && source.managerRoster.length) {
+      managerRoster = source.managerRoster.map(function (person) {
+        return Object.assign({}, person, { name: normalizeName(person.name) });
+      });
+    }
+    function personKey(person) {
+      return [person.region || '', person.store || '', normalizeName(person.name || '')].join('|');
+    }
     var confirmedManagers = managerRoster.reduce(function (map, person) {
       map[person.name] = true;
       return map;
@@ -914,25 +922,36 @@
     }).sort(function (a, b) { return b.amount - a.amount; });
     var hasPeopleData = allPeople.length > 0;
     var currentPeopleNote = hasPeopleData ? '8月24日-8月30日店长/店员个人排名已按本周Excel更新。' : '8月24日-8月30日店长/店员个人排名数据未提供；本页不沿用上周个人数据。';
+    var currentByKey = {};
     var currentByName = {};
+    var currentNameCounts = {};
     allPeople.forEach(function (person) {
+      currentByKey[personKey(person)] = person;
+      currentNameCounts[person.name] = (currentNameCounts[person.name] || 0) + 1;
       if (!currentByName[person.name]) currentByName[person.name] = person;
     });
-    var seenManagers = {};
-    var managers = managerRoster.map(function (person) {
-      var current = currentByName[person.name];
-      seenManagers[person.name] = true;
-      return Object.assign({}, current || {}, person, {
-        region: current && current.region || person.region,
-        store: current && current.store || person.store,
-        missingCurrent: !current
-      });
+    var rosterByKey = {};
+    var rosterByName = {};
+    var rosterNameCounts = {};
+    managerRoster.forEach(function (person) {
+      rosterByKey[personKey(person)] = person;
+      rosterNameCounts[person.name] = (rosterNameCounts[person.name] || 0) + 1;
+      if (!rosterByName[person.name]) rosterByName[person.name] = person;
     });
-    allPeople.forEach(function (person) {
-      if ((person.role === 'manager' || confirmedManagers[person.name]) && !seenManagers[person.name]) {
-        seenManagers[person.name] = true;
-        managers.push(Object.assign({}, person, { previousAmount: null, previousRank: null, missingCurrent: false }));
-      }
+    var seenManagers = {};
+    var managers = hasPeopleData ? allPeople.filter(function (person) {
+      return person.role === 'manager' || confirmedManagers[person.name];
+    }).map(function (person) {
+      var key = personKey(person);
+      var roster = rosterByKey[key] || (rosterNameCounts[person.name] === 1 && currentNameCounts[person.name] === 1 ? rosterByName[person.name] : null);
+      seenManagers[key] = true;
+      return Object.assign({}, roster || {}, person, {
+        previousRank: person.previousRank != null ? person.previousRank : roster && roster.previousRank,
+        previousAmount: person.previousAmount != null ? person.previousAmount : roster && roster.previousAmount,
+        missingCurrent: false
+      });
+    }) : managerRoster.map(function (person) {
+      return Object.assign({}, person, { missingCurrent: true });
     });
     managers.sort(function (a, b) {
       if (!a.missingCurrent && !b.missingCurrent) return Number(b.amount || 0) - Number(a.amount || 0);
@@ -940,7 +959,7 @@
       if (!b.missingCurrent) return 1;
       return Number(a.previousRank || 999) - Number(b.previousRank || 999);
     });
-    var employees = allPeople.filter(function (person) { return person.role !== 'manager' && !confirmedManagers[person.name]; });
+    var employees = allPeople.filter(function (person) { return person.role !== 'manager'; });
     var pageForTitle = function (title) {
       var heading = Array.from(document.querySelectorAll('.page .section-title')).find(function (item) {
         return item.textContent.trim() === title;
@@ -1019,7 +1038,7 @@
         var hasCurrent = !employee.missingCurrent && Number.isFinite(Number(employee.amount));
         var currentRank = hasCurrent ? index + 1 : null;
         var old = history[employee.name];
-        var previousRank = employee.previousRank != null ? employee.previousRank : area ? previousAreaRanks[area + '|' + employee.name] : old && old.rank;
+        var previousRank = area ? (employee.previousAreaRank != null ? employee.previousAreaRank : previousAreaRanks[area + '|' + employee.name]) : (employee.previousRank != null ? employee.previousRank : old && old.rank);
         var previousAmount = employee.previousAmount != null ? employee.previousAmount : old && old.amount;
         var change = !hasCurrent || previousRank == null ? null : previousRank - currentRank;
         var amountChange = !hasCurrent || previousAmount == null ? null : employee.amount - previousAmount;
@@ -1069,8 +1088,8 @@
     var managerPage = pageForTitle('店长业绩排名');
     if (managerPage) {
       var managerAlert = managerPage.querySelector('.alert');
-      if (managerAlert) managerAlert.textContent = hasPeopleData ? '店长排名已按本周Excel更新；店长身份按固定名单识别。' : '店长名单沿用上周固定链接完整名单；本周有数据则更新，未提供数据不使用旧数据冒充。';
-      render(managerPage, managers, '', '店长', hasPeopleData ? '8月24日-8月30日店长排名已按本周Excel更新；未出现在本周数据中的店长保留名单但标注未提供。' : '店长名单保留用于会议核对；本周个人排名数据未提供，金额不使用旧数据冒充。', false);
+      if (managerAlert) managerAlert.textContent = hasPeopleData ? '店长排名已按本周Excel更新；上周数据仅用于对比。' : '店长名单沿用上周固定链接完整名单；本周个人排名数据未提供，金额不使用旧数据冒充。';
+      render(managerPage, managers, '', '店长', hasPeopleData ? '8月24日-8月30日店长排名已按本周Excel更新；本周未提供的人员不进入本周排名。' : '店长名单保留用于会议核对；本周个人排名数据未提供，金额不使用旧数据冒充。', false);
     }
     render(fullPage, employees, '', '店员');
     ['1区', '2区', '3区'].forEach(function (area) {
