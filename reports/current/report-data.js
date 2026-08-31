@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260830-people-v12';
+  var DATA_VERSION = '20260830-people-v13';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
