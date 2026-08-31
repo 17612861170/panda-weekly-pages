@@ -281,7 +281,11 @@
     result.renewShare = store.renewShareOverride == null ? ratio(store.renewAmount, store.revenue) : Number(store.renewShareOverride);
     result.trafficShare = ratio(store.trafficAmount, store.newCardAmount);
     result.sweepShare = ratio(store.sweepAmount, store.newCardAmount);
-    result.overallLargeRate = store.overallLargeRateOverride == null ? ratio(store.newMid + store.newLarge + store.renewMid + store.renewLarge, store.cardCount) : Number(store.overallLargeRateOverride);
+    var storeLargeFields = [store.newMid, store.newLarge, store.renewMid, store.renewLarge];
+    var storeLargeTotal = storeLargeFields.some(function (value) { return value != null && value !== ''; })
+      ? storeLargeFields.reduce(function (sum, value) { return sum + Number(value || 0); }, 0)
+      : null;
+    result.overallLargeRate = store.overallLargeRateOverride == null ? ratio(storeLargeTotal, store.cardCount) : Number(store.overallLargeRateOverride);
     return result;
   }
 
@@ -307,7 +311,11 @@
     result.renewShare = ratio(result.renewAmount, result.revenue);
     result.trafficShare = ratio(result.trafficAmount, result.newCardAmount);
     result.sweepShare = ratio(result.sweepAmount, result.newCardAmount);
-    result.overallLargeRate = ratio(result.newMid + result.newLarge + result.renewMid + result.renewLarge, result.cardCount);
+    var largeFields = [result.newMid, result.newLarge, result.renewMid, result.renewLarge];
+    var largeTotal = largeFields.some(function (value) { return value != null && value !== ''; })
+      ? largeFields.reduce(function (sum, value) { return sum + Number(value || 0); }, 0)
+      : null;
+    result.overallLargeRate = ratio(largeTotal, result.cardCount);
     return result;
   }
 
