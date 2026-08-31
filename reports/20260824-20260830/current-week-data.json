@@ -11,7 +11,8 @@
     "countsSource": "新签总卡量、续卡总卡量按用户补充截图/已录入字段为准；卡均价由对应金额/卡量计算。",
     "closedTestExclusion": "闭店、测试店不进入品牌/区域/门店周报合计；如果截图总数包含这些门店，需要单独剔除并说明差异来源。",
     "overallLargeRate": "本周总大卡率/大卡率按用户提供截图逐店写入；总大卡率=大卡率。",
-    "oldCustomers": "老客数按飞书口径/门店日报老客数透视补缺：08-24至08-30逐日老客去重数相加；不从续卡率、总人数或旧页面反推。"
+    "oldCustomers": "老客数按飞书口径/门店日报老客数透视补缺：08-24至08-30逐日老客去重数相加；不从续卡率、总人数或旧页面反推。",
+    "renewData": "续卡字段以本周续卡截图为准；截图提供一位小数时，页面按截图口径展示，不用旧值覆盖。"
   },
   "regionTargets": {
     "3区": 251151,
@@ -46,8 +47,8 @@
       "newMidLargeRateOverride": 85.33,
       "renewCount": 6,
       "renewAmount": 4177.0,
-      "renewRateOverride": 9.52,
-      "renewShareOverride": 8.33,
+      "renewRateOverride": 9.5,
+      "renewShareOverride": 8.3,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -67,7 +68,9 @@
       "overallLargeRateOverride": 86.4,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 73.33,
-      "newLargeRateOverride": 12.0
+      "newLargeRateOverride": 12.0,
+      "renewLargeRateOverride": 100.0,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "开封万达",
@@ -96,8 +99,8 @@
       "newMidLargeRateOverride": 43.59,
       "renewCount": 18,
       "renewAmount": 10478.0,
-      "renewRateOverride": 11.92,
-      "renewShareOverride": 35.72,
+      "renewRateOverride": 11.9,
+      "renewShareOverride": 35.7,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -118,7 +121,9 @@
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 35.9,
       "newLargeRateOverride": 7.69,
-      "sourceCorrection": "用户截图确认：开封万达本周营业额为29358.50，修正原29331.50。"
+      "sourceCorrection": "用户截图确认：开封万达本周营业额为29358.50，修正原29331.50。",
+      "renewLargeRateOverride": 94.4,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "武汉荟聚",
@@ -146,9 +151,9 @@
       "newSmallRateOverride": 42.86,
       "newMidLargeRateOverride": 57.14,
       "renewCount": 12,
-      "renewAmount": 9100.0,
-      "renewRateOverride": 11.54,
-      "renewShareOverride": 31.32,
+      "renewAmount": 5552.0,
+      "renewRateOverride": 11.5,
+      "renewShareOverride": 19.1,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -165,11 +170,13 @@
       "sourceRank": 3,
       "providedTrafficShare": 25.15,
       "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次补充截图数值与该公式一致。",
-      "manualOverride": "按用户明确补充：武汉荟聚续卡本周9100。",
+      "manualOverride": "按用户最新续卡截图覆盖：武汉荟聚本周续卡金额5552，续卡数12。",
       "overallLargeRateOverride": 64.8,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 45.24,
-      "newLargeRateOverride": 11.9
+      "newLargeRateOverride": 11.9,
+      "renewLargeRateOverride": 91.7,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "洛阳泉舜",
@@ -198,8 +205,8 @@
       "newMidLargeRateOverride": 48.57,
       "renewCount": 15,
       "renewAmount": 6800.0,
-      "renewRateOverride": 7.21,
-      "renewShareOverride": 23.76,
+      "renewRateOverride": 7.2,
+      "renewShareOverride": 23.8,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -219,7 +226,9 @@
       "overallLargeRateOverride": 58.0,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 37.14,
-      "newLargeRateOverride": 11.43
+      "newLargeRateOverride": 11.43,
+      "renewLargeRateOverride": 86.7,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "襄阳高新万达",
@@ -248,8 +257,8 @@
       "newMidLargeRateOverride": 42.59,
       "renewCount": 9,
       "renewAmount": 3699.0,
-      "renewRateOverride": 6.38,
-      "renewShareOverride": 13.66,
+      "renewRateOverride": 6.4,
+      "renewShareOverride": 13.7,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -269,7 +278,9 @@
       "overallLargeRateOverride": 47.6,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 38.89,
-      "newLargeRateOverride": 3.7
+      "newLargeRateOverride": 3.7,
+      "renewLargeRateOverride": 77.8,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "郑州二七万象城",
@@ -298,8 +309,8 @@
       "newMidLargeRateOverride": 57.89,
       "renewCount": 8,
       "renewAmount": 3990.0,
-      "renewRateOverride": 7.48,
-      "renewShareOverride": 14.78,
+      "renewRateOverride": 7.5,
+      "renewShareOverride": 14.8,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -319,7 +330,9 @@
       "overallLargeRateOverride": 65.2,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 44.74,
-      "newLargeRateOverride": 13.16
+      "newLargeRateOverride": 13.16,
+      "renewLargeRateOverride": 100.0,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "焦作万达",
@@ -348,8 +361,8 @@
       "newMidLargeRateOverride": 47.73,
       "renewCount": 8,
       "renewAmount": 4200.0,
-      "renewRateOverride": 3.19,
-      "renewShareOverride": 15.82,
+      "renewRateOverride": 3.2,
+      "renewShareOverride": 15.8,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -369,7 +382,9 @@
       "overallLargeRateOverride": 53.9,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 38.64,
-      "newLargeRateOverride": 9.09
+      "newLargeRateOverride": 9.09,
+      "renewLargeRateOverride": 87.5,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "郑州美盛天街",
@@ -398,8 +413,8 @@
       "newMidLargeRateOverride": 72.41,
       "renewCount": 9,
       "renewAmount": 5890.0,
-      "renewRateOverride": 10.23,
-      "renewShareOverride": 26.54,
+      "renewRateOverride": 10.2,
+      "renewShareOverride": 26.5,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -419,7 +434,9 @@
       "overallLargeRateOverride": 76.3,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 55.17,
-      "newLargeRateOverride": 17.24
+      "newLargeRateOverride": 17.24,
+      "renewLargeRateOverride": 88.9,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "许昌魏都万达",
@@ -448,8 +465,8 @@
       "newMidLargeRateOverride": 73.91,
       "renewCount": 19,
       "renewAmount": 9000.0,
-      "renewRateOverride": 13.48,
-      "renewShareOverride": 41.29,
+      "renewRateOverride": 13.5,
+      "renewShareOverride": 41.3,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -469,7 +486,9 @@
       "overallLargeRateOverride": 85.7,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 73.91,
-      "newLargeRateOverride": 0.0
+      "newLargeRateOverride": 0.0,
+      "renewLargeRateOverride": 100.0,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "南阳吾悦",
@@ -498,7 +517,7 @@
       "newMidLargeRateOverride": 52.78,
       "renewCount": 7,
       "renewAmount": 2576.0,
-      "renewRateOverride": 4.07,
+      "renewRateOverride": 4.1,
       "renewShareOverride": 12.8,
       "renewSmall": null,
       "renewMid": null,
@@ -519,7 +538,9 @@
       "overallLargeRateOverride": 58.1,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 41.67,
-      "newLargeRateOverride": 11.11
+      "newLargeRateOverride": 11.11,
+      "renewLargeRateOverride": 85.7,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "周口万达",
@@ -548,8 +569,8 @@
       "newMidLargeRateOverride": 80.0,
       "renewCount": 12,
       "renewAmount": 4899.0,
-      "renewRateOverride": 10.26,
-      "renewShareOverride": 26.79,
+      "renewRateOverride": 10.3,
+      "renewShareOverride": 26.8,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -569,7 +590,9 @@
       "overallLargeRateOverride": 86.5,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 72.0,
-      "newLargeRateOverride": 8.0
+      "newLargeRateOverride": 8.0,
+      "renewLargeRateOverride": 100.0,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "洛阳中州万达",
@@ -598,8 +621,8 @@
       "newMidLargeRateOverride": 62.96,
       "renewCount": 7,
       "renewAmount": 2797.0,
-      "renewRateOverride": 5.93,
-      "renewShareOverride": 17.63,
+      "renewRateOverride": 5.9,
+      "renewShareOverride": 17.6,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -619,7 +642,9 @@
       "overallLargeRateOverride": 67.7,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 62.96,
-      "newLargeRateOverride": 0.0
+      "newLargeRateOverride": 0.0,
+      "renewLargeRateOverride": 85.7,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "郑州惠济万达",
@@ -648,8 +673,8 @@
       "newMidLargeRateOverride": 40.91,
       "renewCount": 6,
       "renewAmount": 3166.0,
-      "renewRateOverride": 5.56,
-      "renewShareOverride": 23.07,
+      "renewRateOverride": 5.6,
+      "renewShareOverride": 23.1,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -669,7 +694,9 @@
       "overallLargeRateOverride": 50.0,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 27.27,
-      "newLargeRateOverride": 13.64
+      "newLargeRateOverride": 13.64,
+      "renewLargeRateOverride": 83.3,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "商丘万达",
@@ -698,7 +725,7 @@
       "newMidLargeRateOverride": 93.75,
       "renewCount": 11,
       "renewAmount": 4439.0,
-      "renewRateOverride": 35.3,
+      "renewRateOverride": 9.2,
       "renewShareOverride": 32.4,
       "renewSmall": null,
       "renewMid": null,
@@ -720,7 +747,9 @@
       "overallLargeRateOverride": 96.3,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 87.5,
-      "newLargeRateOverride": 6.25
+      "newLargeRateOverride": 6.25,
+      "renewLargeRateOverride": 100.0,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "郑州中原万达",
@@ -749,8 +778,8 @@
       "newMidLargeRateOverride": 53.85,
       "renewCount": 7,
       "renewAmount": 3100.0,
-      "renewRateOverride": 9.33,
-      "renewShareOverride": 27.58,
+      "renewRateOverride": 9.3,
+      "renewShareOverride": 27.6,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -770,7 +799,9 @@
       "overallLargeRateOverride": 70.0,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 53.85,
-      "newLargeRateOverride": 0.0
+      "newLargeRateOverride": 0.0,
+      "renewLargeRateOverride": 100.0,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "南阳万达",
@@ -799,8 +830,8 @@
       "newMidLargeRateOverride": 57.14,
       "renewCount": 7,
       "renewAmount": 3094.0,
-      "renewRateOverride": 4.35,
-      "renewShareOverride": 29.44,
+      "renewRateOverride": 4.3,
+      "renewShareOverride": 29.4,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -820,7 +851,9 @@
       "overallLargeRateOverride": 66.7,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 57.14,
-      "newLargeRateOverride": 0.0
+      "newLargeRateOverride": 0.0,
+      "renewLargeRateOverride": 85.7,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "信阳万达",
@@ -849,8 +882,8 @@
       "newMidLargeRateOverride": 58.33,
       "renewCount": 6,
       "renewAmount": 2394.0,
-      "renewRateOverride": 16.5,
-      "renewShareOverride": 30.52,
+      "renewRateOverride": 9.4,
+      "renewShareOverride": 30.5,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -871,7 +904,9 @@
       "overallLargeRateOverride": 61.1,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 50.0,
-      "newLargeRateOverride": 8.33
+      "newLargeRateOverride": 8.33,
+      "renewLargeRateOverride": 66.7,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "新乡万达",
@@ -900,8 +935,8 @@
       "newMidLargeRateOverride": 70.0,
       "renewCount": 2,
       "renewAmount": 800.0,
-      "renewRateOverride": 2.02,
-      "renewShareOverride": 10.58,
+      "renewRateOverride": 2.0,
+      "renewShareOverride": 10.6,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -921,7 +956,9 @@
       "overallLargeRateOverride": 75.0,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 60.0,
-      "newLargeRateOverride": 10.0
+      "newLargeRateOverride": 10.0,
+      "renewLargeRateOverride": 100.0,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "郑州信万",
@@ -950,8 +987,8 @@
       "newMidLargeRateOverride": 90.0,
       "renewCount": 3,
       "renewAmount": 1400.0,
-      "renewRateOverride": 3.19,
-      "renewShareOverride": 18.99,
+      "renewRateOverride": 3.2,
+      "renewShareOverride": 19.0,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -971,7 +1008,9 @@
       "overallLargeRateOverride": 92.3,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 80.0,
-      "newLargeRateOverride": 10.0
+      "newLargeRateOverride": 10.0,
+      "renewLargeRateOverride": 100.0,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "安阳万达",
@@ -1001,7 +1040,7 @@
       "renewCount": 2,
       "renewAmount": 1000.0,
       "renewRateOverride": 3.7,
-      "renewShareOverride": 16.08,
+      "renewShareOverride": 16.1,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -1021,7 +1060,9 @@
       "overallLargeRateOverride": 62.5,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 33.33,
-      "newLargeRateOverride": 33.33
+      "newLargeRateOverride": 33.33,
+      "renewLargeRateOverride": 100.0,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     },
     {
       "name": "安阳滑县吾悦",
@@ -1050,8 +1091,8 @@
       "newMidLargeRateOverride": 100.0,
       "renewCount": 2,
       "renewAmount": 669.0,
-      "renewRateOverride": 4.17,
-      "renewShareOverride": 11.21,
+      "renewRateOverride": 4.2,
+      "renewShareOverride": 11.2,
       "renewSmall": null,
       "renewMid": null,
       "renewLarge": null,
@@ -1071,16 +1112,19 @@
       "overallLargeRateOverride": 100.0,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 44.44,
-      "newLargeRateOverride": 55.56
+      "newLargeRateOverride": 55.56,
+      "renewLargeRateOverride": 100.0,
+      "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。"
     }
   ],
   "sourceNotes": {
     "closedAndTestStoreExclusion": "闭店、测试店不进入品牌/区域/门店周报合计；如果截图总数包含这些门店，需要单独剔除并说明差异来源。",
     "currentWeekDaily": "本周 08-24 至 08-30 门店日报可见行汇总；已排除宝龙、测试店。",
     "newSignCardTypeSplit": "新签小/中/大卡量按用户筛选后的门店日报可见行还原；每日大卡率为 0 但小卡率+中卡率未满 100% 时，缺口计入大卡；周比例按卡量加权。",
-    "manualCorrections": "用户明确单点修正优先于 Excel 自动汇总；本周武汉荟聚续卡金额按 9100；开封万达本周营业额按用户截图修正为 29358.50。",
+    "manualCorrections": "用户明确单点修正优先于 Excel 自动汇总；本周续卡数据按用户最新续卡截图覆盖，开封万达本周营业额按用户截图修正为29358.50。",
     "currentWeekCustomers": "本周总接待人数按用户截图“人数”列录入；该列不是新客数或老客数。",
     "overallLargeRate": "本周总大卡率按用户截图覆盖；总大卡率=大卡率。",
-    "monthDataRemoved": "按用户要求，本周固定链接不再展示本月数据。"
+    "monthDataRemoved": "按用户要求，本周固定链接不再展示本月数据。",
+    "renewData": "本周续卡金额、续卡数、续卡率、续卡金额占比、续卡大卡率按用户最新续卡截图逐店写入。"
   }
 }

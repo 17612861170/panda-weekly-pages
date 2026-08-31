@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260830-large-rate-v8';
+  var DATA_VERSION = '20260830-renew-v10';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -316,6 +316,8 @@
     result.newMidLargeRate = ratio(newMidLargeTotal, result.newCardCount);
     if (result.newMidLargeRate == null) result.newMidLargeRate = weightedAverage(rows, 'newMidLargeRateOverride', 'newCardCount');
     result.renewShare = ratio(result.renewAmount, result.revenue);
+    result.renewLargeRate = ratio(result.renewLarge, result.renewCount);
+    if (result.renewLargeRate == null) result.renewLargeRate = weightedAverage(rows, 'renewLargeRateOverride', 'renewCount');
     result.trafficShare = ratio(result.trafficAmount, result.newCardAmount);
     result.sweepShare = ratio(result.sweepAmount, result.newCardAmount);
     var largeFields = [result.newMid, result.newLarge, result.renewMid, result.renewLarge];
@@ -522,17 +524,52 @@
     var valueMap = {
       '完成率': entity.completion, '新签办卡率': entity.newSignRate, '新签小卡率': entity.newSmallRate,
       '新签中大卡率': entity.newMidLargeRate, '大卡率': entity.overallLargeRate, '整体大卡率': entity.overallLargeRate,
-      '续卡占比': entity.renewShare, '总续卡占比': entity.renewShare, '总引流占比': entity.trafficShare, '扫楼占比': entity.sweepShare
+      '续卡占比': entity.renewShare, '总续卡占比': entity.renewShare, '续卡大卡率': entity.renewLargeRate,
+      '总引流占比': entity.trafficShare, '扫楼占比': entity.sweepShare
     };
     if (!(label in valueMap) || valueMap[label] == null) return false;
     if (label === '新签小卡率') return valueMap[label] > 40;
     var line = { '完成率': 100, '新签办卡率': 40, '新签中大卡率': 55, '大卡率': 70, '整体大卡率': 70,
-      '续卡占比': 20, '总续卡占比': 20, '总引流占比': 25, '扫楼占比': 15 }[label];
+      '续卡占比': 20, '总续卡占比': 20, '续卡大卡率': 70, '总引流占比': 25, '扫楼占比': 15 }[label];
     return valueMap[label] < line;
+  }
+
+  function headerTexts(table) {
+    return Array.from(table.querySelectorAll('thead th')).map(function (head) {
+      return head.textContent.replace(/\s+/g, '').trim();
+    });
+  }
+
+  function ensureRankingColumn(table, afterLabel, label, width) {
+    var headRow = table.querySelector('thead tr');
+    if (!headRow) return;
+    var heads = headerTexts(table);
+    if (heads.indexOf(label) >= 0) return;
+    var afterIndex = heads.indexOf(afterLabel);
+    var insertIndex = afterIndex >= 0 ? afterIndex + 1 : heads.length;
+    var th = document.createElement('th');
+    th.textContent = label;
+    headRow.insertBefore(th, headRow.children[insertIndex] || null);
+    var colgroup = table.querySelector('colgroup');
+    if (colgroup) {
+      var col = document.createElement('col');
+      col.style.width = width || '96px';
+      colgroup.insertBefore(col, colgroup.children[insertIndex] || null);
+    }
+    table.querySelectorAll('tbody tr, tfoot tr').forEach(function (row) {
+      var td = document.createElement('td');
+      row.insertBefore(td, row.children[insertIndex] || null);
+    });
+  }
+
+  function ensureRenewRankingColumns(table) {
+    ensureRankingColumn(table, '续卡金额', '续卡总卡量', '92px');
+    ensureRankingColumn(table, '续卡占比', '续卡大卡率', '96px');
   }
 
   function updateRankings(storeMap, regions, brand) {
     document.querySelectorAll('table[data-ranking-table="region"], table[data-ranking-table="store"]').forEach(function (table) {
+      ensureRenewRankingColumns(table);
       var isRegion = table.classList.contains('region-ranking-table');
       var rows = Array.from(table.querySelectorAll('tbody tr'));
       rows.forEach(function (row) {
@@ -563,8 +600,10 @@
       newSignRevenue: '新签营收',
       newRate: '新签办卡率',
       renewAmount: '续卡金额',
+      renewCount: '续卡总卡量',
       renewShare: '续卡占比',
       renewRate: '续费率',
+      renewLargeRate: '续卡大卡率',
       newSmallRate: '新签小卡率',
       newMidLargeRate: '新签中大卡率',
       traffic: '总引流金额',
@@ -580,7 +619,7 @@
     }
     var fields = {
       revenue: entity.revenue, completion: entity.completion, newSignRevenue: entity.newCardAmount, newRate: entity.newSignRate,
-      renewAmount: entity.renewAmount, renewShare: entity.renewShare, renewRate: entity.renewRate,
+      renewAmount: entity.renewAmount, renewCount: entity.renewCount, renewShare: entity.renewShare, renewRate: entity.renewRate, renewLargeRate: entity.renewLargeRate,
       newSmallRate: entity.newSmallRate, newMidLargeRate: entity.newMidLargeRate,
       traffic: entity.trafficAmount, trafficShare: entity.trafficShare, newCustomers: entity.newCustomers
     };
