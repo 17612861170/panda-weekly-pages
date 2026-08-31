@@ -2321,11 +2321,11 @@ td { border-color:#dfe4ea; }
         }
         var cells = Array.from(row.children);
         if (!available) {
-          [0, 1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].forEach(function (index) { if (cells[index]) cells[index].textContent = '-'; });
+          [0, 1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].forEach(function (index) { if (cells[index]) cells[index].textContent = '-'; });
           return;
         }
         if (period === 'previous') {
-          [0, 2, 7, 10, 11, 12, 13, 14, 15].forEach(function (index) { if (cells[index]) cells[index].textContent = '-'; });
+          [0, 2, 7, 10, 11, 12, 13, 14, 15, 16].forEach(function (index) { if (cells[index]) cells[index].textContent = '-'; });
           if (cells[6]) cells[6].textContent = formatMoney(row.getAttribute('data-amount-previous'));
           return;
         }
@@ -2954,7 +2954,7 @@ td { border-color:#dfe4ea; }
   });
 })();
 </script>
-<script src="../month-snapshot-20260801-20260830.js?v=20260830-excel-month-v1"></script>
-<script src="./report-data.js?v=20260830-excel-month-v1"></script>
+<script src="../month-snapshot-20260801-20260830.js?v=20260830-excel-final-v2"></script>
+<script src="./report-data.js?v=20260830-excel-final-v2"></script>
 
 </body></html>
