@@ -74,7 +74,7 @@
       "name": "开封万达",
       "sourceName": "开封·万达店",
       "region": "3区",
-      "revenue": 29331.5,
+      "revenue": 29358.5,
       "customers": 615,
       "newCustomers": 83,
       "oldCustomers": 173,
@@ -118,7 +118,8 @@
       "overallLargeRateOverride": 56.4,
       "overallLargeRateSource": "用户截图：2026-08-24至2026-08-30本周大卡率；办卡率=大卡率。",
       "newMidRateOverride": 35.9,
-      "newLargeRateOverride": 7.69
+      "newLargeRateOverride": 7.69,
+      "sourceCorrection": "用户截图确认：开封万达本周营业额为29358.50，修正原29331.50。"
     },
     {
       "name": "武汉荟聚",
@@ -1078,7 +1079,7 @@
     "closedAndTestStoreExclusion": "闭店、测试店不进入品牌/区域/门店周报合计；如果截图总数包含这些门店，需要单独剔除并说明差异来源。",
     "currentWeekDaily": "本周 08-24 至 08-30 门店日报可见行汇总；已排除宝龙、测试店。",
     "newSignCardTypeSplit": "新签小/中/大卡量按用户筛选后的门店日报可见行还原；每日大卡率为 0 但小卡率+中卡率未满 100% 时，缺口计入大卡；周比例按卡量加权。",
-    "manualCorrections": "用户明确单点修正优先于 Excel 自动汇总；本周武汉荟聚续卡金额按 9100。",
+    "manualCorrections": "用户明确单点修正优先于 Excel 自动汇总；本周武汉荟聚续卡金额按 9100；开封万达本周营业额按用户截图修正为 29358.50。",
     "currentWeekCustomers": "本周总接待人数按用户截图“人数”列录入；该列不是新客数或老客数。"
   }
 }
