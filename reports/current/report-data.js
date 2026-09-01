@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260830-remove-people-traffic-v19';
+  var DATA_VERSION = '20260830-traffic-recalc-v20';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,

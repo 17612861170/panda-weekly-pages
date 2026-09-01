@@ -64,7 +64,7 @@
       "salary": null,
       "sourceRank": 1,
       "providedTrafficShare": 22.87,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；用户手工给定占比仅作源数据备注。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 86.4,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 73.33,
@@ -73,9 +73,10 @@
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 0,
       "providedStairShare": 100,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算。",
-      "trafficDataSource": "门店周营收数据-20260824-20260830.xlsx",
-      "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。"
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。",
+      "trafficManualCorrection": "武昌万象城：扶梯8965.99，合计8965.99。"
     },
     {
       "name": "开封万达",
@@ -111,17 +112,17 @@
       "renewLarge": null,
       "partTimeVisits": null,
       "trafficCount": null,
-      "trafficAmount": 4900.5,
+      "trafficAmount": 22012,
       "stairCount": null,
-      "stairAmount": 3589.5,
+      "stairAmount": 18968,
       "sweepCount": null,
-      "sweepAmount": 1311,
+      "sweepAmount": 3044,
       "otherTraffic": null,
       "managerConfirmed": null,
       "salary": null,
       "sourceRank": 2,
-      "providedTrafficShare": 25.96,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算，不直接采用Excel占比列。",
+      "providedTrafficShare": 147.86,
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 56.1,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 35.9,
@@ -129,10 +130,11 @@
       "sourceCorrection": "用户截图确认：开封万达本周营业额为29358.50，修正原29331.50。",
       "renewLargeRateOverride": 94.4,
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
-      "providedSweepShare": 26.75,
-      "providedStairShare": 73.25,
-      "sweepShareRule": "扫楼占比按扫楼引流金额/新签营收重算，不直接采用Excel占比列。",
-      "trafficDataSource": "门店周营收数据-20260824-20260830.xlsx"
+      "providedSweepShare": 20.45,
+      "providedStairShare": 86.17,
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "trafficManualCorrection": "开封万达：扶梯18968，扫楼3044，合计22012。"
     },
     {
       "name": "武汉荟聚",
@@ -178,7 +180,7 @@
       "salary": null,
       "sourceRank": 3,
       "providedTrafficShare": 50.33,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；用户手工给定占比仅作源数据备注。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "manualOverride": "按用户最新续卡截图覆盖：武汉荟聚本周续卡金额5552，续卡数12。",
       "overallLargeRateOverride": 64.8,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
@@ -186,11 +188,12 @@
       "newLargeRateOverride": 11.9,
       "renewLargeRateOverride": 91.7,
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
-      "providedSweepShare": 37.75,
+      "providedSweepShare": 19,
       "providedStairShare": 62.25,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算。",
-      "trafficDataSource": "门店周营收数据-20260824-20260830.xlsx",
-      "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。"
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。",
+      "trafficManualCorrection": "武汉荟聚：扶梯5551，扫楼3366，合计8917。"
     },
     {
       "name": "洛阳泉舜",
@@ -236,7 +239,7 @@
       "salary": null,
       "sourceRank": 4,
       "providedTrafficShare": 69.64,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收(newCardAmount)重算；用户手工明细为最高优先级。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 58,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 37.14,
@@ -245,9 +248,9 @@
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 30.36,
       "providedStairShare": 56.4,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收(newCardAmount)重算。",
-      "trafficDataSource": "用户2026-09-01提供本周二区引流手工修正",
-      "trafficManualCorrection": "洛阳泉舜：总引流=扫楼+门口扶梯；门口扶梯写入扶梯口金额字段。"
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "trafficManualCorrection": "洛阳泉舜：扶梯5795，扫楼4479，合计10274。"
     },
     {
       "name": "襄阳高新万达",
@@ -293,7 +296,7 @@
       "salary": null,
       "sourceRank": 5,
       "providedTrafficShare": 29.97,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；用户手工明细为最高优先级。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 47.6,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 38.89,
@@ -301,10 +304,10 @@
       "renewLargeRateOverride": 77.8,
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 26.01,
-      "providedStairShare": 30.4,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算。",
-      "trafficDataSource": "用户2026-09-01提供8.29-8.30一区引流两日汇总手工修正",
-      "trafficManualCorrection": "8.29-8.30一区引流两日汇总：总引流=扫楼+门口扶梯；门口扶梯写入扶梯口金额字段。"
+      "providedStairShare": 13.2,
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "trafficManualCorrection": "襄阳万达：扫楼4970，门口扶梯756，合计5726。"
     },
     {
       "name": "郑州二七万象城",
@@ -350,7 +353,7 @@
       "salary": null,
       "sourceRank": 6,
       "providedTrafficShare": 20.07,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；用户手工给定占比仅作源数据备注。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 65.2,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 44.74,
@@ -359,10 +362,11 @@
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 0,
       "providedStairShare": 100,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算。",
-      "trafficDataSource": "门店周营收数据-20260824-20260830.xlsx",
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
       "manualAlias": "用户口径：郑州万象城",
-      "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。"
+      "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。",
+      "trafficManualCorrection": "郑州万象城：扶梯3331.9，合计3331.9。"
     },
     {
       "name": "焦作万达",
@@ -408,7 +412,7 @@
       "salary": null,
       "sourceRank": 7,
       "providedTrafficShare": 65.2,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收(newCardAmount)重算；用户手工明细为最高优先级。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 53.9,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 38.64,
@@ -416,11 +420,11 @@
       "renewLargeRateOverride": 87.5,
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 30.15,
-      "providedStairShare": 49.99,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收(newCardAmount)重算。",
-      "trafficDataSource": "用户2026-09-01提供本周二区引流手工修正",
+      "providedStairShare": 53.76,
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
       "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。",
-      "trafficManualCorrection": "焦作万达：总引流=扫楼+门口扶梯；门口扶梯写入扶梯口金额字段。"
+      "trafficManualCorrection": "焦作万达：扶梯6247.2，扫楼5373，合计11620.2。"
     },
     {
       "name": "郑州美盛天街",
@@ -466,18 +470,19 @@
       "salary": null,
       "sourceRank": 8,
       "providedTrafficShare": 35.63,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；用户手工给定占比仅作源数据备注。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 76.3,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 55.17,
       "newLargeRateOverride": 17.24,
       "renewLargeRateOverride": 88.9,
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
-      "providedSweepShare": 27.9,
+      "providedSweepShare": 9.94,
       "providedStairShare": 72.1,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算。",
-      "trafficDataSource": "门店周营收数据-20260824-20260830.xlsx",
-      "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。"
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。",
+      "trafficManualCorrection": "美盛天街：扶梯3641，扫楼1409，合计5050。"
     },
     {
       "name": "许昌魏都万达",
@@ -523,7 +528,7 @@
       "salary": null,
       "sourceRank": 9,
       "providedTrafficShare": 0,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；用户手工明细为最高优先级。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 85.7,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 73.91,
@@ -531,10 +536,10 @@
       "renewLargeRateOverride": 100,
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 0,
-      "providedStairShare": 100,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算。",
-      "trafficDataSource": "用户2026-09-01提供8.29-8.30一区引流两日汇总手工修正",
-      "trafficManualCorrection": "8.29-8.30一区引流两日汇总：总引流=扫楼+门口扶梯；门口扶梯写入扶梯口金额字段。"
+      "providedStairShare": 0,
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "trafficManualCorrection": "许昌万达：扫楼0，门口扶梯0，合计0。"
     },
     {
       "name": "南阳吾悦",
@@ -580,7 +585,7 @@
       "salary": null,
       "sourceRank": 10,
       "providedTrafficShare": 24.66,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；用户手工明细为最高优先级。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 58.1,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 41.67,
@@ -588,10 +593,10 @@
       "renewLargeRateOverride": 85.7,
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 5.3,
-      "providedStairShare": 90.42,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算。",
-      "trafficDataSource": "用户2026-09-01提供8.29-8.30一区引流两日汇总手工修正",
-      "trafficManualCorrection": "8.29-8.30一区引流两日汇总：总引流=扫楼+门口扶梯；门口扶梯写入扶梯口金额字段。"
+      "providedStairShare": 78.51,
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "trafficManualCorrection": "南阳吾悦：扫楼800，门口扶梯2922，合计3722。"
     },
     {
       "name": "周口万达",
@@ -637,7 +642,7 @@
       "salary": null,
       "sourceRank": 11,
       "providedTrafficShare": 67.75,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收(newCardAmount)重算；用户手工明细为最高优先级。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 86.5,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 72,
@@ -645,10 +650,10 @@
       "renewLargeRateOverride": 100,
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 0,
-      "providedStairShare": 98.34,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收(newCardAmount)重算。",
-      "trafficDataSource": "用户2026-09-01提供本周二区引流手工修正",
-      "trafficManualCorrection": "周口万达：总引流=扫楼+门口扶梯；门口扶梯写入扶梯口金额字段。"
+      "providedStairShare": 100,
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "trafficManualCorrection": "周口万达：扶梯6270，扫楼0，合计6270。"
     },
     {
       "name": "洛阳中州万达",
@@ -694,7 +699,7 @@
       "salary": null,
       "sourceRank": 12,
       "providedTrafficShare": 43.05,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收(newCardAmount)重算；用户手工明细为最高优先级。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 67.7,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 62.96,
@@ -702,10 +707,10 @@
       "renewLargeRateOverride": 85.7,
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 29.8,
-      "providedStairShare": 33.55,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收(newCardAmount)重算。",
-      "trafficDataSource": "用户2026-09-01提供本周二区引流手工修正",
-      "trafficManualCorrection": "中州万达：总引流=扫楼+门口扶梯；门口扶梯写入扶梯口金额字段。"
+      "providedStairShare": 30.78,
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "trafficManualCorrection": "中州万达：扶梯1545，扫楼3474，合计5019。"
     },
     {
       "name": "郑州惠济万达",
@@ -751,7 +756,7 @@
       "salary": null,
       "sourceRank": 13,
       "providedTrafficShare": 52.73,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收(newCardAmount)重算；用户手工明细为最高优先级。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 50,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 27.27,
@@ -760,9 +765,9 @@
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 18.31,
       "providedStairShare": 65.27,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收(newCardAmount)重算。",
-      "trafficDataSource": "用户2026-09-01提供本周二区引流手工修正",
-      "trafficManualCorrection": "惠济万达：总引流=扫楼+门口扶梯；门口扶梯写入扶梯口金额字段。"
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "trafficManualCorrection": "惠济万达：扶梯3153，扫楼1678，合计4831。"
     },
     {
       "name": "商丘万达",
@@ -808,7 +813,7 @@
       "salary": null,
       "sourceRank": 14,
       "providedTrafficShare": 62.65,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；用户手工明细为最高优先级。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "manualOverride": "按用户补充表格截图修正。",
       "overallLargeRateOverride": 96.3,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
@@ -817,10 +822,10 @@
       "renewLargeRateOverride": 100,
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 24.91,
-      "providedStairShare": 80.18,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算。",
-      "trafficDataSource": "用户2026-09-01提供8.29-8.30一区引流两日汇总手工修正",
-      "trafficManualCorrection": "8.29-8.30一区引流两日汇总：总引流=扫楼+门口扶梯；门口扶梯写入扶梯口金额字段。"
+      "providedStairShare": 60.24,
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "trafficManualCorrection": "商丘万达：扫楼1555，门口扶梯2356，合计3911。"
     },
     {
       "name": "郑州中原万达",
@@ -866,18 +871,19 @@
       "salary": null,
       "sourceRank": 15,
       "providedTrafficShare": 89.78,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；用户手工给定占比仅作源数据备注。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 70,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 53.85,
       "newLargeRateOverride": 0,
       "renewLargeRateOverride": 100,
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
-      "providedSweepShare": 2.76,
+      "providedSweepShare": 2.47,
       "providedStairShare": 97.24,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算。",
-      "trafficDataSource": "门店周营收数据-20260824-20260830.xlsx",
-      "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。"
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。",
+      "trafficManualCorrection": "中原：引流5045.65，扫楼143，合计5188.65。"
     },
     {
       "name": "南阳万达",
@@ -923,7 +929,7 @@
       "salary": null,
       "sourceRank": 16,
       "providedTrafficShare": 54.11,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；用户手工明细为最高优先级。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 66.7,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 57.14,
@@ -931,10 +937,10 @@
       "renewLargeRateOverride": 85.7,
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 13.33,
-      "providedStairShare": 70.38,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算。",
-      "trafficDataSource": "用户2026-09-01提供8.29-8.30一区引流两日汇总手工修正",
-      "trafficManualCorrection": "8.29-8.30一区引流两日汇总：总引流=扫楼+门口扶梯；门口扶梯写入扶梯口金额字段。"
+      "providedStairShare": 75.37,
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "trafficManualCorrection": "南阳万达：扫楼776，门口扶梯2374，合计3150。"
     },
     {
       "name": "信阳万达",
@@ -980,7 +986,7 @@
       "salary": null,
       "sourceRank": 17,
       "providedTrafficShare": 65.43,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；用户手工明细为最高优先级。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "manualOverride": "按用户补充表格截图修正。",
       "overallLargeRateOverride": 61.1,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
@@ -989,10 +995,10 @@
       "renewLargeRateOverride": 66.7,
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 36.47,
-      "providedStairShare": 88.97,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算。",
-      "trafficDataSource": "用户2026-09-01提供8.29-8.30一区引流两日汇总手工修正",
-      "trafficManualCorrection": "8.29-8.30一区引流两日汇总：总引流=扫楼+门口扶梯；门口扶梯写入扶梯口金额字段。"
+      "providedStairShare": 44.25,
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "trafficManualCorrection": "信阳万达：扫楼1421，门口扶梯1128，合计2549。"
     },
     {
       "name": "新乡万达",
@@ -1038,7 +1044,7 @@
       "salary": null,
       "sourceRank": 18,
       "providedTrafficShare": 87.42,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收(newCardAmount)重算；用户手工明细为最高优先级。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 75,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 60,
@@ -1047,9 +1053,9 @@
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 6.3,
       "providedStairShare": 92.79,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收(newCardAmount)重算。",
-      "trafficDataSource": "用户2026-09-01提供本周二区引流手工修正",
-      "trafficManualCorrection": "新乡万达：总引流=扫楼+门口扶梯；门口扶梯写入扶梯口金额字段。"
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "trafficManualCorrection": "新乡万达：扶梯3888，扫楼302，合计4190。"
     },
     {
       "name": "郑州信万",
@@ -1095,7 +1101,7 @@
       "salary": null,
       "sourceRank": 19,
       "providedTrafficShare": 60.24,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收(newCardAmount)重算；用户手工明细为最高优先级。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 92.3,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 80,
@@ -1104,10 +1110,10 @@
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 25.3,
       "providedStairShare": 58,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收(newCardAmount)重算。",
-      "trafficDataSource": "用户2026-09-01提供本周二区引流手工修正",
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
       "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。",
-      "trafficManualCorrection": "信万牛牛：总引流=扫楼+门口扶梯；门口扶梯写入扶梯口金额字段。"
+      "trafficManualCorrection": "信万牛牛：扶梯1766，扫楼1279，合计3045。"
     },
     {
       "name": "安阳万达",
@@ -1153,7 +1159,7 @@
       "salary": null,
       "sourceRank": 20,
       "providedTrafficShare": 184.94,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；用户手工给定占比仅作源数据备注。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 62.5,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 33.33,
@@ -1162,9 +1168,10 @@
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
       "providedSweepShare": 0,
       "providedStairShare": 100,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算。",
-      "trafficDataSource": "门店周营收数据-20260824-20260830.xlsx",
-      "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。"
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
+      "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。",
+      "trafficManualCorrection": "安阳：扶梯口5341，合计5341。"
     },
     {
       "name": "安阳滑县吾悦",
@@ -1210,33 +1217,25 @@
       "salary": null,
       "sourceRank": 21,
       "providedTrafficShare": 156.17,
-      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；用户手工给定占比仅作源数据备注。",
+      "trafficShareRule": "总引流占比按总引流金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
       "overallLargeRateOverride": 100,
       "overallLargeRateSource": "用户截图确认：2026-08-24至2026-08-30本周总大卡率；总大卡率=大卡率。",
       "newMidRateOverride": 44.44,
       "newLargeRateOverride": 55.56,
       "renewLargeRateOverride": 100,
       "renewDataSource": "用户截图确认：2026-08-24至2026-08-30本周续卡数据。",
-      "providedSweepShare": 5.64,
+      "providedSweepShare": 8.81,
       "providedStairShare": 94.36,
-      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算。",
-      "trafficDataSource": "门店周营收数据-20260824-20260830.xlsx",
+      "sweepShareRule": "扫楼占比按扫楼金额/新签营收重算；本次以用户2026-09-01提供的手工引流明细为最高优先级。",
+      "trafficDataSource": "用户2026-09-01提供本周8月24日-8月30日引流手工明细。",
       "doorAmountSource": "用户提供门口金额5000；当前页面字段沿用扶梯口金额承载。",
-      "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。"
+      "manualCorrectionSource": "用户2026-09-01手工确认：本条消息中的引流/续卡/小卡率数据优先于Excel。",
+      "trafficManualCorrection": "滑县吾悦：门口5000，扫楼299，合计5299。"
     }
   ],
-  "sourceNotes": {
-    "closedAndTestStoreExclusion": "闭店、测试店不进入品牌/区域/门店周报合计；如果截图总数包含这些门店，需要单独剔除并说明差异来源。",
-    "currentWeekDaily": "本周 08-24 至 08-30 门店日报可见行汇总；已排除宝龙、测试店。",
-    "newSignCardTypeSplit": "新签小/中/大卡量按用户筛选后的门店日报可见行还原；每日大卡率为 0 但小卡率+中卡率未满 100% 时，缺口计入大卡；周比例按卡量加权。",
-    "manualCorrections": "用户明确单点修正优先于 Excel 自动汇总；本周续卡数据按用户最新续卡截图覆盖，开封万达本周营业额按用户截图修正为29358.50。",
-    "currentWeekCustomers": "本周总接待人数按用户截图“人数”列录入；该列不是新客数或老客数。",
-    "overallLargeRate": "本周总大卡率按用户截图覆盖；总大卡率=大卡率。",
-    "monthDataRemoved": "按用户要求，本周固定链接不再展示本月数据。",
-    "renewData": "本周续卡金额、续卡数、续卡率、续卡金额占比、续卡大卡率按用户最新续卡截图逐店写入。",
-    "trafficData": "2026-09-01补充引流数据：总引流金额、扫楼引流金额、扶梯口引流金额来自门店周营收数据-20260824-20260830.xlsx；总引流占比/扫楼占比按金额除以新签营收重算。",
-    "manualTrafficCorrections": "2026-09-01用户手工修正信万、焦作、武汉荟聚、安阳万达、武昌万象城、滑县吾悦、郑州二七万象城、美盛天街、中原万达等门店引流数据；武汉荟聚续卡金额/占比同步修正；中原新签小卡率同步修正。"
-  },
+  "sourceNotes": [
+    "2026-09-01引流修正：品牌、区域、门店总引流金额统一以用户手工明细为准；总引流占比=总引流金额/新签营收，扫楼占比=扫楼金额/新签营收。"
+  ],
   "dataQualityNotes": {
     "manualTrafficCorrections": "2026-09-01用户手工修正一区、二区重点门店引流数据；门口扶梯写入扶梯口金额字段；总引流占比=总引流金额/新签营收；扫楼占比=扫楼金额/新签营收。"
   }
