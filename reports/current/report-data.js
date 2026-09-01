@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260830-area1-traffic-v16';
+  var DATA_VERSION = '20260830-area2-traffic-v17';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
