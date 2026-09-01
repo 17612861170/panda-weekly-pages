@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var DATA_VERSION = '20260830-employee-card-mix-v18';
+  var DATA_VERSION = '20260830-remove-people-traffic-v19';
   var priorSupport = {};
   var hiddenSupportLabels = {
     '新签小卡数': true,
@@ -1016,17 +1016,23 @@
       if (!page) return;
       var table = page.querySelector('table[data-ranking-table="employee"]');
       if (!table) return;
-      var headers = ['本周', '上周', '排名变化', '区域', '门店', roleLabel || '店员', '本周总金额', '本周完成率', '上周总金额', '金额增减', '续卡金额', '总引流金额', '办卡/新签/续卡', '新签办卡率', '新签小卡率', '新签中卡率', '新签大卡率'];
+      var headers = ['本周', '上周', '排名变化', '区域', '门店', roleLabel || '店员', '本周总金额', '本周完成率', '上周总金额', '金额增减', '续卡金额', '办卡/新签/续卡', '新签办卡率', '新签小卡率', '新签中卡率', '新签大卡率'];
       var colgroup = table.querySelector('colgroup');
       while (colgroup && colgroup.children.length < headers.length) {
         var col = document.createElement('col');
         col.style.width = colgroup.children.length === 11 ? '84px' : '70px';
         colgroup.appendChild(col);
       }
+      while (colgroup && colgroup.children.length > headers.length) {
+        colgroup.removeChild(colgroup.lastElementChild);
+      }
+      var headRow = table.querySelector('thead tr');
+      while (headRow && headRow.children.length > headers.length) {
+        headRow.removeChild(headRow.lastElementChild);
+      }
       Array.from(table.querySelectorAll('thead th')).forEach(function (header, index) {
         if (headers[index]) header.textContent = headers[index];
       });
-      var headRow = table.querySelector('thead tr');
       while (headRow && headRow.children.length < headers.length) {
         var th = document.createElement('th');
         th.textContent = headers[headRow.children.length];
@@ -1053,7 +1059,6 @@
         var cardCountText = employee.cardCount == null || !Number.isFinite(Number(employee.cardCount)) ? '—' : integer(employee.cardCount);
         var newSignText = employee.newCardAmount == null || !Number.isFinite(Number(employee.newCardAmount)) ? '—' : money(employee.newCardAmount);
         var renewText = employee.renewAmount == null || !Number.isFinite(Number(employee.renewAmount)) ? '—' : money(employee.renewAmount);
-        var trafficText = employee.trafficAmount == null || !Number.isFinite(Number(employee.trafficAmount)) ? '—' : money(employee.trafficAmount);
         var row = document.createElement('tr');
         if (hasCurrent) row.setAttribute('data-amount-current', employee.amount);
         if (previousAmount != null) row.setAttribute('data-amount-previous', previousAmount);
@@ -1066,7 +1071,6 @@
           '<td>' + (previousAmount == null ? '-' : money(previousAmount)) + '</td>' +
           '<td>' + (amountChange == null ? '-' : '<span class="' + (amountChange >= 0 ? 'cg' : 'cr') + '">' + (amountChange >= 0 ? '+' : '-') + money(Math.abs(amountChange)) + '</span>') + '</td>' +
           '<td>' + (hasCurrent ? money(employee.renewAmount) : '-') + '</td>' +
-          '<td>' + (hasCurrent ? trafficText : '-') + '</td>' +
           '<td>' + (hasCurrent ? cardCountText + '/' + newSignText + '/' + renewText : '-') + '</td>' +
           '<td>' + (hasCurrent ? percent(employee.newSignRate) : '-') + '</td>' +
           '<td>' + (hasCurrent ? percent(newSmallRate) : '-') + '</td>' +
